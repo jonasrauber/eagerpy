@@ -18,7 +18,7 @@ install_requires = ["torch", "tensorflow"]
 tests_require = ["pytest", "pytest-cov"]
 
 setup(
-    name="foolbox",
+    name="eagerpy",
     version=version,
     description="EagerPy is a thin wrapper around **PyTorch** and **TensorFlow Eager** that unifies their interface and thus allows writing code that works with both.",
     long_description=README,
