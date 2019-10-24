@@ -14,7 +14,7 @@ except IOError:
     README = ""
 
 
-install_requires = ["torch", "tensorflow"]
+install_requires = []
 tests_require = ["pytest", "pytest-cov"]
 
 setup(
