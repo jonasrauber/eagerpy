@@ -11,6 +11,9 @@ class PyTorchTensor(AbstractTensor):
         super().__init__(tensor)
         self.backend = torch
 
+    def numpy(self):
+        return self.tensor.cpu().numpy()
+
     @property
     def shape(self):
         return self.tensor.shape

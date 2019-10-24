@@ -9,6 +9,9 @@ class TensorFlowTensor(AbstractTensor):
         super().__init__(tensor)
         self.backend = tensorflow
 
+    def numpy(self):
+        return self.tensor.numpy()
+
     @property
     def shape(self):
         return tuple(self.tensor.shape.as_list())
