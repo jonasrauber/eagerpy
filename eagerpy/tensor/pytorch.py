@@ -98,12 +98,20 @@ class PyTorchTensor(AbstractTensor):
         return x
 
     @wrapout
-    def minimum(self, t):
-        return self.backend.min(self.tensor, t.tensor)
+    def minimum(self, other):
+        if hasattr(other, 'tensor'):
+            other = other.tensor
+        else:
+            other = self.backend.ones_like(self.tensor) * other
+        return self.backend.min(self.tensor, other)
 
     @wrapout
-    def maximum(self, t):
-        return self.backend.max(self.tensor, t.tensor)
+    def maximum(self, other):
+        if hasattr(other, 'tensor'):
+            other = other.tensor
+        else:
+            other = self.backend.ones_like(self.tensor) * other
+        return self.backend.max(self.tensor, other)
 
     @wrapout
     def argmin(self, axis=None):

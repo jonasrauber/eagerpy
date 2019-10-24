@@ -60,12 +60,16 @@ class TensorFlowTensor(AbstractTensor):
         return self.backend.reduce_max(self.tensor, axis=axis, keepdims=keepdims)
 
     @wrapout
-    def minimum(self, t):
-        return self.backend.minimum(self.tensor, t.tensor)
+    def minimum(self, other):
+        if hasattr(other, 'tensor'):
+            other = other.tensor
+        return self.backend.minimum(self.tensor, other)
 
     @wrapout
-    def maximum(self, t):
-        return self.backend.maximum(self.tensor, t.tensor)
+    def maximum(self, other):
+        if hasattr(other, 'tensor'):
+            other = other.tensor
+        return self.backend.maximum(self.tensor, other)
 
     @wrapout
     def argmin(self, axis=None):
