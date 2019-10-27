@@ -99,7 +99,7 @@ class PyTorchTensor(AbstractTensor):
 
     @wrapout
     def minimum(self, other):
-        if hasattr(other, 'tensor'):
+        if hasattr(other, "tensor"):
             other = other.tensor
         else:
             other = self.backend.ones_like(self.tensor) * other
@@ -107,7 +107,7 @@ class PyTorchTensor(AbstractTensor):
 
     @wrapout
     def maximum(self, other):
-        if hasattr(other, 'tensor'):
+        if hasattr(other, "tensor"):
             other = other.tensor
         else:
             other = self.backend.ones_like(self.tensor) * other

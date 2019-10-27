@@ -55,7 +55,7 @@ class AbstractTensor(ABC):
 
     @wrapout
     def __rmul__(self, other):
-        if hasattr(other, 'tensor'):
+        if hasattr(other, "tensor"):
             other = other.tensor
         return self.tensor.__rmul__(other)
 
@@ -65,7 +65,7 @@ class AbstractTensor(ABC):
 
     @wrapout
     def __rtruediv__(self, other):
-        if hasattr(other, 'tensor'):
+        if hasattr(other, "tensor"):
             other = other.tensor
         return self.tensor.__rtruediv__(other)
 

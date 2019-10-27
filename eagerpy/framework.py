@@ -43,13 +43,13 @@ def amax(t, *args, **kwargs):
 
 
 def minimum(x, y):
-    if not hasattr(x, 'tensor'):
+    if not hasattr(x, "tensor"):
         return y.minimum(x)
     return x.minimum(y)
 
 
 def maximum(x, y):
-    if not hasattr(x, 'tensor'):
+    if not hasattr(x, "tensor"):
         return y.maximum(x)
     return x.maximum(y)
 

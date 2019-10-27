@@ -61,13 +61,13 @@ class TensorFlowTensor(AbstractTensor):
 
     @wrapout
     def minimum(self, other):
-        if hasattr(other, 'tensor'):
+        if hasattr(other, "tensor"):
             other = other.tensor
         return self.backend.minimum(self.tensor, other)
 
     @wrapout
     def maximum(self, other):
-        if hasattr(other, 'tensor'):
+        if hasattr(other, "tensor"):
             other = other.tensor
         return self.backend.maximum(self.tensor, other)
 
