@@ -6,6 +6,7 @@ import tensorflow as tf
 
 from eagerpy import TensorFlowTensor
 from eagerpy import PyTorchTensor
+from eagerpy import NumPyTensor
 import eagerpy as ep
 
 
@@ -40,6 +41,13 @@ def th1g():
 
 
 @pytest.fixture
+def np1():
+    x = np.arange(5).astype(np.float32)
+    x = NumPyTensor(x)
+    return x
+
+
+@pytest.fixture
 def a2():
     x = np.arange(7, 17, 2).astype(np.float32)
     return x
@@ -69,24 +77,34 @@ def th2g():
     return x
 
 
-@pytest.fixture(params=["tf1", "th1", "th1g", "tf2", "th2", "th2g"])
-def ta(request, tf1, th1, th1g, a1, tf2, th2, th2g, a2):
+@pytest.fixture
+def np2():
+    x = np.arange(7, 17, 2).astype(np.float32)
+    x = NumPyTensor(x)
+    return x
+
+
+@pytest.fixture(params=["tf1", "th1", "th1g", "np1", "tf2", "th2", "th2g", "np2"])
+def ta(request, tf1, th1, th1g, np1, a1, tf2, th2, th2g, np2, a2):
     return {
         "tf1": (tf1, a1),
         "th1": (th1, a1),
         "th1g": (th1g, a1),
+        "np1": (np1, a1),
         "tf2": (tf2, a2),
         "th2": (th2, a2),
         "th2g": (th2g, a2),
+        "np2": (np2, a2),
     }[request.param]
 
 
-@pytest.fixture(params=["tf", "th", "thg"])
-def ttaa(request, tf1, th1, th1g, a1, tf2, th2, th2g, a2):
+@pytest.fixture(params=["tf", "th", "thg", "np"])
+def ttaa(request, tf1, th1, th1g, np1, a1, tf2, th2, th2g, np2, a2):
     return {
         "tf": (tf1, tf2, a1, a2),
         "th": (th1, th2, a1, a2),
         "thg": (th1g, th2g, a1, a2),
+        "np": (np1, np2, a1, a2),
     }[request.param]
 
 

@@ -5,4 +5,5 @@ with open(join(dirname(__file__), "VERSION")) as f:
 
 from .tensor import PyTorchTensor  # noqa: F401
 from .tensor import TensorFlowTensor  # noqa: F401
+from .tensor import NumPyTensor  # noqa: F401
 from .framework import *  # noqa: F401,F403
