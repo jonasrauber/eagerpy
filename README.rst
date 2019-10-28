@@ -42,4 +42,4 @@ Example
    ep.sum(x)
    ep.sqrt(x)
    ep.clip(x, 0, 1)
-   ep.uniform((3, 3), low=-1., high=1.)
+   ep.uniform(x, (3, 3), low=-1., high=1.)
