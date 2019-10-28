@@ -39,7 +39,9 @@ class AbstractTensor(ABC):
 
     @wrapout
     def __add__(self, other):
-        return self.tensor.__add__(other.tensor)
+        if hasattr(other, "tensor"):
+            other = other.tensor
+        return self.tensor.__add__(other)
 
     @wrapout
     def __iadd__(self, other):
@@ -47,7 +49,9 @@ class AbstractTensor(ABC):
 
     @wrapout
     def __sub__(self, other):
-        return self.tensor.__sub__(other.tensor)
+        if hasattr(other, "tensor"):
+            other = other.tensor
+        return self.tensor.__sub__(other)
 
     @wrapout
     def __mul__(self, other):
