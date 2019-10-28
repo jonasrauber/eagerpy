@@ -12,7 +12,7 @@ flake8:
 
 .PHONY: mypy
 mypy:
-	mypy .
+	mypy -m eagerpy
 
 .PHONY: install
 install:
