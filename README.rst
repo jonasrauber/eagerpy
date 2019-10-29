@@ -17,6 +17,8 @@ Warning: this is work in progress; the tests should run through just fine,
 but lot's of features are still missing. Let me know if this project is useful
 to you and which features are needed.
 
+**EagerPy is now in active use** to develop `Foolbox Native <https://github.com/jonasrauber/foolbox-native>`_.
+
 Installation
 ------------
 
