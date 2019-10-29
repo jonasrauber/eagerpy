@@ -138,3 +138,6 @@ class AbstractTensor(AbstractBaseTensor, ABC):
     @wrapout
     def tanh(self):
         return self.backend.tanh(self.tensor)
+
+    def float32(self):
+        return self.astype(self.backend.float32)
