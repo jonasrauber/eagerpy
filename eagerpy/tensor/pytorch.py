@@ -1,5 +1,6 @@
 from .base import AbstractTensor
 from .base import wrapout
+from .base import istensor
 
 from collections.abc import Iterable
 
@@ -99,7 +100,7 @@ class PyTorchTensor(AbstractTensor):
 
     @wrapout
     def minimum(self, other):
-        if hasattr(other, "tensor"):
+        if istensor(other):
             other = other.tensor
         else:
             other = self.backend.ones_like(self.tensor) * other
@@ -107,7 +108,7 @@ class PyTorchTensor(AbstractTensor):
 
     @wrapout
     def maximum(self, other):
-        if hasattr(other, "tensor"):
+        if istensor(other):
             other = other.tensor
         else:
             other = self.backend.ones_like(self.tensor) * other

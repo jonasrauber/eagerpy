@@ -1,4 +1,5 @@
 from .base import AbstractTensor
+from .base import unwrapin
 from .base import wrapout
 
 
@@ -59,16 +60,14 @@ class NumPyTensor(AbstractTensor):
     def max(self, axis=None, keepdims=False):
         return self.tensor.max(axis=axis, keepdims=keepdims)
 
+    @unwrapin
     @wrapout
     def minimum(self, other):
-        if hasattr(other, "tensor"):
-            other = other.tensor
         return self.backend.minimum(self.tensor, other)
 
+    @unwrapin
     @wrapout
     def maximum(self, other):
-        if hasattr(other, "tensor"):
-            other = other.tensor
         return self.backend.maximum(self.tensor, other)
 
     @wrapout
