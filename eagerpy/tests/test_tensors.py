@@ -113,6 +113,11 @@ def test_len(ta):
     assert len(t) == len(a)
 
 
+def test_bool(ta):
+    t, a = ta
+    assert bool(t.sum() == 0) == bool(a.sum() == 0)
+
+
 def test_neg(ta):
     t, a = ta
     assert ((-t).numpy() == -a).all()
