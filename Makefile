@@ -25,3 +25,7 @@ devsetup:
 .PHONY: build
 build:
 	python3 setup.py sdist
+
+.PHONY: release
+release: build
+	twine upload dist/eagerpy-$(shell cat eagerpy/VERSION).tar.gz
