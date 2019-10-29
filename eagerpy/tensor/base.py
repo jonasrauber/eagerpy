@@ -18,13 +18,15 @@ def wrapout(f):
 def unwrapin(f):
     @functools.wraps(f)
     def wrapper(self, *args, **kwargs):
-        args = [arg.tensor if istensor(arg) else arg for arg in args]
+        args = [arg.tensor if isinstance(arg, self.__class__) else arg for arg in args]
         return f(self, *args, **kwargs)
 
     return wrapper
 
 
 class AbstractBaseTensor(ABC):
+    __array_ufunc__ = None
+
     def __init__(self, tensor):
         self.tensor = tensor
 
