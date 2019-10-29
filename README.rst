@@ -9,7 +9,7 @@
 EagerPy
 =======
 
-EagerPy is a thin wrapper around **PyTorch**, **TensorFlow Eager** and
+EagerPy is a thin wrapper around **PyTorch**, **TensorFlow Eager**, **JAX** and
 **NumPy** that unifies their interface and thus allows writing code that
 works natively across all of them.
 
@@ -39,6 +39,10 @@ Example
    import tensorflow as tf
    x = tf.constant([1., 2., 3.])
    x = ep.TensorFlowTensor(x)
+
+   import jax.numpy as np
+   x = np.array([1., 2., 3.])
+   x = ep.JAXTensor(x)
 
    import numpy as np
    x = np.array([1., 2., 3.])

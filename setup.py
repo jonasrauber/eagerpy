@@ -20,7 +20,7 @@ tests_require = ["pytest", "pytest-cov"]
 setup(
     name="eagerpy",
     version=version,
-    description="EagerPy is a thin wrapper around PyTorch, TensorFlow Eager and NumPy that unifies their interface and thus allows writing code that works natively across all of them.",
+    description="EagerPy is a thin wrapper around PyTorch, TensorFlow Eager, JAX and NumPy that unifies their interface and thus allows writing code that works natively across all of them.",
     long_description=README,
     long_description_content_type="text/x-rst",
     classifiers=[
