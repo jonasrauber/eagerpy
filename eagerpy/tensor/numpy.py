@@ -13,6 +13,9 @@ class NumPyTensor(AbstractTensor):
     def numpy(self):
         return self.tensor
 
+    def item(self):
+        return self.tensor.item()
+
     @property
     def shape(self):
         return self.tensor.shape

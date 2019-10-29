@@ -15,6 +15,9 @@ class PyTorchTensor(AbstractTensor):
     def numpy(self):
         return self.tensor.cpu().numpy()
 
+    def item(self):
+        return self.tensor.item()
+
     @property
     def shape(self):
         return self.tensor.shape

@@ -13,6 +13,9 @@ class TensorFlowTensor(AbstractTensor):
     def numpy(self):
         return self.tensor.numpy()
 
+    def item(self):
+        return self.numpy().item()
+
     @property
     def shape(self):
         return tuple(self.tensor.shape.as_list())
