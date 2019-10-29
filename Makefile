@@ -1,6 +1,7 @@
 .PHONY: test
 test:
-	pytest --verbose
+	pytest --verbose --ignore=eagerpy/tests/test_jax_tensor.py
+	pytest --verbose eagerpy/tests/test_jax_tensor.py
 
 .PHONY: black
 black:

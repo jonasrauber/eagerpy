@@ -102,8 +102,8 @@ def jax2():
     return x
 
 
-@pytest.fixture(params=["tf1", "th1", "th1g", "np1", "tf2", "th2", "th2g", "np2"])
-def ta(request, tf1, th1, th1g, np1, a1, tf2, th2, th2g, np2, a2):
+@pytest.fixture(params=["jax1", "jax2"])
+def ta(request, tf1, th1, th1g, np1, jax1, a1, tf2, th2, th2g, np2, jax2, a2):
     return {
         "tf1": (tf1, a1),
         "th1": (th1, a1),
@@ -118,8 +118,8 @@ def ta(request, tf1, th1, th1g, np1, a1, tf2, th2, th2g, np2, a2):
     }[request.param]
 
 
-@pytest.fixture(params=["tf", "th", "thg", "np"])
-def ttaa(request, tf1, th1, th1g, np1, a1, tf2, th2, th2g, np2, a2):
+@pytest.fixture(params=["jax"])
+def ttaa(request, tf1, th1, th1g, np1, jax1, a1, tf2, th2, th2g, np2, jax2, a2):
     return {
         "tf": (tf1, tf2, a1, a2),
         "th": (th1, th2, a1, a2),
