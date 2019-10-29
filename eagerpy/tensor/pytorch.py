@@ -23,9 +23,6 @@ class PyTorchTensor(AbstractTensor):
     def reshape(self, shape):
         return self.tensor.reshape(shape)
 
-    def __len__(self):
-        return self.tensor.__len__()
-
     @property
     def ndim(self):
         return len(self.shape)

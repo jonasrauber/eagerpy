@@ -21,9 +21,6 @@ class TensorFlowTensor(AbstractTensor):
     def reshape(self, shape):
         return self.backend.reshape(self.tensor, shape)
 
-    def __len__(self):
-        return self.shape[0]
-
     @property
     def ndim(self):
         return self.tensor.ndim

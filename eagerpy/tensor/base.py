@@ -44,6 +44,12 @@ class AbstractTensor(AbstractBaseTensor, ABC):
     def abs(self):
         return abs(self)
 
+    def __bool__(self):
+        return self.tensor.__bool__()
+
+    def __len__(self):
+        return self.tensor.__len__()
+
     @wrapout
     def __abs__(self):
         return self.tensor.__abs__()
