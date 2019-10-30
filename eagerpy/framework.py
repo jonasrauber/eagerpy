@@ -72,3 +72,27 @@ def uniform(t, *args, **kwargs):
 
 def normal(t, *args, **kwargs):
     return t.normal(*args, **kwargs)
+
+
+def ones(t, *args, **kwargs):
+    return t.ones(*args, **kwargs)
+
+
+def zeros(t, *args, **kwargs):
+    return t.zeros(*args, **kwargs)
+
+
+def ones_like(t, *args, **kwargs):
+    return t.ones_like(*args, **kwargs)
+
+
+def zeros_like(t, *args, **kwargs):
+    return t.zeros_like(*args, **kwargs)
+
+
+def onehot_like(t, *args, **kwargs):
+    return t.onehot_like(*args, **kwargs)
+
+
+def from_numpy(t, *args, **kwargs):
+    return t.from_numpy(*args, **kwargs)

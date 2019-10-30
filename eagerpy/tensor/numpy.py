@@ -82,10 +82,39 @@ class NumPyTensor(AbstractTensor):
     def argsort(self, axis=-1):
         return self.tensor.argsort(axis=axis)
 
-    @classmethod
-    def uniform(cls, shape, low=0.0, high=1.0):
-        return cls(cls.backend.random.rand(*shape) * (high - low) + low)
+    @wrapout
+    def uniform(self, shape, low=0.0, high=1.0):
+        return self.backend.random.rand(*shape) * (high - low) + low
 
-    @classmethod
-    def normal(cls, shape, mean=0.0, stddev=1.0):
-        return cls(cls.backend.random.randn(*shape) * stddev + mean)
+    @wrapout
+    def normal(self, shape, mean=0.0, stddev=1.0):
+        return self.backend.random.randn(*shape) * stddev + mean
+
+    @wrapout
+    def ones(self, shape):
+        return self.backend.ones(shape, dtype=self.tensor.dtype)
+
+    @wrapout
+    def zeros(self, shape):
+        return self.backend.zeros(shape, dtype=self.tensor.dtype)
+
+    @wrapout
+    def ones_like(self):
+        return self.backend.ones_like(self.tensor)
+
+    @wrapout
+    def zeros_like(self):
+        return self.backend.zeros_like(self.tensor)
+
+    @unwrapin
+    @wrapout
+    def onehot_like(self, indices, *, value=1):
+        assert self.tensor.ndim == 2
+        x = self.backend.zeros_like(self.tensor)
+        rows = self.backend.arange(len(x))
+        x[rows, indices] = value
+        return x
+
+    @wrapout
+    def from_numpy(self, a):
+        return self.backend.asarray(a)

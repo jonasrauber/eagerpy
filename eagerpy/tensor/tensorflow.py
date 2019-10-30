@@ -2,6 +2,8 @@ from .base import AbstractTensor
 from .base import unwrapin
 from .base import wrapout
 
+import numpy as np
+
 
 class TensorFlowTensor(AbstractTensor):
     def __init__(self, tensor):
@@ -9,6 +11,24 @@ class TensorFlowTensor(AbstractTensor):
 
         super().__init__(tensor)
         self.backend = tensorflow
+
+    @unwrapin
+    @wrapout
+    def __getitem__(self, index):
+        if isinstance(index, tuple):
+            index = tuple(
+                x.tensor if isinstance(x, self.__class__) else x for x in index
+            )
+            tensors = any(
+                isinstance(x, self.backend.Tensor) or isinstance(x, np.ndarray)
+                for x in index
+            )
+            if tensors:
+                # workaround for missing support for this in TensorFlow
+                index = self.backend.convert_to_tensor(index)
+                index = self.backend.transpose(index)
+                return self.backend.gather_nd(self.tensor, index)
+        return self.tensor.__getitem__(index)
 
     def numpy(self):
         return self.tensor.numpy()
@@ -82,10 +102,44 @@ class TensorFlowTensor(AbstractTensor):
     def argsort(self, axis=-1):
         return self.backend.argsort(self.tensor, axis=axis)
 
-    @classmethod
-    def uniform(cls, shape, low=0.0, high=1.0):
-        return cls(cls.backend.random.uniform(shape, minval=low, maxval=high))
+    @wrapout
+    def uniform(self, shape, low=0.0, high=1.0):
+        return self.backend.random.uniform(shape, minval=low, maxval=high)
 
-    @classmethod
-    def normal(cls, shape, mean=0.0, stddev=1.0):
-        return cls(cls.backend.random.normal(shape, mean=mean, stddev=stddev))
+    @wrapout
+    def normal(self, shape, mean=0.0, stddev=1.0):
+        return self.backend.random.normal(shape, mean=mean, stddev=stddev)
+
+    @wrapout
+    def ones(self, shape):
+        return self.backend.ones(shape, dtype=self.tensor.dtype)
+
+    @wrapout
+    def zeros(self, shape):
+        return self.backend.zeros(shape, dtype=self.tensor.dtype)
+
+    @wrapout
+    def ones_like(self):
+        return self.backend.ones_like(self.tensor)
+
+    @wrapout
+    def zeros_like(self):
+        return self.backend.zeros_like(self.tensor)
+
+    @unwrapin
+    @wrapout
+    def onehot_like(self, indices, *, value=1):
+        assert self.tensor.ndim == 2
+        assert indices.ndim == 1
+        assert len(indices) == len(self.tensor)
+        value = self.backend.cast(value, self.tensor.dtype)
+        return self.backend.one_hot(
+            indices,
+            depth=self.tensor.shape[-1],
+            on_value=value,
+            dtype=self.tensor.dtype,
+        )
+
+    @wrapout
+    def from_numpy(self, a):
+        return self.backend.convert_to_tensor(a)

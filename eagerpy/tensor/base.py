@@ -35,8 +35,13 @@ class AbstractTensor(AbstractBaseTensor, ABC):
     def __repr__(self):
         return f"{self.__class__.__name__}({self.tensor.__repr__()})"
 
+    @unwrapin
     @wrapout
     def __getitem__(self, index):
+        if isinstance(index, tuple):
+            index = tuple(
+                x.tensor if isinstance(x, self.__class__) else x for x in index
+            )
         return self.tensor.__getitem__(index)
 
     @property
@@ -67,13 +72,13 @@ class AbstractTensor(AbstractBaseTensor, ABC):
 
     @unwrapin
     @wrapout
-    def __iadd__(self, other):
-        return self.tensor.__iadd__(other)
+    def __sub__(self, other):
+        return self.tensor.__sub__(other)
 
     @unwrapin
     @wrapout
-    def __sub__(self, other):
-        return self.tensor.__sub__(other)
+    def __rsub__(self, other):
+        return self.tensor.__rsub__(other)
 
     @unwrapin
     @wrapout

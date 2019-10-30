@@ -86,22 +86,53 @@ class JAXTensor(AbstractTensor):
     def argsort(self, axis=-1):
         return self.tensor.argsort(axis=axis)
 
-    @classmethod
-    def uniform(cls, shape, low=0.0, high=1.0):
+    @wrapout
+    def uniform(self, shape, low=0.0, high=1.0):
         import jax.random as random
 
+        cls = self.__class__
         if cls.key is None:
             cls.key = random.PRNGKey(0)
 
         cls.key, subkey = random.split(cls.key)
-        return cls(random.uniform(subkey, shape, minval=low, maxval=high))
+        return random.uniform(subkey, shape, minval=low, maxval=high)
 
-    @classmethod
-    def normal(cls, shape, mean=0.0, stddev=1.0):
+    @wrapout
+    def normal(self, shape, mean=0.0, stddev=1.0):
         import jax.random as random
 
+        cls = self.__class__
         if cls.key is None:
             cls.key = random.PRNGKey(0)
 
         cls.key, subkey = random.split(cls.key)
-        return cls(random.normal(subkey, shape) * stddev + mean)
+        return random.normal(subkey, shape) * stddev + mean
+
+    @wrapout
+    def ones(self, shape):
+        return self.backend.ones(shape, dtype=self.tensor.dtype)
+
+    @wrapout
+    def zeros(self, shape):
+        return self.backend.zeros(shape, dtype=self.tensor.dtype)
+
+    @wrapout
+    def ones_like(self):
+        return self.backend.ones_like(self.tensor)
+
+    @wrapout
+    def zeros_like(self):
+        return self.backend.zeros_like(self.tensor)
+
+    @unwrapin
+    @wrapout
+    def onehot_like(self, indices, *, value=1):
+        assert self.tensor.ndim == 2
+        assert indices.ndim == 1
+        x = self.backend.arange(self.tensor.shape[1]).reshape(1, -1)
+        indices = indices.reshape(-1, 1)
+        return x == indices
+
+    @wrapout
+    def from_numpy(self, a):
+        return self.backend.asarray(a)

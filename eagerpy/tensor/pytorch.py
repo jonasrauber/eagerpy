@@ -1,7 +1,9 @@
 from .base import AbstractTensor
 from .base import wrapout
 from .base import istensor
+from .base import unwrapin
 
+import numpy as np
 from collections.abc import Iterable
 
 
@@ -45,10 +47,10 @@ class PyTorchTensor(AbstractTensor):
     @wrapout
     def arctanh(self):
         """
-        implement once this issue has been fixed:
+        improve once this issue has been fixed:
         https://github.com/pytorch/pytorch/issues/10324
         """
-        raise NotImplementedError
+        return 0.5 * self.backend.log((1 + self.tensor) / (1 - self.tensor))
 
     @wrapout
     def sum(self, axis=None, keepdims=False):
@@ -126,10 +128,44 @@ class PyTorchTensor(AbstractTensor):
     def argsort(self, axis=-1):
         return self.tensor.argsort(dim=axis)
 
-    @classmethod
-    def uniform(cls, shape, low=0.0, high=1.0):
-        return cls(cls.backend.rand(*shape) * (high - low) + low)
+    @wrapout
+    def uniform(self, shape, low=0.0, high=1.0):
+        return self.backend.rand(*shape) * (high - low) + low
 
-    @classmethod
-    def normal(cls, shape, mean=0.0, stddev=1.0):
-        return cls(cls.backend.randn(*shape) * stddev + mean)
+    @wrapout
+    def normal(self, shape, mean=0.0, stddev=1.0):
+        return self.backend.randn(*shape) * stddev + mean
+
+    @wrapout
+    def ones(self, shape):
+        return self.backend.ones(
+            *shape, dtype=self.tensor.dtype, device=self.tensor.device
+        )
+
+    @wrapout
+    def zeros(self, shape):
+        return self.backend.zeros(
+            *shape, dtype=self.tensor.dtype, device=self.tensor.device
+        )
+
+    @wrapout
+    def ones_like(self):
+        return self.backend.ones_like(self.tensor)
+
+    @wrapout
+    def zeros_like(self):
+        return self.backend.zeros_like(self.tensor)
+
+    @unwrapin
+    @wrapout
+    def onehot_like(self, indices, *, value=1):
+        assert self.tensor.ndim == 2
+        assert indices.ndim == 1
+        x = self.backend.zeros_like(self.tensor)
+        rows = np.arange(len(x))
+        x[rows, indices] = value
+        return x
+
+    @wrapout
+    def from_numpy(self, a):
+        return self.backend.as_tensor(a, device=self.tensor.device)
