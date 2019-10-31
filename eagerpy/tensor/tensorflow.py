@@ -2,7 +2,20 @@ from .base import AbstractTensor
 from .base import unwrapin
 from .base import wrapout
 
+import functools
 import numpy as np
+
+
+def samedevice(f):
+    import tensorflow as tf
+
+    @functools.wraps(f)
+    def wrapper(self, *args, **kwargs):
+        with tf.device(self.tensor.device):
+            out = f(self, *args, **kwargs)
+        return out
+
+    return wrapper
 
 
 class TensorFlowTensor(AbstractTensor):
@@ -102,22 +115,26 @@ class TensorFlowTensor(AbstractTensor):
     def argsort(self, axis=-1):
         return self.backend.argsort(self.tensor, axis=axis)
 
+    @samedevice
     @wrapout
     def uniform(self, shape, low=0.0, high=1.0):
         return self.backend.random.uniform(
             shape, minval=low, maxval=high, dtype=self.tensor.dtype
         )
 
+    @samedevice
     @wrapout
     def normal(self, shape, mean=0.0, stddev=1.0):
         return self.backend.random.normal(
             shape, mean=mean, stddev=stddev, dtype=self.tensor.dtype
         )
 
+    @samedevice
     @wrapout
     def ones(self, shape):
         return self.backend.ones(shape, dtype=self.tensor.dtype)
 
+    @samedevice
     @wrapout
     def zeros(self, shape):
         return self.backend.zeros(shape, dtype=self.tensor.dtype)
@@ -130,6 +147,7 @@ class TensorFlowTensor(AbstractTensor):
     def zeros_like(self):
         return self.backend.zeros_like(self.tensor)
 
+    @samedevice
     @unwrapin
     @wrapout
     def onehot_like(self, indices, *, value=1):
@@ -144,6 +162,7 @@ class TensorFlowTensor(AbstractTensor):
             dtype=self.tensor.dtype,
         )
 
+    @samedevice
     @wrapout
     def from_numpy(self, a):
         return self.backend.convert_to_tensor(a)
