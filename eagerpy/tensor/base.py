@@ -49,7 +49,7 @@ class AbstractTensor(AbstractBaseTensor, ABC):
         return self.tensor.dtype
 
     def abs(self):
-        return abs(self)
+        return self.__abs__()
 
     def __bool__(self):
         return self.tensor.__bool__()

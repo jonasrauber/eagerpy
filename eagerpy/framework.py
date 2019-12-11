@@ -3,7 +3,7 @@ def clip(t, *args, **kwargs):
 
 
 def abs(t):
-    return abs(t)
+    return t.abs()
 
 
 def sign(t):
