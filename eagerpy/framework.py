@@ -96,3 +96,8 @@ def onehot_like(t, *args, **kwargs):
 
 def from_numpy(t, *args, **kwargs):
     return t.from_numpy(*args, **kwargs)
+
+
+def concatenate(tensors, axis=0):
+    t = tensors[0]
+    return t._concatenate(tensors, axis=axis)

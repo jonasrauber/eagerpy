@@ -166,3 +166,9 @@ class TensorFlowTensor(AbstractTensor):
     @wrapout
     def from_numpy(self, a):
         return self.backend.convert_to_tensor(a)
+
+    @wrapout
+    def _concatenate(self, tensors, axis=0):
+        # concatenates only "tensors", but not "self"
+        tensors = [t.tensor if isinstance(t, self.__class__) else t for t in tensors]
+        return self.backend.concat(tensors, axis=axis)
