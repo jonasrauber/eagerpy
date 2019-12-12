@@ -274,3 +274,11 @@ def test_argmax(ta):
 def test_argsort(ta):
     t, a = ta
     assert (t.argsort().numpy() == a.argsort()).all()
+
+
+def test_transpose(ta):
+    t, a = ta
+    assert (t.transpose().numpy() == np.transpose(a)).all()
+    if a.ndim == 3:
+        axes = (1, 2, 0)
+        assert (t.transpose(axes=axes).numpy() == np.transpose(a, axes=axes)).all()

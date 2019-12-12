@@ -101,3 +101,7 @@ def from_numpy(t, *args, **kwargs):
 def concatenate(tensors, axis=0):
     t = tensors[0]
     return t._concatenate(tensors, axis=axis)
+
+
+def transpose(t, axes=None):
+    return t.transpose(axes=axes)
