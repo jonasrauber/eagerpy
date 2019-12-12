@@ -193,3 +193,31 @@ class PyTorchTensor(AbstractTensor):
         if axes is None:
             axes = tuple(range(self.ndim - 1, -1, -1))
         return self.tensor.permute(*axes)
+
+    @wrapout
+    def all(self, axis=None, keepdims=False):
+        assert self.dtype == self.backend.bool
+        if axis is None:
+            assert not keepdims
+            return self.tensor.all()
+        if not isinstance(axis, Iterable):
+            axis = (axis,)
+        axis = reversed(sorted(axis))
+        x = self.tensor
+        for i in axis:
+            x = x.all(i, keepdim=keepdims)
+        return x
+
+    @wrapout
+    def any(self, axis=None, keepdims=False):
+        assert self.dtype == self.backend.bool
+        if axis is None:
+            assert not keepdims
+            return self.tensor.any()
+        if not isinstance(axis, Iterable):
+            axis = (axis,)
+        axis = reversed(sorted(axis))
+        x = self.tensor
+        for i in axis:
+            x = x.any(i, keepdim=keepdims)
+        return x

@@ -178,3 +178,13 @@ class TensorFlowTensor(AbstractTensor):
         if axes is None:
             axes = tuple(range(self.ndim - 1, -1, -1))
         return self.backend.transpose(self.tensor, perm=axes)
+
+    @wrapout
+    def all(self, axis=None, keepdims=False):
+        assert self.dtype == self.backend.bool
+        return self.backend.reduce_all(self.tensor, axis=axis, keepdims=keepdims)
+
+    @wrapout
+    def any(self, axis=None, keepdims=False):
+        assert self.dtype == self.backend.bool
+        return self.backend.reduce_any(self.tensor, axis=axis, keepdims=keepdims)

@@ -148,3 +148,13 @@ class JAXTensor(AbstractTensor):
         if axes is None:
             axes = tuple(range(self.ndim - 1, -1, -1))
         return self.backend.transpose(self.tensor, axes=axes)
+
+    @wrapout
+    def all(self, axis=None, keepdims=False):
+        assert self.dtype == self.backend.bool
+        return self.tensor.all(axis=axis, keepdims=keepdims)
+
+    @wrapout
+    def any(self, axis=None, keepdims=False):
+        assert self.dtype == self.backend.bool
+        return self.tensor.any(axis=axis, keepdims=keepdims)

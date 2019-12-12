@@ -282,3 +282,21 @@ def test_transpose(ta):
     if a.ndim == 3:
         axes = (1, 2, 0)
         assert (t.transpose(axes=axes).numpy() == np.transpose(a, axes=axes)).all()
+
+
+def test_all(ta):
+    t, a = ta
+    t = t < 10
+    a = a < 10
+    assert t.all().numpy() == a.all()
+    assert t.all(axis=0).numpy() == a.all(axis=0)
+    assert (t.all(axis=0, keepdims=True).numpy() == a.all(axis=0, keepdims=True)).all()
+
+
+def test_any(ta):
+    t, a = ta
+    t = t < 0
+    a = a < 0
+    assert t.any().numpy() == a.any()
+    assert t.any(axis=0).numpy() == a.any(axis=0)
+    assert (t.any(axis=0, keepdims=True).numpy() == a.any(axis=0, keepdims=True)).any()
