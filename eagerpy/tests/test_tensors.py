@@ -300,3 +300,21 @@ def test_any(ta):
     assert t.any().numpy() == a.any()
     assert t.any(axis=0).numpy() == a.any(axis=0)
     assert (t.any(axis=0, keepdims=True).numpy() == a.any(axis=0, keepdims=True)).any()
+
+
+def test_logical_and(ta):
+    t, a = ta
+    t1 = t < 3
+    t2 = t >= 3
+    a1 = a < 3
+    a2 = a >= 3
+    assert (t1.logical_and(t2).numpy() == np.logical_and(a1, a2)).all()
+
+
+def test_logical_or(ta):
+    t, a = ta
+    t1 = t < 3
+    t2 = t >= 3
+    a1 = a < 3
+    a2 = a >= 3
+    assert (t1.logical_or(t2).numpy() == np.logical_or(a1, a2)).all()

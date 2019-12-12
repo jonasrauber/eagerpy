@@ -105,3 +105,15 @@ def concatenate(tensors, axis=0):
 
 def transpose(t, axes=None):
     return t.transpose(axes=axes)
+
+
+def logical_and(x, y):
+    if not hasattr(x, "tensor"):
+        return y.logical_and(x)
+    return x.logical_and(y)
+
+
+def logical_or(x, y):
+    if not hasattr(x, "tensor"):
+        return y.logical_or(x)
+    return x.logical_or(y)

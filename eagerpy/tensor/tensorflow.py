@@ -188,3 +188,15 @@ class TensorFlowTensor(AbstractTensor):
     def any(self, axis=None, keepdims=False):
         assert self.dtype == self.backend.bool
         return self.backend.reduce_any(self.tensor, axis=axis, keepdims=keepdims)
+
+    @unwrapin
+    @wrapout
+    def logical_and(self, other):
+        assert self.dtype == self.backend.bool
+        return self.backend.logical_and(self.tensor, other)
+
+    @unwrapin
+    @wrapout
+    def logical_or(self, other):
+        assert self.dtype == self.backend.bool
+        return self.backend.logical_or(self.tensor, other)

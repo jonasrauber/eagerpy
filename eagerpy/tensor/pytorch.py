@@ -221,3 +221,15 @@ class PyTorchTensor(AbstractTensor):
         for i in axis:
             x = x.any(i, keepdim=keepdims)
         return x
+
+    @unwrapin
+    @wrapout
+    def logical_and(self, other):
+        assert self.dtype == self.backend.bool
+        return self.tensor & other
+
+    @unwrapin
+    @wrapout
+    def logical_or(self, other):
+        assert self.dtype == self.backend.bool
+        return self.tensor | other
