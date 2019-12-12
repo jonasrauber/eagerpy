@@ -318,3 +318,28 @@ def test_logical_or(ta):
     a1 = a < 3
     a2 = a >= 3
     assert (t1.logical_or(t2).numpy() == np.logical_or(a1, a2)).all()
+
+
+def test_exp(ta):
+    t, a = ta
+    np.testing.assert_allclose(np.exp(a), t.exp().numpy())
+
+
+def test_log(ta):
+    t, a = ta
+    np.testing.assert_allclose(np.log(a), t.log().numpy())
+
+
+def test_log2(ta):
+    t, a = ta
+    np.testing.assert_allclose(np.log2(a), t.log2().numpy())
+
+
+def test_log10(ta):
+    t, a = ta
+    np.testing.assert_allclose(np.log10(a), t.log10().numpy())
+
+
+def test_log1p(ta):
+    t, a = ta
+    np.testing.assert_allclose(np.log1p(a), t.log1p().numpy())

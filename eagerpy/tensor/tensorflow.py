@@ -179,6 +179,9 @@ class TensorFlowTensor(AbstractTensor):
             axes = tuple(range(self.ndim - 1, -1, -1))
         return self.backend.transpose(self.tensor, perm=axes)
 
+    def bool(self):
+        return self.astype(self.backend.bool)
+
     @wrapout
     def all(self, axis=None, keepdims=False):
         assert self.dtype == self.backend.bool
@@ -200,3 +203,23 @@ class TensorFlowTensor(AbstractTensor):
     def logical_or(self, other):
         assert self.dtype == self.backend.bool
         return self.backend.logical_or(self.tensor, other)
+
+    @wrapout
+    def exp(self):
+        return self.backend.exp(self.tensor)
+
+    @wrapout
+    def log(self):
+        return self.backend.math.log(self.tensor)
+
+    @wrapout
+    def log2(self):
+        return self.backend.math.log(self.tensor) / self.backend.math.log(2.0)
+
+    @wrapout
+    def log10(self):
+        return self.backend.math.log(self.tensor) / self.backend.math.log(10.0)
+
+    @wrapout
+    def log1p(self):
+        return self.backend.math.log1p(self.tensor)

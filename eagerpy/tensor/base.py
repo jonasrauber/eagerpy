@@ -148,6 +148,3 @@ class AbstractTensor(AbstractBaseTensor, ABC):
 
     def float32(self):
         return self.astype(self.backend.float32)
-
-    def bool(self):
-        return self.astype(self.backend.bool)

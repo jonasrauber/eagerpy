@@ -194,6 +194,9 @@ class PyTorchTensor(AbstractTensor):
             axes = tuple(range(self.ndim - 1, -1, -1))
         return self.tensor.permute(*axes)
 
+    def bool(self):
+        return self.astype(self.backend.bool)
+
     @wrapout
     def all(self, axis=None, keepdims=False):
         assert self.dtype == self.backend.bool
@@ -233,3 +236,23 @@ class PyTorchTensor(AbstractTensor):
     def logical_or(self, other):
         assert self.dtype == self.backend.bool
         return self.tensor | other
+
+    @wrapout
+    def exp(self):
+        return self.backend.exp(self.tensor)
+
+    @wrapout
+    def log(self):
+        return self.backend.log(self.tensor)
+
+    @wrapout
+    def log2(self):
+        return self.backend.log2(self.tensor)
+
+    @wrapout
+    def log10(self):
+        return self.backend.log10(self.tensor)
+
+    @wrapout
+    def log1p(self):
+        return self.backend.log1p(self.tensor)

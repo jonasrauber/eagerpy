@@ -117,3 +117,23 @@ def logical_or(x, y):
     if not hasattr(x, "tensor"):
         return y.logical_or(x)
     return x.logical_or(y)
+
+
+def exp(t):
+    return t.exp()
+
+
+def log(t):
+    return t.log()
+
+
+def log2(t):
+    return t.log2()
+
+
+def log10(t):
+    return t.log10()
+
+
+def log1p(t):
+    return t.log1p()

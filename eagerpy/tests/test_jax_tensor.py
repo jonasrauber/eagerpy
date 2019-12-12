@@ -274,3 +274,72 @@ def test_argmax(ta):
 def test_argsort(ta):
     t, a = ta
     assert (t.argsort().numpy() == a.argsort()).all()
+
+
+def test_transpose(ta):
+    t, a = ta
+    assert (t.transpose().numpy() == np.transpose(a)).all()
+    if a.ndim == 3:
+        axes = (1, 2, 0)
+        assert (t.transpose(axes=axes).numpy() == np.transpose(a, axes=axes)).all()
+
+
+def test_all(ta):
+    t, a = ta
+    t = t < 10
+    a = a < 10
+    assert t.all().numpy() == a.all()
+    assert t.all(axis=0).numpy() == a.all(axis=0)
+    assert (t.all(axis=0, keepdims=True).numpy() == a.all(axis=0, keepdims=True)).all()
+
+
+def test_any(ta):
+    t, a = ta
+    t = t < 0
+    a = a < 0
+    assert t.any().numpy() == a.any()
+    assert t.any(axis=0).numpy() == a.any(axis=0)
+    assert (t.any(axis=0, keepdims=True).numpy() == a.any(axis=0, keepdims=True)).any()
+
+
+def test_logical_and(ta):
+    t, a = ta
+    t1 = t < 3
+    t2 = t >= 3
+    a1 = a < 3
+    a2 = a >= 3
+    assert (t1.logical_and(t2).numpy() == np.logical_and(a1, a2)).all()
+
+
+def test_logical_or(ta):
+    t, a = ta
+    t1 = t < 3
+    t2 = t >= 3
+    a1 = a < 3
+    a2 = a >= 3
+    assert (t1.logical_or(t2).numpy() == np.logical_or(a1, a2)).all()
+
+
+def test_exp(ta):
+    t, a = ta
+    np.testing.assert_allclose(np.exp(a), t.exp().numpy())
+
+
+def test_log(ta):
+    t, a = ta
+    np.testing.assert_allclose(np.log(a), t.log().numpy())
+
+
+def test_log2(ta):
+    t, a = ta
+    np.testing.assert_allclose(np.log2(a), t.log2().numpy())
+
+
+def test_log10(ta):
+    t, a = ta
+    np.testing.assert_allclose(np.log10(a), t.log10().numpy())
+
+
+def test_log1p(ta):
+    t, a = ta
+    np.testing.assert_allclose(np.log1p(a), t.log1p().numpy())

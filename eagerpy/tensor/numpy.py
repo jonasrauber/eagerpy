@@ -131,24 +131,47 @@ class NumPyTensor(AbstractTensor):
             axes = tuple(range(self.ndim - 1, -1, -1))
         return self.backend.transpose(self.tensor, axes=axes)
 
+    def bool(self):
+        return self.astype(self.backend.dtype("bool"))
+
     @wrapout
     def all(self, axis=None, keepdims=False):
-        assert self.dtype == self.backend.bool
+        assert self.dtype == self.backend.dtype("bool")
         return self.tensor.all(axis=axis, keepdims=keepdims)
 
     @wrapout
     def any(self, axis=None, keepdims=False):
-        assert self.dtype == self.backend.bool
+        assert self.dtype == self.backend.dtype("bool")
         return self.tensor.any(axis=axis, keepdims=keepdims)
 
     @unwrapin
     @wrapout
     def logical_and(self, other):
-        assert self.dtype == self.backend.bool
+        assert self.dtype == self.backend.dtype("bool")
         return self.backend.logical_and(self.tensor, other)
 
     @unwrapin
     @wrapout
     def logical_or(self, other):
-        assert self.dtype == self.backend.bool
+        assert self.dtype == self.backend.dtype("bool")
         return self.backend.logical_or(self.tensor, other)
+
+    @wrapout
+    def exp(self):
+        return self.backend.exp(self.tensor)
+
+    @wrapout
+    def log(self):
+        return self.backend.log(self.tensor)
+
+    @wrapout
+    def log2(self):
+        return self.backend.log2(self.tensor)
+
+    @wrapout
+    def log10(self):
+        return self.backend.log10(self.tensor)
+
+    @wrapout
+    def log1p(self):
+        return self.backend.log1p(self.tensor)
