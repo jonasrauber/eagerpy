@@ -28,10 +28,6 @@ class JAXTensor(AbstractTensor):
     def reshape(self, shape):
         return self.tensor.reshape(shape)
 
-    @property
-    def ndim(self):
-        return self.tensor.ndim
-
     @wrapout
     def astype(self, dtype):
         return self.tensor.astype(dtype)

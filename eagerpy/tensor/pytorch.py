@@ -28,10 +28,6 @@ class PyTorchTensor(AbstractTensor):
     def reshape(self, shape):
         return self.tensor.reshape(shape)
 
-    @property
-    def ndim(self):
-        return len(self.shape)
-
     @wrapout
     def astype(self, dtype):
         return self.tensor.to(dtype)

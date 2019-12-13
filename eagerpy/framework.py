@@ -145,3 +145,9 @@ def where(condition, x, y):
 
 def tile(t, multiples):
     return t.tile(multiples)
+
+
+def matmul(x, y):
+    if not hasattr(x, "tensor"):
+        return y.matmul(x)
+    return x.matmul(y)

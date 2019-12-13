@@ -57,10 +57,6 @@ class TensorFlowTensor(AbstractTensor):
     def reshape(self, shape):
         return self.backend.reshape(self.tensor, shape)
 
-    @property
-    def ndim(self):
-        return self.tensor.ndim
-
     @wrapout
     def astype(self, dtype):
         return self.backend.cast(self.tensor, dtype)

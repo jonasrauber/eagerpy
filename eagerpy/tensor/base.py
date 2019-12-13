@@ -153,3 +153,20 @@ class AbstractTensor(AbstractBaseTensor, ABC):
     @wrapout
     def where(self, x, y):
         return self.backend.where(self.tensor, x, y)
+
+    @unwrapin
+    @wrapout
+    def matmul(self, other):
+        assert self.tensor.ndim == 2
+        assert other.ndim == 2
+        return self.backend.matmul(self.tensor, other)
+
+    @property
+    def ndim(self):
+        return self.tensor.ndim
+
+    @property
+    def T(self):
+        if self.ndim < 2:
+            return self
+        return self.transpose()

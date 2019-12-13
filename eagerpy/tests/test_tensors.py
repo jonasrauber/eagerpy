@@ -354,3 +354,21 @@ def test_tile(ta):
     t, a = ta
     m = (3,) * a.ndim
     assert (ep.tile(t, m).numpy() == np.tile(a, m)).all()
+
+
+def test_matmul(ta):
+    t, a = ta
+    if t.ndim == 1:
+        t = t[None]
+        a = a[None]
+        assert (ep.matmul(t, t.T).numpy() == np.matmul(a, a.T)).all()
+        t = t[0, :, None]
+        a = a[0, :, None]
+        assert (ep.matmul(t, t.T).numpy() == np.matmul(a, a.T)).all()
+    elif t.ndim == 2:
+        assert (ep.matmul(t, t.T).numpy() == np.matmul(a, a.T)).all()
+    elif t.ndim > 2:
+        axes = list(range(t.ndim - 2))
+        t = t.sum(axes)
+        a = a.sum(axes)
+        assert (ep.matmul(t, t.T).numpy() == np.matmul(a, a.T)).all()
