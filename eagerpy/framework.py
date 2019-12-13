@@ -137,3 +137,7 @@ def log10(t):
 
 def log1p(t):
     return t.log1p()
+
+
+def where(condition, x, y):
+    return condition.where(x, y)

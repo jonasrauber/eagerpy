@@ -148,3 +148,8 @@ class AbstractTensor(AbstractBaseTensor, ABC):
 
     def float32(self):
         return self.astype(self.backend.float32)
+
+    @unwrapin
+    @wrapout
+    def where(self, x, y):
+        return self.backend.where(self.tensor, x, y)

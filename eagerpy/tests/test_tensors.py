@@ -343,3 +343,8 @@ def test_log10(ta):
 def test_log1p(ta):
     t, a = ta
     np.testing.assert_allclose(np.log1p(a), t.log1p().numpy())
+
+
+def test_where(ta):
+    t, a = ta
+    assert (ep.where(t >= 3, t, -t).numpy() == np.where(a >= 3, a, -a)).all()
