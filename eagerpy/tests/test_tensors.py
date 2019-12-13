@@ -348,3 +348,9 @@ def test_log1p(ta):
 def test_where(ta):
     t, a = ta
     assert (ep.where(t >= 3, t, -t).numpy() == np.where(a >= 3, a, -a)).all()
+
+
+def test_tile(ta):
+    t, a = ta
+    m = (3,) * a.ndim
+    assert (ep.tile(t, m).numpy() == np.tile(a, m)).all()

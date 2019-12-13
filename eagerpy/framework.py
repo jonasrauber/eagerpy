@@ -141,3 +141,7 @@ def log1p(t):
 
 def where(condition, x, y):
     return condition.where(x, y)
+
+
+def tile(t, multiples):
+    return t.tile(multiples)

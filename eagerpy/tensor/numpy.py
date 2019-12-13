@@ -175,3 +175,9 @@ class NumPyTensor(AbstractTensor):
     @wrapout
     def log1p(self):
         return self.backend.log1p(self.tensor)
+
+    @unwrapin
+    @wrapout
+    def tile(self, multiples):
+        assert len(multiples) == self.ndim
+        return self.backend.tile(self.tensor, multiples)
