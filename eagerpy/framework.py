@@ -119,6 +119,10 @@ def logical_or(x, y):
     return x.logical_or(y)
 
 
+def logical_not(t):
+    return t.logical_not()
+
+
 def exp(t):
     return t.exp()
 

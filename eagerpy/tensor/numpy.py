@@ -153,6 +153,11 @@ class NumPyTensor(AbstractTensor):
         return self.backend.logical_or(self.tensor, other)
 
     @wrapout
+    def logical_not(self):
+        assert self.dtype == self.backend.dtype("bool")
+        return self.backend.logical_not(self.tensor)
+
+    @wrapout
     def exp(self):
         return self.backend.exp(self.tensor)
 

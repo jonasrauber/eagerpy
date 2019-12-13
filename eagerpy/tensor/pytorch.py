@@ -234,6 +234,11 @@ class PyTorchTensor(AbstractTensor):
         return self.tensor | other
 
     @wrapout
+    def logical_not(self):
+        assert self.dtype == self.backend.bool
+        return ~self.tensor
+
+    @wrapout
     def exp(self):
         return self.backend.exp(self.tensor)
 

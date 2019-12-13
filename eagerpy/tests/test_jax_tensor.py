@@ -320,6 +320,18 @@ def test_logical_or(ta):
     assert (t1.logical_or(t2).numpy() == np.logical_or(a1, a2)).all()
 
 
+def test_logical_not(ta):
+    t, a = ta
+    t1 = t < 3
+    t2 = t >= 3
+    a1 = a < 3
+    a2 = a >= 3
+    assert (t1.logical_not() == t2).all()
+    assert (t2.logical_not() == t1).all()
+    assert (t1.logical_not().numpy() == np.logical_not(a1)).all()
+    assert (t2.logical_not().numpy() == np.logical_not(a2)).all()
+
+
 def test_exp(ta):
     t, a = ta
     np.testing.assert_allclose(np.exp(a), t.exp().numpy())
