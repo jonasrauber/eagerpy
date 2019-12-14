@@ -140,6 +140,12 @@ class JAXTensor(AbstractTensor):
         return self.backend.concatenate(tensors, axis=axis)
 
     @wrapout
+    def _stack(self, tensors, axis=0):
+        # stacks only "tensors", but not "self"
+        tensors = [t.tensor if isinstance(t, self.__class__) else t for t in tensors]
+        return self.backend.stack(tensors, axis=axis)
+
+    @wrapout
     def transpose(self, axes=None):
         if axes is None:
             axes = tuple(range(self.ndim - 1, -1, -1))

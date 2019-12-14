@@ -2,6 +2,8 @@
 test:
 	pytest --verbose --ignore=eagerpy/tests/test_jax_tensor.py
 	pytest --verbose eagerpy/tests/test_jax_tensor.py
+	pytest --verbose eagerpy/tests/test_astensor.py
+	pytest --verbose eagerpy/tests/test_concatenate.py
 
 .PHONY: black
 black:

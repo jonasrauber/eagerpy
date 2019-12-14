@@ -392,3 +392,9 @@ def test_softmax(ta):
     np.testing.assert_allclose(s.sum(axis=-1).numpy(), 1.0, rtol=1e-6)
     assert (s.numpy() >= 0).all()
     assert (s.numpy() <= 1).all()
+
+
+def test_stack(ttaa):
+    t1, t2, a1, a2 = ttaa
+    assert (ep.stack([t1, t2]).numpy() == np.stack([a1, a2])).all()
+    assert (ep.stack([t1, t2], axis=1).numpy() == np.stack([a1, a2], axis=1)).all()

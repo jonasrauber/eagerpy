@@ -159,3 +159,8 @@ def matmul(x, y):
 
 def softmax(t, axis=-1):
     return t.softmax(axis=axis)
+
+
+def stack(tensors, axis=0):
+    t = tensors[0]
+    return t._stack(tensors, axis=axis)
