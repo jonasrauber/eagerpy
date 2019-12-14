@@ -216,3 +216,11 @@ class JAXTensor(AbstractTensor):
         logits = logits - logits.max(axis=axis, keepdims=True)
         e = self.backend.exp(logits)
         return e / e.sum(axis=axis, keepdims=True)
+
+    @wrapout
+    def squeeze(self, axis=None):
+        return self.tensor.squeeze(axis=axis)
+
+    @wrapout
+    def expand_dims(self, axis=None):
+        return self.backend.expand_dims(self.tensor, axis=axis)

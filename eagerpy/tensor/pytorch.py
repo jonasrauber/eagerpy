@@ -273,3 +273,19 @@ class PyTorchTensor(AbstractTensor):
     @wrapout
     def softmax(self, axis=-1):
         return self.backend.nn.functional.softmax(self.tensor, dim=axis)
+
+    @wrapout
+    def squeeze(self, axis=None):
+        if axis is None:
+            return self.tensor.squeeze()
+        if not isinstance(axis, Iterable):
+            axis = (axis,)
+        axis = reversed(sorted(axis))
+        x = self.tensor
+        for i in axis:
+            x = x.squeeze(dim=i)
+        return x
+
+    @wrapout
+    def expand_dims(self, axis=None):
+        return self.tensor.unsqueeze(axis=axis)

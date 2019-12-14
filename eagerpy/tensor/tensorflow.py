@@ -240,3 +240,11 @@ class TensorFlowTensor(AbstractTensor):
     @wrapout
     def softmax(self, axis=-1):
         return self.backend.nn.softmax(self.tensor, axis=axis)
+
+    @wrapout
+    def squeeze(self, axis=None):
+        return self.backend.squeeze(self.tensor, axis=axis)
+
+    @wrapout
+    def expand_dims(self, axis=None):
+        return self.backend.expand_dims(self.tensor, axis=axis)

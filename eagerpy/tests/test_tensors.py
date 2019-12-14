@@ -398,3 +398,37 @@ def test_stack(ttaa):
     t1, t2, a1, a2 = ttaa
     assert (ep.stack([t1, t2]).numpy() == np.stack([a1, a2])).all()
     assert (ep.stack([t1, t2], axis=1).numpy() == np.stack([a1, a2], axis=1)).all()
+
+
+def test_expand_dims(ta):
+    t, a = ta
+    assert t.expand_dims(axis=0).shape == np.expand_dims(a, axis=0).shape
+    assert t.expand_dims(axis=1).shape == np.expand_dims(a, axis=1).shape
+
+
+def test_squeeze(ta):
+    t, a = ta
+    assert (
+        t.expand_dims(axis=0).squeeze(axis=0).shape
+        == np.expand_dims(a, axis=0).squeeze(axis=0).shape
+    )
+    assert (
+        t.expand_dims(axis=0).squeeze().shape
+        == np.expand_dims(a, axis=0).squeeze().shape
+    )
+    assert (
+        t.expand_dims(axis=0).expand_dims(axis=1).squeeze(axis=0).shape
+        == np.expand_dims(np.expand_dims(a, axis=0), axis=1).squeeze(axis=0).shape
+    )
+    assert (
+        t.expand_dims(axis=0).expand_dims(axis=1).squeeze(axis=1).shape
+        == np.expand_dims(np.expand_dims(a, axis=0), axis=1).squeeze(axis=1).shape
+    )
+    assert (
+        t.expand_dims(axis=0).expand_dims(axis=1).squeeze(axis=(0, 1)).shape
+        == np.expand_dims(np.expand_dims(a, axis=0), axis=1).squeeze(axis=(0, 1)).shape
+    )
+    assert (
+        t.expand_dims(axis=0).expand_dims(axis=1).squeeze().shape
+        == np.expand_dims(np.expand_dims(a, axis=0), axis=1).squeeze().shape
+    )

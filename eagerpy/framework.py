@@ -164,3 +164,11 @@ def softmax(t, axis=-1):
 def stack(tensors, axis=0):
     t = tensors[0]
     return t._stack(tensors, axis=axis)
+
+
+def squeeze(t, *args, **kwargs):
+    return t.squeeze(*args, **kwargs)
+
+
+def expand_dims(t, *args, **kwargs):
+    return t.epxand_dims(*args, **kwargs)
