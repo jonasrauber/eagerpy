@@ -263,3 +263,7 @@ class PyTorchTensor(AbstractTensor):
     def tile(self, multiples):
         assert len(multiples) == self.ndim
         return self.tensor.repeat(multiples)
+
+    @wrapout
+    def softmax(self, axis=-1):
+        return self.backend.nn.functional.softmax(self.tensor, dim=axis)

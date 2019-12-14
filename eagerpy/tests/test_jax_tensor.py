@@ -384,3 +384,11 @@ def test_matmul(ta):
         t = t.sum(axes)
         a = a.sum(axes)
         assert (ep.matmul(t, t.T).numpy() == np.matmul(a, a.T)).all()
+
+
+def test_softmax(ta):
+    t, a = ta
+    s = t.softmax(axis=-1)
+    np.testing.assert_allclose(s.sum(axis=-1).numpy(), 1.0, rtol=1e-6)
+    assert (s.numpy() >= 0).all()
+    assert (s.numpy() <= 1).all()

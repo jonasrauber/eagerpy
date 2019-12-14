@@ -155,3 +155,7 @@ def matmul(x, y):
     if not hasattr(x, "tensor"):
         return y.matmul(x)
     return x.matmul(y)
+
+
+def softmax(t, axis=-1):
+    return t.softmax(axis=axis)

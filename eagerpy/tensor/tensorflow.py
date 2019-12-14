@@ -230,3 +230,7 @@ class TensorFlowTensor(AbstractTensor):
     def tile(self, multiples):
         assert len(multiples) == self.ndim
         return self.backend.tile(self.tensor, multiples)
+
+    @wrapout
+    def softmax(self, axis=-1):
+        return self.backend.nn.softmax(self.tensor, axis=axis)

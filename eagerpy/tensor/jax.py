@@ -200,3 +200,13 @@ class JAXTensor(AbstractTensor):
     def tile(self, multiples):
         assert len(multiples) == self.ndim
         return self.backend.tile(self.tensor, multiples)
+
+    @wrapout
+    def softmax(self, axis=-1):
+        # for numerical reasons we subtract the max logit
+        # (mathematically it doesn't matter!)
+        # otherwise exp(logits) might become too large or too small
+        logits = self.tensor
+        logits = logits - logits.max(axis=axis, keepdims=True)
+        e = self.backend.exp(logits)
+        return e / e.sum(axis=axis, keepdims=True)
