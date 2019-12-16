@@ -287,3 +287,11 @@ class PyTorchTensor(AbstractTensor):
     @wrapout
     def expand_dims(self, axis=None):
         return self.tensor.unsqueeze(axis=axis)
+
+    @wrapout
+    def full(self, shape, value):
+        if not isinstance(shape, Iterable):
+            shape = (shape,)
+        return self.backend.full(
+            shape, value, dtype=self.tensor.dtype, device=self.tensor.device
+        )

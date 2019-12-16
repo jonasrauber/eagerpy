@@ -253,3 +253,10 @@ class TensorFlowTensor(AbstractTensor):
     @wrapout
     def expand_dims(self, axis=None):
         return self.backend.expand_dims(self.tensor, axis=axis)
+
+    @samedevice
+    @wrapout
+    def full(self, shape, value):
+        if not isinstance(shape, Iterable):
+            shape = (shape,)
+        return self.backend.fill(shape, value)

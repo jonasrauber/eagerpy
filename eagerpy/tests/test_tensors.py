@@ -475,3 +475,10 @@ def test_normal(ta):
 def test_arctanh(ta):
     t, a = ta
     np.testing.assert_allclose(t.arctanh().numpy(), np.arctanh(a), rtol=1e-06)
+
+
+def test_full(ta):
+    t, a = ta
+    assert ep.full(t, (2, 3), 4.0).numpy().shape == np.full((2, 3), 4.0).shape
+    assert (ep.full(t, (2, 3), 4.0).numpy() == np.full((2, 3), 4.0)).all()
+    assert ep.full(t, 5, 4.0).numpy().shape == np.full(5, 4.0).shape

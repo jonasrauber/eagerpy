@@ -172,3 +172,7 @@ def squeeze(t, *args, **kwargs):
 
 def expand_dims(t, *args, **kwargs):
     return t.epxand_dims(*args, **kwargs)
+
+
+def full(t, *args, **kwargs):
+    return t.full(*args, **kwargs)

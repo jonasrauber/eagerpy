@@ -231,3 +231,7 @@ class JAXTensor(AbstractTensor):
     @wrapout
     def expand_dims(self, axis=None):
         return self.backend.expand_dims(self.tensor, axis=axis)
+
+    @wrapout
+    def full(self, shape, value):
+        return self.backend.full(shape, value, dtype=self.tensor.dtype)
