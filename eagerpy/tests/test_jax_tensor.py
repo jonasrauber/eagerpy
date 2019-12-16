@@ -432,3 +432,46 @@ def test_squeeze(ta):
         t.expand_dims(axis=0).expand_dims(axis=1).squeeze().shape
         == np.expand_dims(np.expand_dims(a, axis=0), axis=1).squeeze().shape
     )
+
+
+def test_ones_like(ta):
+    t, a = ta
+    assert ep.ones_like(t).numpy().shape == np.ones_like(a).shape
+    assert (ep.ones_like(t).numpy() == np.ones_like(a)).all()
+
+
+def test_zeros_like(ta):
+    t, a = ta
+    assert ep.zeros_like(t).numpy().shape == np.zeros_like(a).shape
+    assert (ep.zeros_like(t).numpy() == np.zeros_like(a)).all()
+
+
+def test_ones(ta):
+    t, a = ta
+    assert ep.ones(t, (2, 3)).numpy().shape == np.ones((2, 3)).shape
+    assert (ep.ones(t, (2, 3)).numpy() == np.ones((2, 3))).all()
+    assert ep.ones(t, 5).numpy().shape == np.ones(5).shape
+
+
+def test_zeros(ta):
+    t, a = ta
+    assert ep.zeros(t, (2, 3)).numpy().shape == np.zeros((2, 3)).shape
+    assert (ep.zeros(t, (2, 3)).numpy() == np.zeros((2, 3))).all()
+    assert ep.zeros(t, 5).numpy().shape == np.zeros(5).shape
+
+
+def test_uniform(ta):
+    t, a = ta
+    assert ep.uniform(t, (2, 3)).numpy().shape == np.random.uniform(size=(2, 3)).shape
+    assert ep.uniform(t, 5).numpy().shape == np.random.uniform(size=5).shape
+
+
+def test_normal(ta):
+    t, a = ta
+    assert ep.normal(t, (2, 3)).numpy().shape == np.random.normal(size=(2, 3)).shape
+    assert ep.normal(t, 5).numpy().shape == np.random.normal(size=5).shape
+
+
+def test_arctanh(ta):
+    t, a = ta
+    np.testing.assert_allclose(t.arctanh().numpy(), np.arctanh(a), rtol=1e-06)

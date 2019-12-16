@@ -4,6 +4,7 @@ from .base import wrapout
 
 import functools
 import numpy as np
+from collections.abc import Iterable
 
 
 def samedevice(f):
@@ -114,6 +115,8 @@ class TensorFlowTensor(AbstractTensor):
     @samedevice
     @wrapout
     def uniform(self, shape, low=0.0, high=1.0):
+        if not isinstance(shape, Iterable):
+            shape = (shape,)
         return self.backend.random.uniform(
             shape, minval=low, maxval=high, dtype=self.tensor.dtype
         )
@@ -121,6 +124,8 @@ class TensorFlowTensor(AbstractTensor):
     @samedevice
     @wrapout
     def normal(self, shape, mean=0.0, stddev=1.0):
+        if not isinstance(shape, Iterable):
+            shape = (shape,)
         return self.backend.random.normal(
             shape, mean=mean, stddev=stddev, dtype=self.tensor.dtype
         )

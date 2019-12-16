@@ -1,8 +1,9 @@
-import numpy as onp
-
 from .base import AbstractTensor
 from .base import unwrapin
 from .base import wrapout
+
+import numpy as onp
+from collections.abc import Iterable
 
 
 class JAXTensor(AbstractTensor):
@@ -86,6 +87,9 @@ class JAXTensor(AbstractTensor):
     def uniform(self, shape, low=0.0, high=1.0):
         import jax.random as random
 
+        if not isinstance(shape, Iterable):
+            shape = (shape,)
+
         cls = self.__class__
         if cls.key is None:
             cls.key = random.PRNGKey(0)
@@ -96,6 +100,9 @@ class JAXTensor(AbstractTensor):
     @wrapout
     def normal(self, shape, mean=0.0, stddev=1.0):
         import jax.random as random
+
+        if not isinstance(shape, Iterable):
+            shape = (shape,)
 
         cls = self.__class__
         if cls.key is None:

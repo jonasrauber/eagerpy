@@ -127,9 +127,7 @@ class PyTorchTensor(AbstractTensor):
     @wrapout
     def uniform(self, shape, low=0.0, high=1.0):
         return (
-            self.backend.rand(
-                *shape, dtype=self.tensor.dtype, device=self.tensor.device
-            )
+            self.backend.rand(shape, dtype=self.tensor.dtype, device=self.tensor.device)
             * (high - low)
             + low
         )
@@ -138,7 +136,7 @@ class PyTorchTensor(AbstractTensor):
     def normal(self, shape, mean=0.0, stddev=1.0):
         return (
             self.backend.randn(
-                *shape, dtype=self.tensor.dtype, device=self.tensor.device
+                shape, dtype=self.tensor.dtype, device=self.tensor.device
             )
             * stddev
             + mean
@@ -147,13 +145,13 @@ class PyTorchTensor(AbstractTensor):
     @wrapout
     def ones(self, shape):
         return self.backend.ones(
-            *shape, dtype=self.tensor.dtype, device=self.tensor.device
+            shape, dtype=self.tensor.dtype, device=self.tensor.device
         )
 
     @wrapout
     def zeros(self, shape):
         return self.backend.zeros(
-            *shape, dtype=self.tensor.dtype, device=self.tensor.device
+            shape, dtype=self.tensor.dtype, device=self.tensor.device
         )
 
     @wrapout

@@ -80,11 +80,11 @@ class NumPyTensor(AbstractTensor):
 
     @wrapout
     def uniform(self, shape, low=0.0, high=1.0):
-        return self.backend.random.rand(*shape) * (high - low) + low
+        return self.backend.random.uniform(low, high, size=shape)
 
     @wrapout
     def normal(self, shape, mean=0.0, stddev=1.0):
-        return self.backend.random.randn(*shape) * stddev + mean
+        return self.backend.random.normal(mean, stddev, size=shape)
 
     @wrapout
     def ones(self, shape):
