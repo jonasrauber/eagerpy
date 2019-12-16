@@ -35,6 +35,9 @@ class AbstractTensor(AbstractBaseTensor, ABC):
     def __repr__(self):
         return f"{self.__class__.__name__}({self.tensor.__repr__()})"
 
+    def __format__(self, *args, **kwargs):
+        return self.tensor.__format__(*args, **kwargs)
+
     @unwrapin
     @wrapout
     def __getitem__(self, index):
