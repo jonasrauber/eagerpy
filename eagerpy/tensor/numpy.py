@@ -210,3 +210,18 @@ class NumPyTensor(AbstractTensor):
     @wrapout
     def full(self, shape, value):
         return self.backend.full(shape, value, dtype=self.tensor.dtype)
+
+    @unwrapin
+    @wrapout
+    def index_update(self, indices, values):
+        if isinstance(indices, tuple):
+            indices = tuple(
+                t.tensor if isinstance(t, self.__class__) else t for t in indices
+            )
+        x = self.tensor.copy()
+        x[indices] = values
+        return x
+
+    @wrapout
+    def arange(self, *args, **kwargs):
+        return self.backend.arange(*args, **kwargs)

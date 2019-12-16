@@ -176,3 +176,11 @@ def expand_dims(t, *args, **kwargs):
 
 def full(t, *args, **kwargs):
     return t.full(*args, **kwargs)
+
+
+def index_update(t, *args, **kwargs):
+    return t.index_update(*args, **kwargs)
+
+
+def arange(t, *args, **kwargs):
+    return t.arange(*args, **kwargs)

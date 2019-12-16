@@ -10,9 +10,11 @@ class JAXTensor(AbstractTensor):
     key = None
 
     def __init__(self, tensor):
+        import jax
         from jax import numpy
 
         super().__init__(tensor)
+        self.jax = jax
         self.backend = numpy
 
     def numpy(self):
@@ -237,3 +239,16 @@ class JAXTensor(AbstractTensor):
         if not isinstance(shape, Iterable):
             shape = (shape,)
         return self.backend.full(shape, value, dtype=self.tensor.dtype)
+
+    @unwrapin
+    @wrapout
+    def index_update(self, indices, values):
+        if isinstance(indices, tuple):
+            indices = tuple(
+                t.tensor if isinstance(t, self.__class__) else t for t in indices
+            )
+        return self.jax.ops.index_update(self.tensor, indices, values)
+
+    @wrapout
+    def arange(self, *args, **kwargs):
+        return self.backend.arange(*args, **kwargs)

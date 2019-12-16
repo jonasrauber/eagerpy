@@ -482,3 +482,9 @@ def test_full(ta):
     assert ep.full(t, (2, 3), 4.0).numpy().shape == np.full((2, 3), 4.0).shape
     assert (ep.full(t, (2, 3), 4.0).numpy() == np.full((2, 3), 4.0)).all()
     assert ep.full(t, 5, 4.0).numpy().shape == np.full(5, 4.0).shape
+
+
+def test_arange(ta):
+    t, a = ta
+    assert ep.arange(t, 6).numpy().shape == np.arange(6).shape
+    assert (ep.arange(t, 6).numpy() == np.arange(6)).all()

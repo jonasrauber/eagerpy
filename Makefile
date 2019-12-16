@@ -4,6 +4,7 @@ test:
 	pytest --verbose eagerpy/tests/test_jax_tensor.py
 	pytest --verbose eagerpy/tests/test_astensor.py
 	pytest --verbose eagerpy/tests/test_concatenate.py
+	pytest --verbose eagerpy/tests/test_index_update.py
 
 .PHONY: black
 black:

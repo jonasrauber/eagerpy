@@ -3,6 +3,8 @@ from os.path import join, dirname
 with open(join(dirname(__file__), "VERSION")) as f:
     __version__ = f.read().strip()
 
+from .utils import index  # noqa: F401
+
 from .tensor import Tensor  # noqa: F401
 from .tensor import PyTorchTensor  # noqa: F401
 from .tensor import TensorFlowTensor  # noqa: F401

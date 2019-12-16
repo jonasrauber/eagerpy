@@ -1,6 +1,7 @@
 from .base import AbstractTensor
 from .base import unwrapin
 from .base import wrapout
+from .. import index
 
 import functools
 import numpy as np
@@ -260,3 +261,50 @@ class TensorFlowTensor(AbstractTensor):
         if not isinstance(shape, Iterable):
             shape = (shape,)
         return self.backend.fill(shape, value)
+
+    @unwrapin
+    @wrapout
+    def index_update(self, indices, values):
+        if isinstance(indices, tuple):
+            indices = tuple(
+                t.tensor if isinstance(t, self.__class__) else t for t in indices
+            )
+
+        x = self.tensor
+        if isinstance(indices, int):
+            return self.backend.tensor_scatter_nd_update(x, [[indices]], values[None])
+        elif isinstance(indices, tuple) and any(
+            isinstance(idx, slice) for idx in indices
+        ):
+            if (
+                len(indices) == x.ndim == 2
+                and indices[0] == index[:]
+                and not isinstance(indices[1], slice)
+            ):
+                x = self.backend.transpose(x)
+                result = self.backend.tensor_scatter_nd_update(
+                    x, [[indices[-1]]], values[None]
+                )
+                return self.backend.transpose(result)
+            else:
+                raise NotImplementedError
+        elif isinstance(indices, tuple):
+            if all(
+                idx.dtype in [self.backend.int32, self.backend.int64] for idx in indices
+            ):
+                indices = [
+                    self.backend.cast(idx, self.backend.int64)
+                    if idx.dtype == self.backend.int32
+                    else idx
+                    for idx in indices
+                ]
+            return self.backend.tensor_scatter_nd_update(
+                x, self.backend.stack(indices, axis=-1), values
+            )
+        else:
+            raise ValueError
+
+    @samedevice
+    @wrapout
+    def arange(self, *args, **kwargs):
+        return self.backend.range(*args, **kwargs)
