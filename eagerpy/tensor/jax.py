@@ -234,4 +234,6 @@ class JAXTensor(AbstractTensor):
 
     @wrapout
     def full(self, shape, value):
+        if not isinstance(shape, Iterable):
+            shape = (shape,)
         return self.backend.full(shape, value, dtype=self.tensor.dtype)
