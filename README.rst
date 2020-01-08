@@ -64,3 +64,15 @@ Example
    ep.sqrt(x)
    ep.clip(x, 0, 1)
    ep.uniform(x, (3, 3), low=-1., high=1.)  # x is needed to infer the framework
+
+
+Development
+-----------
+
+For development, it is recommended to do a an editable installation of Foolbox
+and Foolbox native using `pip install -e .` in the corresponding folders (after
+cloning the two repositories). Unfortunately, `pip` has a
+`bug <https://github.com/pypa/pip/issues/7265>`_ with editable installs and
+namespace packages like Foolbox Native. A simple workaround is to add a symlink
+to the `foolbox/ext/native` folder of Foolbox Native in the `foolbox/ext/` folder
+of Foolbox itself.
