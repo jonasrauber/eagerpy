@@ -308,3 +308,10 @@ class TensorFlowTensor(AbstractTensor):
     @wrapout
     def arange(self, *args, **kwargs):
         return self.backend.range(*args, **kwargs)
+
+    @wrapout
+    def cumsum(self, axis=None):
+        if axis is None:
+            x = self.backend.reshape(self.tensor, (-1,))
+            return self.backend.cumsum(x, axis=0)
+        return self.backend.cumsum(self.tensor, axis=axis)

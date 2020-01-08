@@ -488,3 +488,11 @@ def test_arange(ta):
     t, a = ta
     assert ep.arange(t, 6).numpy().shape == np.arange(6).shape
     assert (ep.arange(t, 6).numpy() == np.arange(6)).all()
+
+
+def test_cumsum(ta):
+    t, a = ta
+    assert (ep.cumsum(t, axis=0).numpy() == np.cumsum(a, axis=0)).all()
+    assert (ep.cumsum(t, axis=-1).numpy() == np.cumsum(a, axis=-1)).all()
+    assert (ep.cumsum(t, axis=None).numpy() == np.cumsum(a, axis=None)).all()
+    assert (ep.cumsum(t).numpy() == np.cumsum(a, axis=None)).all()

@@ -184,3 +184,7 @@ def index_update(t, *args, **kwargs):
 
 def arange(t, *args, **kwargs):
     return t.arange(*args, **kwargs)
+
+
+def cumsum(t, *args, **kwargs):
+    return t.cumsum(*args, **kwargs)

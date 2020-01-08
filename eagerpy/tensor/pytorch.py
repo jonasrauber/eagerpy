@@ -310,3 +310,9 @@ class PyTorchTensor(AbstractTensor):
     @wrapout
     def arange(self, *args, **kwargs):
         return self.backend.arange(*args, **kwargs, device=self.tensor.device)
+
+    @wrapout
+    def cumsum(self, axis=None):
+        if axis is None:
+            return self.tensor.reshape(-1).cumsum(dim=0)
+        return self.tensor.cumsum(dim=axis)

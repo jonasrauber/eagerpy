@@ -252,3 +252,7 @@ class JAXTensor(AbstractTensor):
     @wrapout
     def arange(self, *args, **kwargs):
         return self.backend.arange(*args, **kwargs)
+
+    @wrapout
+    def cumsum(self, axis=None):
+        return self.tensor.cumsum(axis=axis)
