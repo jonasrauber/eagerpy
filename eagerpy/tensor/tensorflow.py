@@ -315,3 +315,11 @@ class TensorFlowTensor(AbstractTensor):
             x = self.backend.reshape(self.tensor, (-1,))
             return self.backend.cumsum(x, axis=0)
         return self.backend.cumsum(self.tensor, axis=axis)
+
+    @wrapout
+    def flip(self, axis=None):
+        if axis is None:
+            axis = tuple(range(self.ndim))
+        if not isinstance(axis, Iterable):
+            axis = (axis,)
+        return self.backend.reverse(self.tensor, axis=axis)

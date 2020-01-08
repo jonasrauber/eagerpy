@@ -496,3 +496,11 @@ def test_cumsum(ta):
     assert (ep.cumsum(t, axis=-1).numpy() == np.cumsum(a, axis=-1)).all()
     assert (ep.cumsum(t, axis=None).numpy() == np.cumsum(a, axis=None)).all()
     assert (ep.cumsum(t).numpy() == np.cumsum(a, axis=None)).all()
+
+
+def test_flip(ta):
+    t, a = ta
+    assert (ep.flip(t, axis=0).numpy() == np.flip(a, axis=0)).all()
+    assert (ep.flip(t, axis=-1).numpy() == np.flip(a, axis=-1)).all()
+    assert (ep.flip(t, axis=None).numpy() == np.flip(a, axis=None)).all()
+    assert (ep.flip(t).numpy() == np.flip(a, axis=None)).all()

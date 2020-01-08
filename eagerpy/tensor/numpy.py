@@ -229,3 +229,7 @@ class NumPyTensor(AbstractTensor):
     @wrapout
     def cumsum(self, axis=None):
         return self.tensor.cumsum(axis=axis)
+
+    @wrapout
+    def flip(self, axis=None):
+        return self.backend.flip(self.tensor, axis=axis)

@@ -191,3 +191,7 @@ def arange(t, *args, **kwargs):
 
 def cumsum(t, *args, **kwargs):
     return t.cumsum(*args, **kwargs)
+
+
+def flip(t, *args, **kwargs):
+    return t.flip(*args, **kwargs)

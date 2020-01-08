@@ -316,3 +316,11 @@ class PyTorchTensor(AbstractTensor):
         if axis is None:
             return self.tensor.reshape(-1).cumsum(dim=0)
         return self.tensor.cumsum(dim=axis)
+
+    @wrapout
+    def flip(self, axis=None):
+        if axis is None:
+            axis = tuple(range(self.ndim))
+        if not isinstance(axis, Iterable):
+            axis = (axis,)
+        return self.tensor.flip(dims=axis)
