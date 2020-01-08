@@ -1,3 +1,6 @@
+newaxis = None
+
+
 def clip(t, *args, **kwargs):
     return t.clip(*args, **kwargs)
 
