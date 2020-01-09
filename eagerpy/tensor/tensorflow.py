@@ -323,3 +323,9 @@ class TensorFlowTensor(AbstractTensor):
         if not isinstance(axis, Iterable):
             axis = (axis,)
         return self.backend.reverse(self.tensor, axis=axis)
+
+    @unwrapin
+    def meshgrid(self, *tensors, indexing="xy"):
+        outputs = self.backend.meshgrid(self.tensor, *tensors, indexing=indexing)
+        outputs = tuple(self.__class__(out) for out in outputs)
+        return outputs

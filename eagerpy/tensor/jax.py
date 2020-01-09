@@ -260,3 +260,9 @@ class JAXTensor(AbstractTensor):
     @wrapout
     def flip(self, axis=None):
         return self.backend.flip(self.tensor, axis=axis)
+
+    @unwrapin
+    def meshgrid(self, *tensors, indexing="xy"):
+        outputs = self.backend.meshgrid(self.tensor, *tensors, indexing=indexing)
+        outputs = tuple(self.__class__(out) for out in outputs)
+        return outputs

@@ -324,3 +324,18 @@ class PyTorchTensor(AbstractTensor):
         if not isinstance(axis, Iterable):
             axis = (axis,)
         return self.tensor.flip(dims=axis)
+
+    @unwrapin
+    def meshgrid(self, *tensors, indexing="xy"):
+        if indexing == "ij" or len(tensors) == 0:
+            outputs = self.backend.meshgrid(self.tensor, *tensors)
+        elif indexing == "xy":
+            outputs = self.backend.meshgrid(tensors[0], self.tensor, *tensors[1:])
+        else:
+            raise ValueError(
+                f"Valid values for indexing are 'xy' and 'ij', got {indexing}"
+            )
+        outputs = list(self.__class__(out) for out in outputs)
+        if indexing == "xy" and len(outputs) >= 2:
+            outputs[0], outputs[1] = outputs[1], outputs[0]
+        return tuple(outputs)

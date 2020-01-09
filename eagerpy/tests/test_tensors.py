@@ -504,3 +504,14 @@ def test_flip(ta):
     assert (ep.flip(t, axis=-1).numpy() == np.flip(a, axis=-1)).all()
     assert (ep.flip(t, axis=None).numpy() == np.flip(a, axis=None)).all()
     assert (ep.flip(t).numpy() == np.flip(a, axis=None)).all()
+
+
+def test_meshgrid(ta):
+    t, a = ta
+    t = ep.arange(t, 5)
+    a = np.arange(5)
+    t2 = ep.arange(t, 3)
+    a2 = np.arange(3)
+    assert len(ep.meshgrid(t, t2)) == len(np.meshgrid(a, a2)) == 2
+    assert (ep.meshgrid(t, t2)[0].numpy() == np.meshgrid(a, a2)[0]).all()
+    assert (ep.meshgrid(t, t2)[1].numpy() == np.meshgrid(a, a2)[1]).all()

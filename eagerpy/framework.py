@@ -195,3 +195,7 @@ def cumsum(t, *args, **kwargs):
 
 def flip(t, *args, **kwargs):
     return t.flip(*args, **kwargs)
+
+
+def meshgrid(t, *args, **kwargs):
+    return t.meshgrid(*args, **kwargs)
