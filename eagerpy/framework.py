@@ -95,6 +95,10 @@ def zeros_like(t, *args, **kwargs):
     return t.zeros_like(*args, **kwargs)
 
 
+def full_like(t, *args, **kwargs):
+    return t.full_like(*args, **kwargs)
+
+
 def onehot_like(t, *args, **kwargs):
     return t.onehot_like(*args, **kwargs)
 

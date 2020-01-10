@@ -102,6 +102,10 @@ class NumPyTensor(AbstractTensor):
     def zeros_like(self):
         return self.backend.zeros_like(self.tensor)
 
+    @wrapout
+    def full_like(self, fill_value):
+        return self.backend.full_like(self.tensor, fill_value)
+
     @unwrapin
     @wrapout
     def onehot_like(self, indices, *, value=1):

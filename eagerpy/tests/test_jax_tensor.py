@@ -446,6 +446,12 @@ def test_zeros_like(ta):
     assert (ep.zeros_like(t).numpy() == np.zeros_like(a)).all()
 
 
+def test_full_like(ta):
+    t, a = ta
+    assert ep.full_like(t, 5).numpy().shape == np.full_like(a, 5).shape
+    assert (ep.full_like(t, 5).numpy() == np.full_like(a, 5)).all()
+
+
 def test_ones(ta):
     t, a = ta
     assert ep.ones(t, (2, 3)).numpy().shape == np.ones((2, 3)).shape

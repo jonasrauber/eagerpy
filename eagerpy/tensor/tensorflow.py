@@ -149,6 +149,11 @@ class TensorFlowTensor(AbstractTensor):
     def zeros_like(self):
         return self.backend.zeros_like(self.tensor)
 
+    @wrapout
+    def full_like(self, fill_value):
+        fill_value = self.backend.cast(fill_value, self.tensor.dtype)
+        return self.backend.fill(self.tensor.shape, fill_value)
+
     @samedevice
     @unwrapin
     @wrapout
