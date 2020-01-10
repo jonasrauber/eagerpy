@@ -239,3 +239,23 @@ class NumPyTensor(AbstractTensor):
         outputs = self.backend.meshgrid(self.tensor, *tensors, indexing=indexing)
         outputs = tuple(self.__class__(out) for out in outputs)
         return outputs
+
+    @wrapout
+    def pad(self, paddings, mode="constant", value=0):
+        assert len(paddings) == self.ndim
+        for p in paddings:
+            assert len(p) == 2
+        assert mode == "constant" or mode == "reflect"
+        if mode == "reflect":
+            # PyTorch's pad has limited support for 'reflect' padding
+            if self.ndim != 3 and self.ndim != 4:
+                raise NotImplementedError
+            k = self.ndim - 2
+            if paddings[:k] != ((0, 0),) * k:
+                raise NotImplementedError
+        if mode == "constant":
+            return self.backend.pad(
+                self.tensor, paddings, mode=mode, constant_values=value
+            )
+        else:
+            return self.backend.pad(self.tensor, paddings, mode=mode)

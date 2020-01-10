@@ -515,3 +515,29 @@ def test_meshgrid(ta):
     assert len(ep.meshgrid(t, t2)) == len(np.meshgrid(a, a2)) == 2
     assert (ep.meshgrid(t, t2)[0].numpy() == np.meshgrid(a, a2)[0]).all()
     assert (ep.meshgrid(t, t2)[1].numpy() == np.meshgrid(a, a2)[1]).all()
+    assert (
+        ep.meshgrid(t, t2, indexing="ij")[0].numpy()
+        == np.meshgrid(a, a2, indexing="ij")[0]
+    ).all()
+    assert (
+        ep.meshgrid(t, t2, indexing="ij")[1].numpy()
+        == np.meshgrid(a, a2, indexing="ij")[1]
+    ).all()
+
+
+def test_pad(ta):
+    t, a = ta
+    a = np.arange(120).reshape((2, 3, 4, 5)).astype(np.float32)
+    t = ep.from_numpy(t, a)
+    assert (
+        ep.pad(t, ((0, 0), (0, 0), (2, 3), (1, 2))).numpy()
+        == np.pad(a, ((0, 0), (0, 0), (2, 3), (1, 2)))
+    ).all()
+    assert (
+        ep.pad(t, ((0, 0), (0, 0), (2, 3), (1, 2)), value=-2).numpy()
+        == np.pad(a, ((0, 0), (0, 0), (2, 3), (1, 2)), constant_values=-2)
+    ).all()
+    assert (
+        ep.pad(t, ((0, 0), (0, 0), (2, 3), (1, 2)), mode="reflect").numpy()
+        == np.pad(a, ((0, 0), (0, 0), (2, 3), (1, 2)), mode="reflect")
+    ).all()

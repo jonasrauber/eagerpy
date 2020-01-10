@@ -339,3 +339,22 @@ class PyTorchTensor(AbstractTensor):
         if indexing == "xy" and len(outputs) >= 2:
             outputs[0], outputs[1] = outputs[1], outputs[0]
         return tuple(outputs)
+
+    @wrapout
+    def pad(self, paddings, mode="constant", value=0):
+        assert len(paddings) == self.ndim
+        for p in paddings:
+            assert len(p) == 2
+        assert mode == "constant" or mode == "reflect"
+        if mode == "reflect":
+            # PyTorch's pad has limited support for 'reflect' padding
+            if self.ndim != 3 and self.ndim != 4:
+                raise NotImplementedError
+            k = self.ndim - 2
+            if paddings[:k] != ((0, 0),) * k:
+                raise NotImplementedError
+            paddings = paddings[k:]
+        paddings = tuple(x for p in reversed(paddings) for x in p)
+        return self.backend.nn.functional.pad(
+            self.tensor, paddings, mode=mode, value=value
+        )

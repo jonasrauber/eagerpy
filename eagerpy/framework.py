@@ -199,3 +199,7 @@ def flip(t, *args, **kwargs):
 
 def meshgrid(t, *args, **kwargs):
     return t.meshgrid(*args, **kwargs)
+
+
+def pad(t, *args, **kwargs):
+    return t.pad(*args, **kwargs)
