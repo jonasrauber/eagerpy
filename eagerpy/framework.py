@@ -1,4 +1,6 @@
 newaxis = None
+inf = float("inf")
+nan = float("nan")
 
 
 def clip(t, *args, **kwargs):
