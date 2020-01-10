@@ -217,3 +217,11 @@ def isnan(t):
 
 def isinf(t):
     return t.isinf()
+
+
+def all(t, *args, **kwargs):
+    return t.all(*args, **kwargs)
+
+
+def any(t, *args, **kwargs):
+    return t.any(*args, **kwargs)
