@@ -209,3 +209,11 @@ def meshgrid(t, *args, **kwargs):
 
 def pad(t, *args, **kwargs):
     return t.pad(*args, **kwargs)
+
+
+def isnan(t):
+    return t.isnan()
+
+
+def isinf(t):
+    return t.isinf()

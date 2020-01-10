@@ -349,3 +349,11 @@ class TensorFlowTensor(AbstractTensor):
             if paddings[:k] != ((0, 0),) * k:
                 raise NotImplementedError
         return self.backend.pad(self.tensor, paddings, mode=mode, constant_values=value)
+
+    @wrapout
+    def isnan(self):
+        return self.backend.math.is_nan(self.tensor)
+
+    @wrapout
+    def isinf(self):
+        return self.backend.math.is_inf(self.tensor)

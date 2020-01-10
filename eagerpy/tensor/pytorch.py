@@ -362,3 +362,11 @@ class PyTorchTensor(AbstractTensor):
         return self.backend.nn.functional.pad(
             self.tensor, paddings, mode=mode, value=value
         )
+
+    @wrapout
+    def isnan(self):
+        return self.backend.isnan(self.tensor)
+
+    @wrapout
+    def isinf(self):
+        return self.backend.isinf(self.tensor)

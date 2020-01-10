@@ -547,3 +547,23 @@ def test_pad(ta):
         ep.pad(t, ((0, 0), (0, 0), (2, 3), (1, 2)), mode="reflect").numpy()
         == np.pad(a, ((0, 0), (0, 0), (2, 3), (1, 2)), mode="reflect")
     ).all()
+
+
+def test_isnan(ta):
+    t, a = ta
+    assert (t.isnan().numpy() == np.isnan(a)).all()
+    t = t + np.nan
+    a = a + np.nan
+    assert (t.isnan().numpy() == np.isnan(a)).all()
+
+
+def test_isinf(ta):
+    t, a = ta
+    assert (t.isinf().numpy() == np.isinf(a)).all()
+    t = t + np.inf
+    a = a + np.inf
+    assert (t.isinf().numpy() == np.isinf(a)).all()
+    t, a = ta
+    t = t - np.inf
+    a = a - np.inf
+    assert (t.isinf().numpy() == np.isinf(a)).all()

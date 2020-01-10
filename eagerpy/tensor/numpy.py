@@ -263,3 +263,11 @@ class NumPyTensor(AbstractTensor):
             )
         else:
             return self.backend.pad(self.tensor, paddings, mode=mode)
+
+    @wrapout
+    def isnan(self):
+        return self.backend.isnan(self.tensor)
+
+    @wrapout
+    def isinf(self):
+        return self.backend.isinf(self.tensor)
