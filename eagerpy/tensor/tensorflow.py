@@ -357,3 +357,11 @@ class TensorFlowTensor(AbstractTensor):
     @wrapout
     def isinf(self):
         return self.backend.math.is_inf(self.tensor)
+
+    @unwrapin
+    @wrapout
+    def crossentropy(self, labels):
+        logits = self.tensor
+        assert logits.ndim == 2
+        assert logits.shape[:1] == labels.shape
+        return self.backend.nn.sparse_softmax_cross_entropy_with_logits(labels, logits)

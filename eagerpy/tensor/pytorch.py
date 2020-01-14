@@ -370,3 +370,13 @@ class PyTorchTensor(AbstractTensor):
     @wrapout
     def isinf(self):
         return self.backend.isinf(self.tensor)
+
+    @unwrapin
+    @wrapout
+    def crossentropy(self, labels):
+        logits = self.tensor
+        assert logits.ndim == 2
+        assert logits.shape[:1] == labels.shape
+        return self.backend.nn.functional.cross_entropy(
+            logits, labels, reduction="none"
+        )

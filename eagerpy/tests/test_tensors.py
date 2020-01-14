@@ -567,3 +567,16 @@ def test_isinf(ta):
     t = t - np.inf
     a = a - np.inf
     assert (t.isinf().numpy() == np.isinf(a)).all()
+
+
+def test_crossentropy(ta):
+    t, a = ta
+    np.random.seed(22)
+    a = np.random.uniform(size=(10, 5)).astype(np.float32)
+    tx = ep.from_numpy(t, a)  # EagerPy t-like tensor
+    tn = ep.astensor(a)  # EagerPy NumPy tensor
+    txl = tx.argmax(axis=-1)
+    tnl = tn.argmax(axis=-1)
+    np.testing.assert_allclose(
+        tx.crossentropy(txl).numpy(), tn.crossentropy(tnl).numpy(), rtol=1e-6
+    )

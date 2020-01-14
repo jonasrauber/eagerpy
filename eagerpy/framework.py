@@ -225,3 +225,7 @@ def all(t, *args, **kwargs):
 
 def any(t, *args, **kwargs):
     return t.any(*args, **kwargs)
+
+
+def crossentropy(logits, labels):
+    return logits.crossentropy(labels)

@@ -298,3 +298,20 @@ class JAXTensor(AbstractTensor):
     @wrapout
     def isinf(self):
         return self.backend.isinf(self.tensor)
+
+    @unwrapin
+    @wrapout
+    def crossentropy(self, labels):
+        logits = self.tensor
+        assert logits.ndim == 2
+        assert logits.shape[:1] == labels.shape
+        # for numerical reasons we subtract the max logit
+        # (mathematically it doesn't matter!)
+        # otherwise exp(logits) might become too large or too small
+        logits = logits - logits.max(axis=1, keepdims=True)
+        e = self.backend.exp(logits)
+        s = self.backend.sum(e, axis=1)
+        ces = self.backend.log(s) - self.backend.take_along_axis(
+            logits, labels[:, self.backend.newaxis], axis=1
+        ).squeeze(axis=1)
+        return ces
