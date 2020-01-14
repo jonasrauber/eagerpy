@@ -72,7 +72,7 @@ Compatibility
 We currently test with the following versions:
 
 * PyTorch 1.3.1
-* TensorFlow 2.1.0
+* TensorFlow 2.0.0
 * JAX 0.1.57
 * NumPy 1.18.1
 
