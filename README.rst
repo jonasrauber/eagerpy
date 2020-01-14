@@ -66,6 +66,17 @@ Example
    ep.uniform(x, (3, 3), low=-1., high=1.)  # x is needed to infer the framework
 
 
+Compatibility
+-------------
+
+We currently test with the following versions:
+
+* PyTorch 1.3.0
+* TensorFlow 2.0.0
+* JAX 0.1.57
+* NumPy 1.17.3
+
+
 Development
 -----------
 
