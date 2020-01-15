@@ -1,3 +1,5 @@
+from . import istensor
+
 newaxis = None
 inf = float("inf")
 nan = float("nan")
@@ -48,13 +50,13 @@ def amax(t, *args, **kwargs):
 
 
 def minimum(x, y):
-    if not hasattr(x, "tensor"):
+    if not istensor(x):
         return y.minimum(x)
     return x.minimum(y)
 
 
 def maximum(x, y):
-    if not hasattr(x, "tensor"):
+    if not istensor(x):
         return y.maximum(x)
     return x.maximum(y)
 
@@ -117,13 +119,13 @@ def transpose(t, axes=None):
 
 
 def logical_and(x, y):
-    if not hasattr(x, "tensor"):
+    if not istensor(x):
         return y.logical_and(x)
     return x.logical_and(y)
 
 
 def logical_or(x, y):
-    if not hasattr(x, "tensor"):
+    if not istensor(x):
         return y.logical_or(x)
     return x.logical_or(y)
 
@@ -161,7 +163,7 @@ def tile(t, multiples):
 
 
 def matmul(x, y):
-    if not hasattr(x, "tensor"):
+    if not istensor(x):
         return y.matmul(x)
     return x.matmul(y)
 
