@@ -2,6 +2,7 @@ from . import PyTorchTensor
 from . import TensorFlowTensor
 from . import JAXTensor
 from . import NumPyTensor
+from . import istensor
 
 
 def _get_module_name(x):
@@ -10,7 +11,7 @@ def _get_module_name(x):
 
 
 def astensor(x):
-    if hasattr(x, "tensor"):
+    if istensor(x):
         return x
     # we use the module name instead of isinstance
     # to avoid importing all the frameworks
