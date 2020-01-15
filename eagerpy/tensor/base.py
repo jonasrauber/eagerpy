@@ -33,7 +33,14 @@ class AbstractBaseTensor(ABC):
 
 class AbstractTensor(AbstractBaseTensor, ABC):
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.tensor.__repr__()})"
+        lines = self.tensor.__repr__().split("\n")
+        prefix = self.__class__.__name__ + "("
+        lines[0] = prefix + lines[0]
+        prefix = " " * len(prefix)
+        for i in range(1, len(lines)):
+            lines[i] = prefix + lines[i]
+        lines[-1] = lines[-1] + ")"
+        return "\n".join(lines)
 
     def __format__(self, *args, **kwargs):
         return self.tensor.__format__(*args, **kwargs)
