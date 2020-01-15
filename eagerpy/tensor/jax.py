@@ -5,17 +5,25 @@ from .base import wrapout
 import numpy as onp
 from collections.abc import Iterable
 
+try:
+    import jax
+except (ModuleNotFoundError, ImportError) as e:
+    # delay the error until the attack is initialized
+    JAX_IMPORT_ERROR = e
+else:
+    JAX_IMPORT_ERROR = None  # type: ignore
+
 
 class JAXTensor(AbstractTensor):
     key = None
 
     def __init__(self, tensor):
-        import jax
-        from jax import numpy
+        if JAX_IMPORT_ERROR is not None:
+            raise JAX_IMPORT_ERROR
 
         super().__init__(tensor)
         self.jax = jax
-        self.backend = numpy
+        self.backend = jax.numpy
 
     def numpy(self):
         return onp.asarray(self.tensor)
@@ -315,3 +323,54 @@ class JAXTensor(AbstractTensor):
             logits, labels[:, self.backend.newaxis], axis=1
         ).squeeze(axis=1)
         return ces
+
+    def _value_and_grad_fn(self, f, has_aux=False):
+        # f takes and returns JAXTensor instances
+        # jax.value_and_grad accepts functions that take JAXTensor instances
+        # because we registered JAXTensor as JAX type, but it still requires
+        # the output to be a scalar (that is not not wrapped as a JAXTensor)
+
+        # f_jax is like f but unwraps loss
+        if has_aux:
+
+            def f_jax(*args, **kwargs):
+                loss, aux = f(*args, **kwargs)
+                return loss.tensor, aux
+
+        else:
+
+            def f_jax(*args, **kwargs):
+                loss = f(*args, **kwargs)
+                return loss.tensor
+
+        value_and_grad_jax = self.jax.value_and_grad(f_jax, has_aux=has_aux)
+
+        # value_and_grad is like value_and_grad_jax but wraps loss
+        if has_aux:
+
+            def value_and_grad(x, *args, **kwargs):
+                assert isinstance(x, JAXTensor)
+                (loss, aux), grad = value_and_grad_jax(x, *args, **kwargs)
+                assert grad.shape == x.shape
+                return JAXTensor(loss), aux, grad
+
+        else:
+
+            def value_and_grad(x, *args, **kwargs):
+                assert isinstance(x, JAXTensor)
+                loss, grad = value_and_grad_jax(x, *args, **kwargs)
+                assert grad.shape == x.shape
+                return JAXTensor(loss), grad
+
+        return value_and_grad
+
+
+if JAX_IMPORT_ERROR is None:
+
+    def flatten(t):
+        return ((t.tensor,), None)
+
+    def unflatten(aux_data, children):
+        return JAXTensor(*children)
+
+    jax.tree_util.register_pytree_node(JAXTensor, flatten, unflatten)

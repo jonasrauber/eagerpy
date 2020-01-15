@@ -118,6 +118,22 @@ def ta(request, tf1, th1, th1g, np1, a1, tf2, th2, th2g, np2, a2):
     }[request.param]
 
 
+@pytest.fixture(params=["tf1", "th1", "th1g", "tf2", "th2", "th2g"])
+def ta_nonumpy(request, tf1, th1, th1g, np1, a1, tf2, th2, th2g, np2, a2):
+    return {
+        "tf1": (tf1, a1),
+        "th1": (th1, a1),
+        "th1g": (th1g, a1),
+        "np1": (np1, a1),
+        "jax1": (jax1, a1),
+        "tf2": (tf2, a2),
+        "th2": (th2, a2),
+        "th2g": (th2g, a2),
+        "np2": (np2, a2),
+        "jax2": (jax2, a2),
+    }[request.param]
+
+
 @pytest.fixture(params=["tf", "th", "thg", "np"])
 def ttaa(request, tf1, th1, th1g, np1, a1, tf2, th2, th2g, np2, a2):
     return {
@@ -580,3 +596,103 @@ def test_crossentropy(ta):
     np.testing.assert_allclose(
         tx.crossentropy(txl).numpy(), tn.crossentropy(tnl).numpy(), rtol=1e-6
     )
+
+
+def test_value_and_grad_fn(ta_nonumpy):
+    t, _ = ta_nonumpy
+    a = np.arange(8).astype(np.float32).reshape((2, 4))
+    t = ep.arange(t, 8).float32().reshape((2, 4))
+
+    def f(x):
+        return x.square().sum()
+
+    vgf = ep.value_and_grad_fn(t, f)
+    v, g = vgf(t)
+    assert v.numpy().item() == 140
+    assert (g.numpy() == 2 * a).all()
+
+
+def test_value_and_grad_fn_with_aux(ta_nonumpy):
+    t, _ = ta_nonumpy
+    a = np.arange(8).astype(np.float32).reshape((2, 4))
+    t = ep.arange(t, 8).float32().reshape((2, 4))
+
+    def f(x):
+        x = x.square()
+        return x.sum(), x
+
+    vgf = ep.value_and_grad_fn(t, f, has_aux=True)
+    v, aux, g = vgf(t)
+    assert v.numpy().item() == 140
+    assert (g.numpy() == 2 * a).all()
+    assert (aux.numpy() == np.square(a)).all()
+
+
+def test_value_and_grad(ta_nonumpy):
+    t, _ = ta_nonumpy
+    a = np.arange(8).astype(np.float32).reshape((2, 4))
+    t = ep.arange(t, 8).float32().reshape((2, 4))
+
+    def f(x):
+        return x.square().sum()
+
+    v, g = ep.value_and_grad(f, t)
+    assert v.numpy().item() == 140
+    assert (g.numpy() == 2 * a).all()
+
+    v, g = t.value_and_grad(f)
+    assert v.numpy().item() == 140
+    assert (g.numpy() == 2 * a).all()
+
+
+def test_value_aux_and_grad(ta_nonumpy):
+    t, _ = ta_nonumpy
+    a = np.arange(8).astype(np.float32).reshape((2, 4))
+    t = ep.arange(t, 8).float32().reshape((2, 4))
+
+    def f(x):
+        x = x.square()
+        return x.sum(), x
+
+    v, aux, g = ep.value_aux_and_grad(f, t)
+    assert v.numpy().item() == 140
+    assert (g.numpy() == 2 * a).all()
+    assert (aux.numpy() == np.square(a)).all()
+
+    v, aux, g = t.value_aux_and_grad(f)
+    assert v.numpy().item() == 140
+    assert (g.numpy() == 2 * a).all()
+    assert (aux.numpy() == np.square(a)).all()
+
+    def f(x):
+        x = x.square()
+        return x.sum(), (x, x + 1)
+
+    v, (aux0, aux1), g = ep.value_aux_and_grad(f, t)
+    assert v.numpy().item() == 140
+    assert (g.numpy() == 2 * a).all()
+    assert (aux0.numpy() == np.square(a)).all()
+    assert (aux1.numpy() == np.square(a) + 1).all()
+
+    v, (aux0, aux1), g = t.value_aux_and_grad(f)
+    assert v.numpy().item() == 140
+    assert (g.numpy() == 2 * a).all()
+    assert (aux0.numpy() == np.square(a)).all()
+    assert (aux1.numpy() == np.square(a) + 1).all()
+
+
+def test_value_and_grad_multiple_args(ta_nonumpy):
+    t, _ = ta_nonumpy
+    a = np.arange(8).astype(np.float32).reshape((2, 4))
+    t = ep.arange(t, 8).float32().reshape((2, 4))
+
+    def f(x, y):
+        return (x * y).sum()
+
+    v, g = ep.value_and_grad(f, t, t)
+    assert v.numpy().item() == 140
+    assert (g.numpy() == a).all()
+
+    v, g = t.value_and_grad(f, t)
+    assert v.numpy().item() == 140
+    assert (g.numpy() == a).all()

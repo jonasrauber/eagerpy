@@ -173,3 +173,9 @@ class AbstractTensor(AbstractBaseTensor, ABC):
         if self.ndim < 2:
             return self
         return self.transpose()
+
+    def value_and_grad(self, f, *args, **kwargs):
+        return self._value_and_grad_fn(f)(self, *args, **kwargs)
+
+    def value_aux_and_grad(self, f, *args, **kwargs):
+        return self._value_and_grad_fn(f, has_aux=True)(self, *args, **kwargs)

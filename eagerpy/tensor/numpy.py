@@ -288,3 +288,7 @@ class NumPyTensor(AbstractTensor):
             logits, labels[:, self.backend.newaxis], axis=1
         ).squeeze(axis=1)
         return ces
+
+    def _value_and_grad_fn(self, f, has_aux=False):
+        # TODO: maybe implement this using https://github.com/HIPS/autograd
+        raise NotImplementedError

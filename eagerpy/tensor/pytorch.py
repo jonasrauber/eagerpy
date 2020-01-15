@@ -380,3 +380,36 @@ class PyTorchTensor(AbstractTensor):
         return self.backend.nn.functional.cross_entropy(
             logits, labels, reduction="none"
         )
+
+    def _value_and_grad_fn(self, f, has_aux=False):
+        def value_and_grad(x, *args, **kwargs):
+            assert isinstance(x, PyTorchTensor)
+            x = x.tensor
+            x = x.clone()
+            x.requires_grad_()
+            x = PyTorchTensor(x)
+            if has_aux:
+                loss, aux = f(x, *args, **kwargs)
+            else:
+                loss = f(x, *args, **kwargs)
+            loss = loss.tensor
+            loss.backward()
+            grad = PyTorchTensor(x.tensor.grad)
+            assert grad.shape == x.shape
+            loss = loss.detach()
+            loss = PyTorchTensor(loss)
+            if has_aux:
+                if isinstance(aux, PyTorchTensor):
+                    aux = PyTorchTensor(aux.tensor.detach())
+                elif isinstance(aux, tuple):
+                    aux = tuple(
+                        PyTorchTensor(t.tensor.detach())
+                        if isinstance(t, PyTorchTensor)
+                        else t
+                        for t in aux
+                    )
+                return loss, aux, grad
+            else:
+                return loss, grad
+
+        return value_and_grad

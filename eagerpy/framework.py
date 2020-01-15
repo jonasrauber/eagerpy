@@ -229,3 +229,15 @@ def any(t, *args, **kwargs):
 
 def crossentropy(logits, labels):
     return logits.crossentropy(labels)
+
+
+def value_and_grad_fn(t, f, has_aux=False):
+    return t._value_and_grad_fn(f, has_aux=has_aux)
+
+
+def value_and_grad(f, t, *args, **kwargs):
+    return t.value_and_grad(f, *args, **kwargs)
+
+
+def value_aux_and_grad(f, t, *args, **kwargs):
+    return t.value_aux_and_grad(f, *args, **kwargs)

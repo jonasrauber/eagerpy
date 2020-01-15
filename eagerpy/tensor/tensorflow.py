@@ -365,3 +365,26 @@ class TensorFlowTensor(AbstractTensor):
         assert logits.ndim == 2
         assert logits.shape[:1] == labels.shape
         return self.backend.nn.sparse_softmax_cross_entropy_with_logits(labels, logits)
+
+    def _value_and_grad_fn(self, f, has_aux=False):
+        def value_and_grad(x, *args, **kwargs):
+            # using tf.identity to make x independent from possible other instances of x in args
+            x = x.tensor
+            x = self.backend.identity(x)
+            x = TensorFlowTensor(x)
+            assert isinstance(x, TensorFlowTensor)
+            with self.backend.GradientTape() as tape:
+                tape.watch(x.tensor)
+                if has_aux:
+                    loss, aux = f(x, *args, **kwargs)
+                else:
+                    loss = f(x, *args, **kwargs)
+            grad = tape.gradient(loss.tensor, x.tensor)
+            grad = TensorFlowTensor(grad)
+            assert grad.shape == x.shape
+            if has_aux:
+                return loss, aux, grad
+            else:
+                return loss, grad
+
+        return value_and_grad
