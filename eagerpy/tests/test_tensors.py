@@ -190,6 +190,7 @@ def test_getitem(ta):
 def test_pow(ta):
     t, a = ta
     np.testing.assert_allclose((t ** 3).numpy(), (a ** 3))
+    np.testing.assert_allclose(t.pow(3).numpy(), (a ** 3))
 
 
 def test_square(ta):
