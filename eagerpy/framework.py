@@ -25,6 +25,10 @@ def square(t):
     return t.square()
 
 
+def pow(t, exponent):
+    return t.pow(exponent)
+
+
 def tanh(t):
     return t.tanh()
 

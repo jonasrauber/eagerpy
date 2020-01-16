@@ -144,6 +144,9 @@ class AbstractTensor(AbstractBaseTensor, ABC):
     def __pow__(self, exponent):
         return self.tensor.__pow__(exponent)
 
+    def pow(self, exponent):
+        return self.__pow__(exponent)
+
     @wrapout
     def sign(self):
         return self.backend.sign(self.tensor)
