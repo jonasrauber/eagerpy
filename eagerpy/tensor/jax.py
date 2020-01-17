@@ -2,24 +2,27 @@ from .base import AbstractTensor
 from .base import unwrapin
 from .base import wrapout
 
-import numpy as onp
 from collections.abc import Iterable
-
-try:
-    import jax
-except (ModuleNotFoundError, ImportError) as e:
-    # delay the error until the attack is initialized
-    JAX_IMPORT_ERROR = e
-else:
-    JAX_IMPORT_ERROR = None  # type: ignore
+import numpy as onp
 
 
 class JAXTensor(AbstractTensor):
     key = None
 
+    def __new__(cls, *args, **kwargs):
+        import jax
+
+        def flatten(t):
+            return ((t.tensor,), None)
+
+        def unflatten(aux_data, children):
+            return cls(*children)
+
+        jax.tree_util.register_pytree_node(cls, flatten, unflatten)
+        return super(cls, *args, **kwargs)
+
     def __init__(self, tensor):
-        if JAX_IMPORT_ERROR is not None:
-            raise JAX_IMPORT_ERROR
+        import jax
 
         super().__init__(tensor)
         self.jax = jax
@@ -363,14 +366,3 @@ class JAXTensor(AbstractTensor):
                 return JAXTensor(loss), grad
 
         return value_and_grad
-
-
-if JAX_IMPORT_ERROR is None:
-
-    def flatten(t):
-        return ((t.tensor,), None)
-
-    def unflatten(aux_data, children):
-        return JAXTensor(*children)
-
-    jax.tree_util.register_pytree_node(JAXTensor, flatten, unflatten)

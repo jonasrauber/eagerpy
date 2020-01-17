@@ -9,10 +9,10 @@ from collections.abc import Iterable
 
 
 def samedevice(f):
-    import tensorflow as tf
-
     @functools.wraps(f)
     def wrapper(self, *args, **kwargs):
+        import tensorflow as tf
+
         with tf.device(self.tensor.device):
             out = f(self, *args, **kwargs)
         return out
