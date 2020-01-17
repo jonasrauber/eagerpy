@@ -7,19 +7,22 @@ import numpy as onp
 
 
 class JAXTensor(AbstractTensor):
+    _registered = False
     key = None
 
     def __new__(cls, *args, **kwargs):
-        import jax
+        if not cls._registered:
+            import jax
 
-        def flatten(t):
-            return ((t.tensor,), None)
+            def flatten(t):
+                return ((t.tensor,), None)
 
-        def unflatten(aux_data, children):
-            return cls(*children)
+            def unflatten(aux_data, children):
+                return cls(*children)
 
-        jax.tree_util.register_pytree_node(cls, flatten, unflatten)
-        return super(cls, *args, **kwargs)
+            jax.tree_util.register_pytree_node(cls, flatten, unflatten)
+            cls._registered = True
+        return super().__new__(cls)
 
     def __init__(self, tensor):
         import jax
