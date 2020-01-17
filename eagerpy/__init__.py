@@ -20,3 +20,5 @@ from .modules import jax  # noqa: F401
 from .modules import numpy  # noqa: F401
 
 from .framework import *  # noqa: F401,F403
+
+from . import norms  # noqa: F401
