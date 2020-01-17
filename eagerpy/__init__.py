@@ -14,4 +14,9 @@ from .tensor import JAXTensor  # noqa: F401
 from .tensor.base import istensor  # noqa: F401
 from .astensor import astensor  # noqa: F401
 
+from .modules import torch  # noqa: F401
+from .modules import tensorflow  # noqa: F401
+from .modules import jax  # noqa: F401
+from .modules import numpy  # noqa: F401
+
 from .framework import *  # noqa: F401,F403
