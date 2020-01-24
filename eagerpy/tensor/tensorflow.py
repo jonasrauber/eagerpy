@@ -253,6 +253,10 @@ class TensorFlowTensor(AbstractTensor):
         return self.backend.nn.softmax(self.tensor, axis=axis)
 
     @wrapout
+    def log_softmax(self, axis=-1):
+        return self.backend.nn.log_softmax(self.tensor, axis=axis)
+
+    @wrapout
     def squeeze(self, axis=None):
         return self.backend.squeeze(self.tensor, axis=axis)
 

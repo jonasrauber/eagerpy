@@ -277,6 +277,10 @@ class PyTorchTensor(AbstractTensor):
         return self.backend.nn.functional.softmax(self.tensor, dim=axis)
 
     @wrapout
+    def log_softmax(self, axis=-1):
+        return self.backend.nn.functional.log_softmax(self.tensor, dim=axis)
+
+    @wrapout
     def squeeze(self, axis=None):
         if axis is None:
             return self.tensor.squeeze()

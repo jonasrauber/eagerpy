@@ -190,6 +190,7 @@ def test_getitem(ta):
 def test_pow(ta):
     t, a = ta
     np.testing.assert_allclose((t ** 3).numpy(), (a ** 3))
+    np.testing.assert_allclose(t.pow(3).numpy(), (a ** 3))
 
 
 def test_square(ta):
@@ -405,6 +406,15 @@ def test_matmul(ta):
 def test_softmax(ta):
     t, a = ta
     s = t.softmax(axis=-1)
+    np.testing.assert_allclose(s.sum(axis=-1).numpy(), 1.0, rtol=1e-6)
+    assert (s.numpy() >= 0).all()
+    assert (s.numpy() <= 1).all()
+
+
+def test_log_softmax(ta):
+    t, a = ta
+    ls = t.log_softmax(axis=-1)
+    s = ls.exp()
     np.testing.assert_allclose(s.sum(axis=-1).numpy(), 1.0, rtol=1e-6)
     assert (s.numpy() >= 0).all()
     assert (s.numpy() <= 1).all()

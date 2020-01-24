@@ -204,6 +204,18 @@ class NumPyTensor(AbstractTensor):
         return e / e.sum(axis=axis, keepdims=True)
 
     @wrapout
+    def log_softmax(self, axis=-1):
+        # for numerical reasons we subtract the max logit
+        # (mathematically it doesn't matter!)
+        # otherwise exp(logits) might become too large or too small
+        logits = self.tensor
+        logits = logits - logits.max(axis=axis, keepdims=True)
+        log_sum_exp = self.backend.log(
+            self.backend.exp(logits).sum(axis=axis, keepdims=True)
+        )
+        return logits - log_sum_exp
+
+    @wrapout
     def squeeze(self, axis=None):
         return self.tensor.squeeze(axis=axis)
 

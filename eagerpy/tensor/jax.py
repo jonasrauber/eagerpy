@@ -236,13 +236,11 @@ class JAXTensor(AbstractTensor):
 
     @wrapout
     def softmax(self, axis=-1):
-        # for numerical reasons we subtract the max logit
-        # (mathematically it doesn't matter!)
-        # otherwise exp(logits) might become too large or too small
-        logits = self.tensor
-        logits = logits - logits.max(axis=axis, keepdims=True)
-        e = self.backend.exp(logits)
-        return e / e.sum(axis=axis, keepdims=True)
+        return self.jax.nn.softmax(self.tensor, axis=axis)
+
+    @wrapout
+    def log_softmax(self, axis=-1):
+        return self.jax.nn.log_softmax(self.tensor, axis=axis)
 
     @wrapout
     def squeeze(self, axis=None):
