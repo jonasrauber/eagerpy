@@ -356,16 +356,22 @@ def test_exp(ta):
 
 def test_log(ta):
     t, a = ta
+    t = ep.maximum(t, 1e-2)
+    a = np.maximum(a, 1e-2)
     np.testing.assert_allclose(np.log(a), t.log().numpy())
 
 
 def test_log2(ta):
     t, a = ta
+    t = ep.maximum(t, 1e-2)
+    a = np.maximum(a, 1e-2)
     np.testing.assert_allclose(np.log2(a), t.log2().numpy())
 
 
 def test_log10(ta):
     t, a = ta
+    t = ep.maximum(t, 1e-2)
+    a = np.maximum(a, 1e-2)
     np.testing.assert_allclose(np.log10(a), t.log10().numpy())
 
 
@@ -506,6 +512,10 @@ def test_normal(ta):
 
 def test_arctanh(ta):
     t, a = ta
+    t = (t - t.mean()) / t.max()
+    a = (a - a.mean()) / a.max()
+    t = t.tanh()
+    a = np.tanh(a)
     np.testing.assert_allclose(t.arctanh().numpy(), np.arctanh(a), rtol=1e-06)
 
 
