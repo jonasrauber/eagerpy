@@ -82,6 +82,11 @@ class AbstractTensor(AbstractBaseTensor, ABC):
 
     @unwrapin
     @wrapout
+    def __radd__(self, other):
+        return self.tensor.__radd__(other)
+
+    @unwrapin
+    @wrapout
     def __sub__(self, other):
         return self.tensor.__sub__(other)
 

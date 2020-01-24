@@ -163,21 +163,29 @@ def test_neg(ta):
 def test_add(ttaa):
     t1, t2, a1, a2 = ttaa
     assert ((t1 + t2).numpy() == (a1 + a2)).all()
+    assert ((t1 + 3).numpy() == (a1 + 3)).all()
+    assert ((3 + t1).numpy() == (3 + a1)).all()
 
 
 def test_sub(ttaa):
     t1, t2, a1, a2 = ttaa
     assert ((t1 - t2).numpy() == (a1 - a2)).all()
+    assert ((t1 - 3).numpy() == (a1 - 3)).all()
+    assert ((3 - t1).numpy() == (3 - a1)).all()
 
 
 def test_mul(ttaa):
     t1, t2, a1, a2 = ttaa
     assert ((t1 * t2).numpy() == (a1 * a2)).all()
+    assert ((t1 * 3).numpy() == (a1 * 3)).all()
+    assert ((3 * t1).numpy() == (3 * a1)).all()
 
 
 def test_div(ttaa):
     t1, t2, a1, a2 = ttaa
     np.testing.assert_allclose((t1 / t2).numpy(), (a1 / a2))
+    np.testing.assert_allclose((t1 / 2).numpy(), (a1 / 2))
+    np.testing.assert_allclose((2 / t1).numpy(), (2 / a1))
 
 
 def test_getitem(ta):
