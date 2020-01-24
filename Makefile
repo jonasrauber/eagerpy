@@ -3,6 +3,11 @@ test:
 	pytest --verbose --ignore=eagerpy/tests/test_jax_tensor.py
 	pytest --verbose eagerpy/tests/test_jax_tensor.py
 
+.PHONY: testcov
+testcov:
+	pytest --cov-report term-missing --cov=eagerpy --verbose --ignore=eagerpy/tests/test_jax_tensor.py
+	pytest --cov-report term-missing --cov=eagerpy --cov-append --verbose eagerpy/tests/test_jax_tensor.py
+
 .PHONY: black
 black:
 	black .
