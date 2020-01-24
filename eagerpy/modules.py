@@ -1,4 +1,5 @@
 from importlib import import_module
+import inspect
 from types import ModuleType
 import functools
 from . import astensor
@@ -34,6 +35,8 @@ class ModuleWrapper(ModuleType):
         attr = getattr(import_module(self.__name__), name)
         if callable(attr):
             attr = wrap(attr)
+        elif inspect.ismodule(attr):
+            attr = ModuleWrapper(attr.__name__)
         return attr
 
 
