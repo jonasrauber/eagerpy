@@ -31,6 +31,7 @@ jobs:
       run: |
         flake8 . --count --show-source --statistics
     - name: black
+      run: |
         black --check --verbose .
     - name: Install package
       run: |
