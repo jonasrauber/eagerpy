@@ -50,7 +50,11 @@ jobs:
     - name: Test with pytest (TensorFlow)
       run: |
         pytest --cov-report term-missing --cov=eagerpy --cov-append --verbose tests/test_main.py --backend tensorflow
-    - uses: codecov/codecov-action@v1
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Codecov
+      uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        fail_ci_if_error: true
