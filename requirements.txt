@@ -6,3 +6,4 @@ jaxlib>=0.1.37
 jax>=0.1.57
 tensorflow>=2.0.0
 coverage>=5.0.3
+coveralls>=1.10.0
