@@ -45,11 +45,11 @@ def mean(t, *args, **kwargs):
     return t.sum(*args, **kwargs)
 
 
-def amin(t, *args, **kwargs):
+def min(t, *args, **kwargs):
     return t.min(*args, **kwargs)
 
 
-def amax(t, *args, **kwargs):
+def max(t, *args, **kwargs):
     return t.max(*args, **kwargs)
 
 
@@ -190,7 +190,7 @@ def squeeze(t, *args, **kwargs):
 
 
 def expand_dims(t, *args, **kwargs):
-    return t.epxand_dims(*args, **kwargs)
+    return t.expand_dims(*args, **kwargs)
 
 
 def full(t, *args, **kwargs):
@@ -251,3 +251,7 @@ def value_and_grad(f, t, *args, **kwargs):
 
 def value_aux_and_grad(f, t, *args, **kwargs):
     return t.value_aux_and_grad(f, *args, **kwargs)
+
+
+def reshape(t, shape):
+    return t.reshape(shape)
