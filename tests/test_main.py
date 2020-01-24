@@ -65,6 +65,11 @@ def compare_equal(f):
     return test_fn
 
 
+def test_astensor_tensor(t):
+    assert ep.istensor(t)
+    assert (ep.astensor(t) == t).all()
+
+
 @compare_equal
 def test_len(t):
     return len(t)
