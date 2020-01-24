@@ -50,6 +50,7 @@ jobs:
     - name: Test with pytest (TensorFlow)
       run: |
         pytest --cov-report term-missing --cov=eagerpy --cov-append --verbose tests/test_main.py --backend tensorflow
-    - name: list files
-      run: |
-        ls -lah
+    - uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: true
