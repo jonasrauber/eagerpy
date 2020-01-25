@@ -10,12 +10,12 @@ norms = {0: l0, 1: l1, 2: l2, ep.inf: linf}
 
 @pytest.fixture
 def x1d():
-    return ep.torch.arange(10).float32() / 7.0
+    return ep.numpy.arange(10).float32() / 7.0
 
 
 @pytest.fixture
 def x2d():
-    return ep.torch.arange(12).float32().reshape((3, 4)) / 7.0
+    return ep.numpy.arange(12).float32().reshape((3, 4)) / 7.0
 
 
 @pytest.mark.parametrize("p", [0, 1, 2, ep.inf])
