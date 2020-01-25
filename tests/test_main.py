@@ -70,6 +70,30 @@ def test_astensor_tensor(t):
     assert (ep.astensor(t) == t).all()
 
 
+def test_module():
+    assert ep.istensor(ep.numpy.tanh([3, 5]))
+    assert not ep.istensor(ep.numpy.tanh(3))
+
+
+def test_module_dir():
+    assert "zeros" in dir(ep.numpy)
+
+
+def test_repr(t):
+    assert not repr(t).startswith("<")
+
+
+def test_format(dummy):
+    t = ep.arange(dummy, 5).sum()
+    return f"{t:.1f}" == "10.0"
+
+
+@compare_equal
+def test_item(t):
+    t = t.sum()
+    return t.item()
+
+
 @compare_equal
 def test_len(t):
     return len(t)
@@ -146,23 +170,43 @@ def test_rmul_scalar(t):
 
 
 @compare_allclose
-def test_div(t1, t2):
+def test_truediv(t1, t2):
     return t1 / t2
 
 
 @compare_allclose(rtol=1e-6)
-def test_div_scalar(t):
+def test_truediv_scalar(t):
     return t / 3
 
 
 @compare_allclose
-def test_rdiv_scalar(t):
+def test_rtruediv_scalar(t):
     return 3 / (abs(t) + 1e-8)
+
+
+@compare_allclose
+def test_floordiv(t1, t2):
+    return t1 // t2
+
+
+@compare_allclose(rtol=1e-6)
+def test_floordiv_scalar(t):
+    return t // 3
+
+
+@compare_allclose
+def test_rfloordiv_scalar(t):
+    return 3 // (abs(t) + 1e-8)
 
 
 @compare_all
 def test_getitem(t):
     return t[2]
+
+
+def test_getitem_tuple(dummy):
+    t = ep.arange(dummy, 8).float32().reshape((2, 4))
+    return t[1, 3]
 
 
 @compare_all
@@ -387,8 +431,26 @@ def test_logical_and(t):
 
 
 @compare_all
+def test_logical_and_scalar(t):
+    return ep.logical_and(True, t < 3)
+
+
+def test_logical_and_manual(t):
+    assert (ep.logical_and(t < 3, ep.ones_like(t).bool()) == (t < 3)).all()
+
+
+@compare_all
 def test_logical_or(t):
     return ep.logical_or(t > 3, t < 1)
+
+
+@compare_all
+def test_logical_or_scalar(t):
+    return ep.logical_or(True, t < 1)
+
+
+def test_logical_or_manual(t):
+    assert (ep.logical_or(t < 3, ep.zeros_like(t).bool()) == (t < 3)).all()
 
 
 @compare_all
@@ -438,6 +500,14 @@ def test_ones_like(t):
 @compare_all
 def test_full_like(t):
     return ep.full_like(t, 5)
+
+
+@pytest.mark.parametrize("value", [1, -1, 2])
+@compare_all
+def test_onehot_like(dummy, value):
+    t = ep.arange(dummy, 18).float32().reshape((6, 3))
+    indices = ep.arange(t, 6) // 2
+    return ep.onehot_like(t, indices, value=value)
 
 
 @compare_all
@@ -496,8 +566,14 @@ def test_argsort(t):
 
 
 @compare_all
-def test_transpose(t):
+def test_transpose(dummy):
+    t = ep.arange(dummy, 8).float32().reshape((2, 4))
     return ep.transpose(t)
+
+
+def test_transpose_1d(dummy):
+    t = ep.arange(dummy, 8).float32()
+    assert (ep.transpose(t) == t).all()
 
 
 @compare_all
@@ -578,7 +654,7 @@ def test_expand_dims(t, axis):
     return ep.expand_dims(t, axis)
 
 
-@pytest.mark.parametrize("axis", [0, 1, (0, 1)])
+@pytest.mark.parametrize("axis", [None, 0, 1, (0, 1)])
 @compare_all
 def test_squeeze(t, axis):
     t = t.expand_dims(axis=0).expand_dims(axis=1)

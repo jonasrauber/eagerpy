@@ -167,8 +167,6 @@ def tile(t, multiples):
 
 
 def matmul(x, y):
-    if not istensor(x):
-        return y.matmul(x)
     return x.matmul(y)
 
 
