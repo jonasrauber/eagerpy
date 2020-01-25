@@ -396,8 +396,18 @@ def test_logical_and(t):
 
 
 @compare_all
+def test_logical_and_scalar(t):
+    return ep.logical_and(True, t < 3)
+
+
+@compare_all
 def test_logical_or(t):
     return ep.logical_or(t > 3, t < 1)
+
+
+@compare_all
+def test_logical_or_scalar(t):
+    return ep.logical_or(True, t < 1)
 
 
 @compare_all
@@ -537,6 +547,12 @@ def test_tile(t):
 def test_matmul(dummy):
     t = ep.arange(dummy, 8).float32().reshape((2, 4))
     return ep.matmul(t, t.T)
+
+
+@compare_all
+def test_matmul_scalar(dummy):
+    t = ep.arange(dummy, 8).float32().reshape((2, 4))
+    return ep.matmul(5.0, t)
 
 
 @compare_allclose(rtol=1e-6)
