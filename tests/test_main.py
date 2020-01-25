@@ -436,7 +436,7 @@ def test_logical_and_scalar(t):
 
 
 def test_logical_and_manual(t):
-    assert (ep.logical_and(t < 3, ep.ones_like(t).bool()) == t).all()
+    assert (ep.logical_and(t < 3, ep.ones_like(t).bool()) == (t < 3)).all()
 
 
 @compare_all
@@ -450,7 +450,7 @@ def test_logical_or_scalar(t):
 
 
 def test_logical_or_manual(t):
-    assert (ep.logical_or(t < 3, ep.zeros_like(t).bool()) == t).all()
+    assert (ep.logical_or(t < 3, ep.zeros_like(t).bool()) == (t < 3)).all()
 
 
 @compare_all
