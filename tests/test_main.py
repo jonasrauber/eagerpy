@@ -449,6 +449,14 @@ def test_full_like(t):
     return ep.full_like(t, 5)
 
 
+@pytest.mark.parametrize("value", [1, -1, 2])
+@compare_all
+def test_onehot_like(dummy, value):
+    t = ep.arange(dummy, 18).float32().reshape((6, 3))
+    indices = ep.arange(6) // 2
+    return ep.onehot_like(t, indices, value=value)
+
+
 @compare_all
 def test_zeros_scalar(t):
     return ep.zeros(t, 5)
