@@ -339,6 +339,16 @@ def test_rfloordiv_scalar(t):
 
 
 @compare_all
+def test_mod(t1, t2):
+    return t1 % (abs(t2) + 1)
+
+
+@compare_all
+def test_mod_scalar(t):
+    return t % 3
+
+
+@compare_all
 def test_getitem(t):
     return t[2]
 
@@ -347,6 +357,14 @@ def test_getitem(t):
 def test_getitem_tuple(dummy):
     t = ep.arange(dummy, 8).float32().reshape((2, 4))
     return t[1, 3]
+
+
+@compare_all
+def test_getitem_tuple_tensors(dummy):
+    t = ep.arange(dummy, 32).float32().reshape((8, 4))
+    rows = ep.arange(t, len(t))
+    indices = ep.arange(t, len(t)) % t.shape[1]
+    return t[rows, indices]
 
 
 @compare_all

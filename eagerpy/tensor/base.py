@@ -127,6 +127,11 @@ class AbstractTensor(AbstractBaseTensor, ABC):
 
     @unwrapin
     @wrapout
+    def __mod__(self, other):
+        return self.tensor.__mod__(other)
+
+    @unwrapin
+    @wrapout
     def __lt__(self, other):
         return self.tensor.__lt__(other)
 
