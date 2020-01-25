@@ -29,16 +29,6 @@ def test_repr(t):
     assert not repr(t).startswith("<")
 
 
-def test_format(dummy):
-    t = ep.arange(dummy, 5).sum()
-    return f"{t:.1f}" == "10.0"
-
-
-def test_getitem_tuple(dummy):
-    t = ep.arange(dummy, 8).float32().reshape((2, 4))
-    return t[1, 3]
-
-
 def test_logical_or_manual(t):
     assert (ep.logical_or(t < 3, ep.zeros_like(t).bool()) == (t < 3)).all()
 
@@ -147,20 +137,13 @@ def test_value_and_grad_multiple_args(dummy):
     assert (g == t).all()
 
 
-def test_index_update_row(dummy):
-    x = ep.ones(dummy, (3, 4))
-    return ep.index_update(x, ep.index[1], ep.ones(x, 4) * 66.0)
+def test_logical_and_manual(t):
+    assert (ep.logical_and(t < 3, ep.ones_like(t).bool()) == (t < 3)).all()
 
 
-def test_index_update_column(dummy):
-    x = ep.ones(dummy, (3, 4))
-    return ep.index_update(x, ep.index[:, 1], ep.ones(x, 3) * 66.0)
-
-
-def test_index_update_indices(dummy):
-    x = ep.ones(dummy, (3, 4))
-    ind = ep.from_numpy(dummy, np.array([0, 1, 2, 1]))
-    return ep.index_update(x, ep.index[ind, ep.arange(x, 4)], ep.ones(x, 4) * 33.0)
+def test_transpose_1d(dummy):
+    t = ep.arange(dummy, 8).float32()
+    assert (ep.transpose(t) == t).all()
 
 
 ###############################################################################
@@ -229,6 +212,12 @@ def compare_equal(f):
         assert t == n
 
     return test_fn
+
+
+@compare_equal
+def test_format(dummy):
+    t = ep.arange(dummy, 5).sum()
+    return f"{t:.1f}" == "10.0"
 
 
 @compare_equal
@@ -345,6 +334,12 @@ def test_rfloordiv_scalar(t):
 @compare_all
 def test_getitem(t):
     return t[2]
+
+
+@compare_all
+def test_getitem_tuple(dummy):
+    t = ep.arange(dummy, 8).float32().reshape((2, 4))
+    return t[1, 3]
 
 
 @compare_all
@@ -573,10 +568,6 @@ def test_logical_and_scalar(t):
     return ep.logical_and(True, t < 3)
 
 
-def test_logical_and_manual(t):
-    assert (ep.logical_and(t < 3, ep.ones_like(t).bool()) == (t < 3)).all()
-
-
 @compare_all
 def test_logical_or(t):
     return ep.logical_or(t > 3, t < 1)
@@ -699,11 +690,6 @@ def test_argsort(t):
 def test_transpose(dummy):
     t = ep.arange(dummy, 8).float32().reshape((2, 4))
     return ep.transpose(t)
-
-
-def test_transpose_1d(dummy):
-    t = ep.arange(dummy, 8).float32()
-    assert (ep.transpose(t) == t).all()
 
 
 @compare_all
@@ -831,3 +817,22 @@ def test_meshgrid_a(dummy, indexing, i):
 def test_pad(dummy, mode, value):
     t = ep.arange(dummy, 120).reshape((2, 3, 4, 5)).float32()
     return ep.pad(t, ((0, 0), (0, 0), (2, 3), (1, 2)), mode=mode, value=value)
+
+
+@compare_all
+def test_index_update_row(dummy):
+    x = ep.ones(dummy, (3, 4))
+    return ep.index_update(x, ep.index[1], ep.ones(x, 4) * 66.0)
+
+
+@compare_all
+def test_index_update_column(dummy):
+    x = ep.ones(dummy, (3, 4))
+    return ep.index_update(x, ep.index[:, 1], ep.ones(x, 3) * 66.0)
+
+
+@compare_all
+def test_index_update_indices(dummy):
+    x = ep.ones(dummy, (3, 4))
+    ind = ep.from_numpy(dummy, np.array([0, 1, 2, 1]))
+    return ep.index_update(x, ep.index[ind, ep.arange(x, 4)], ep.ones(x, 4) * 33.0)
