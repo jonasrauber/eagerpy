@@ -4,6 +4,172 @@ import numpy as np
 import eagerpy as ep
 
 
+###############################################################################
+# normal tests
+# - no decorator
+# - assertions
+###############################################################################
+
+
+def test_astensor_tensor(t):
+    assert ep.istensor(t)
+    assert (ep.astensor(t) == t).all()
+
+
+def test_module():
+    assert ep.istensor(ep.numpy.tanh([3, 5]))
+    assert not ep.istensor(ep.numpy.tanh(3))
+
+
+def test_module_dir():
+    assert "zeros" in dir(ep.numpy)
+
+
+def test_repr(t):
+    assert not repr(t).startswith("<")
+
+
+def test_format(dummy):
+    t = ep.arange(dummy, 5).sum()
+    return f"{t:.1f}" == "10.0"
+
+
+def test_getitem_tuple(dummy):
+    t = ep.arange(dummy, 8).float32().reshape((2, 4))
+    return t[1, 3]
+
+
+def test_logical_or_manual(t):
+    assert (ep.logical_or(t < 3, ep.zeros_like(t).bool()) == (t < 3)).all()
+
+
+def test_logical_not_manual(t):
+    assert (ep.logical_not(t > 3) == (t <= 3)).all()
+
+
+def test_softmax_manual(t):
+    s = ep.softmax(t)
+    assert (s >= 0).all()
+    assert (s <= 1).all()
+    np.testing.assert_allclose(s.sum().numpy(), 1.0, rtol=1e-6)
+
+
+def test_log_softmax_manual(t):
+    np.testing.assert_allclose(
+        ep.log_softmax(t).exp().numpy(), ep.softmax(t).numpy(), rtol=1e-6
+    )
+
+
+def test_value_and_grad_fn(dummy):
+    if isinstance(dummy, ep.NumPyTensor):
+        pytest.skip()
+
+    def f(x):
+        return x.square().sum()
+
+    vgf = ep.value_and_grad_fn(dummy, f)
+    t = ep.arange(dummy, 8).float32().reshape((2, 4))
+    v, g = vgf(t)
+    assert v.item() == 140
+    assert (g == 2 * t).all()
+
+
+def test_value_and_grad_fn_with_aux(dummy):
+    if isinstance(dummy, ep.NumPyTensor):
+        pytest.skip()
+
+    def f(x):
+        x = x.square()
+        return x.sum(), x
+
+    vgf = ep.value_and_grad_fn(dummy, f, has_aux=True)
+    t = ep.arange(dummy, 8).float32().reshape((2, 4))
+    v, aux, g = vgf(t)
+    assert v.item() == 140
+    assert (aux == t.square()).all()
+    assert (g == 2 * t).all()
+
+
+def test_value_and_grad(dummy):
+    if isinstance(dummy, ep.NumPyTensor):
+        pytest.skip()
+
+    def f(x):
+        return x.square().sum()
+
+    t = ep.arange(dummy, 8).float32().reshape((2, 4))
+    v, g = ep.value_and_grad(f, t)
+    assert v.item() == 140
+    assert (g == 2 * t).all()
+
+
+def test_value_aux_and_grad(dummy):
+    if isinstance(dummy, ep.NumPyTensor):
+        pytest.skip()
+
+    def f(x):
+        x = x.square()
+        return x.sum(), x
+
+    t = ep.arange(dummy, 8).float32().reshape((2, 4))
+    v, aux, g = ep.value_aux_and_grad(f, t)
+    assert v.item() == 140
+    assert (aux == t.square()).all()
+    assert (g == 2 * t).all()
+
+
+def test_value_aux_and_grad_multiple_aux(dummy):
+    if isinstance(dummy, ep.NumPyTensor):
+        pytest.skip()
+
+    def f(x):
+        x = x.square()
+        return x.sum(), (x, x + 1)
+
+    t = ep.arange(dummy, 8).float32().reshape((2, 4))
+    v, (aux0, aux1), g = ep.value_aux_and_grad(f, t)
+    assert v.item() == 140
+    assert (aux0 == t.square()).all()
+    assert (aux1 == t.square() + 1).all()
+    assert (g == 2 * t).all()
+
+
+def test_value_and_grad_multiple_args(dummy):
+    if isinstance(dummy, ep.NumPyTensor):
+        pytest.skip()
+
+    def f(x, y):
+        return (x * y).sum()
+
+    t = ep.arange(dummy, 8).float32().reshape((2, 4))
+    v, g = ep.value_and_grad(f, t, t)
+    assert v.item() == 140
+    assert (g == t).all()
+
+
+def test_index_update_row(dummy):
+    x = ep.ones(dummy, (3, 4))
+    return ep.index_update(x, ep.index[1], ep.ones(x, 4) * 66.0)
+
+
+def test_index_update_column(dummy):
+    x = ep.ones(dummy, (3, 4))
+    return ep.index_update(x, ep.index[:, 1], ep.ones(x, 3) * 66.0)
+
+
+def test_index_update_indices(dummy):
+    x = ep.ones(dummy, (3, 4))
+    ind = ep.from_numpy(dummy, np.array([0, 1, 2, 1]))
+    return ep.index_update(x, ep.index[ind, ep.arange(x, 4)], ep.ones(x, 4) * 33.0)
+
+
+###############################################################################
+# special tests
+# - decorated with compare_*
+# - return values
+###############################################################################
+
+
 def get_numpy_kwargs(kwargs):
     return {
         k: ep.astensor(t.numpy()) if ep.istensor(t) else t for k, t in kwargs.items()
@@ -63,29 +229,6 @@ def compare_equal(f):
         assert t == n
 
     return test_fn
-
-
-def test_astensor_tensor(t):
-    assert ep.istensor(t)
-    assert (ep.astensor(t) == t).all()
-
-
-def test_module():
-    assert ep.istensor(ep.numpy.tanh([3, 5]))
-    assert not ep.istensor(ep.numpy.tanh(3))
-
-
-def test_module_dir():
-    assert "zeros" in dir(ep.numpy)
-
-
-def test_repr(t):
-    assert not repr(t).startswith("<")
-
-
-def test_format(dummy):
-    t = ep.arange(dummy, 5).sum()
-    return f"{t:.1f}" == "10.0"
 
 
 @compare_equal
@@ -202,11 +345,6 @@ def test_rfloordiv_scalar(t):
 @compare_all
 def test_getitem(t):
     return t[2]
-
-
-def test_getitem_tuple(dummy):
-    t = ep.arange(dummy, 8).float32().reshape((2, 4))
-    return t[1, 3]
 
 
 @compare_all
@@ -449,17 +587,9 @@ def test_logical_or_scalar(t):
     return ep.logical_or(True, t < 1)
 
 
-def test_logical_or_manual(t):
-    assert (ep.logical_or(t < 3, ep.zeros_like(t).bool()) == (t < 3)).all()
-
-
 @compare_all
 def test_logical_not(t):
     return ep.logical_not(t > 3)
-
-
-def test_logical_not_manual(t):
-    assert (ep.logical_not(t > 3) == (t <= 3)).all()
 
 
 @compare_all
@@ -603,22 +733,9 @@ def test_softmax(t):
     return ep.softmax(t)
 
 
-def test_softmax_manual(t):
-    s = ep.softmax(t)
-    assert (s >= 0).all()
-    assert (s <= 1).all()
-    np.testing.assert_allclose(s.sum().numpy(), 1.0, rtol=1e-6)
-
-
 @compare_allclose(rtol=1e-5)
 def test_log_softmax(t):
     return ep.log_softmax(t)
-
-
-def test_log_softmax_manual(t):
-    np.testing.assert_allclose(
-        ep.log_softmax(t).exp().numpy(), ep.softmax(t).numpy(), rtol=1e-6
-    )
 
 
 @compare_allclose
@@ -714,106 +831,3 @@ def test_meshgrid_a(dummy, indexing, i):
 def test_pad(dummy, mode, value):
     t = ep.arange(dummy, 120).reshape((2, 3, 4, 5)).float32()
     return ep.pad(t, ((0, 0), (0, 0), (2, 3), (1, 2)), mode=mode, value=value)
-
-
-def test_value_and_grad_fn(dummy):
-    if isinstance(dummy, ep.NumPyTensor):
-        pytest.skip()
-
-    def f(x):
-        return x.square().sum()
-
-    vgf = ep.value_and_grad_fn(dummy, f)
-    t = ep.arange(dummy, 8).float32().reshape((2, 4))
-    v, g = vgf(t)
-    assert v.item() == 140
-    assert (g == 2 * t).all()
-
-
-def test_value_and_grad_fn_with_aux(dummy):
-    if isinstance(dummy, ep.NumPyTensor):
-        pytest.skip()
-
-    def f(x):
-        x = x.square()
-        return x.sum(), x
-
-    vgf = ep.value_and_grad_fn(dummy, f, has_aux=True)
-    t = ep.arange(dummy, 8).float32().reshape((2, 4))
-    v, aux, g = vgf(t)
-    assert v.item() == 140
-    assert (aux == t.square()).all()
-    assert (g == 2 * t).all()
-
-
-def test_value_and_grad(dummy):
-    if isinstance(dummy, ep.NumPyTensor):
-        pytest.skip()
-
-    def f(x):
-        return x.square().sum()
-
-    t = ep.arange(dummy, 8).float32().reshape((2, 4))
-    v, g = ep.value_and_grad(f, t)
-    assert v.item() == 140
-    assert (g == 2 * t).all()
-
-
-def test_value_aux_and_grad(dummy):
-    if isinstance(dummy, ep.NumPyTensor):
-        pytest.skip()
-
-    def f(x):
-        x = x.square()
-        return x.sum(), x
-
-    t = ep.arange(dummy, 8).float32().reshape((2, 4))
-    v, aux, g = ep.value_aux_and_grad(f, t)
-    assert v.item() == 140
-    assert (aux == t.square()).all()
-    assert (g == 2 * t).all()
-
-
-def test_value_aux_and_grad_multiple_aux(dummy):
-    if isinstance(dummy, ep.NumPyTensor):
-        pytest.skip()
-
-    def f(x):
-        x = x.square()
-        return x.sum(), (x, x + 1)
-
-    t = ep.arange(dummy, 8).float32().reshape((2, 4))
-    v, (aux0, aux1), g = ep.value_aux_and_grad(f, t)
-    assert v.item() == 140
-    assert (aux0 == t.square()).all()
-    assert (aux1 == t.square() + 1).all()
-    assert (g == 2 * t).all()
-
-
-def test_value_and_grad_multiple_args(dummy):
-    if isinstance(dummy, ep.NumPyTensor):
-        pytest.skip()
-
-    def f(x, y):
-        return (x * y).sum()
-
-    t = ep.arange(dummy, 8).float32().reshape((2, 4))
-    v, g = ep.value_and_grad(f, t, t)
-    assert v.item() == 140
-    assert (g == t).all()
-
-
-def test_index_update_row(dummy):
-    x = ep.ones(dummy, (3, 4))
-    return ep.index_update(x, ep.index[1], ep.ones(x, 4) * 66.0)
-
-
-def test_index_update_column(dummy):
-    x = ep.ones(dummy, (3, 4))
-    return ep.index_update(x, ep.index[:, 1], ep.ones(x, 3) * 66.0)
-
-
-def test_index_update_indices(dummy):
-    x = ep.ones(dummy, (3, 4))
-    ind = ep.from_numpy(dummy, np.array([0, 1, 2, 1]))
-    return ep.index_update(x, ep.index[ind, ep.arange(x, 4)], ep.ones(x, 4) * 33.0)
