@@ -164,23 +164,43 @@ def test_rmul_scalar(t):
 
 
 @compare_allclose
-def test_div(t1, t2):
+def test_truediv(t1, t2):
     return t1 / t2
 
 
 @compare_allclose(rtol=1e-6)
-def test_div_scalar(t):
+def test_truediv_scalar(t):
     return t / 3
 
 
 @compare_allclose
-def test_rdiv_scalar(t):
+def test_rtruediv_scalar(t):
     return 3 / (abs(t) + 1e-8)
+
+
+@compare_allclose
+def test_floordiv(t1, t2):
+    return t1 // t2
+
+
+@compare_allclose(rtol=1e-6)
+def test_floordiv_scalar(t):
+    return t // 3
+
+
+@compare_allclose
+def test_rfloordiv_scalar(t):
+    return 3 // (abs(t) + 1e-8)
 
 
 @compare_all
 def test_getitem(t):
     return t[2]
+
+
+def test_getitem_tuple(dummy):
+    t = ep.arange(dummy, 8).float32().reshape((2, 4))
+    return t[1, 3]
 
 
 @compare_all
