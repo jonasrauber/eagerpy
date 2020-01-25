@@ -24,7 +24,7 @@ def test_1d(x1d, p):
     assert_allclose(norms[p](x1d).numpy(), norm(x1d.numpy(), ord=p))
 
 
-@pytest.mark.parametrize("p", [0, 1, 2, ep.inf])
+@pytest.mark.parametrize("p", [0, 1, 2, 3, 4, ep.inf])
 @pytest.mark.parametrize("axis", [0, 1, -1])
 @pytest.mark.parametrize("keepdims", [False, True])
 def test_2d(x2d, p, axis, keepdims):
@@ -32,7 +32,8 @@ def test_2d(x2d, p, axis, keepdims):
         lp(x2d, p, axis=axis, keepdims=keepdims).numpy(),
         norm(x2d.numpy(), ord=p, axis=axis, keepdims=keepdims),
     )
-    assert_allclose(
-        norms[p](x2d, axis=axis, keepdims=keepdims).numpy(),
-        norm(x2d.numpy(), ord=p, axis=axis, keepdims=keepdims),
-    )
+    if p in norms:
+        assert_allclose(
+            norms[p](x2d, axis=axis, keepdims=keepdims).numpy(),
+            norm(x2d.numpy(), ord=p, axis=axis, keepdims=keepdims),
+        )
