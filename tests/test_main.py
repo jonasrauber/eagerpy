@@ -4,6 +4,13 @@ import numpy as np
 import eagerpy as ep
 
 
+# make sure there are no undecorated tests in the "special tests" section below
+# -> /\n\ndef test_
+# make sure the undecorated tests in the "normal tests" section all contain
+# assertions and do not return something
+# -> /\n    return
+
+
 ###############################################################################
 # normal tests
 # - no decorator
