@@ -79,6 +79,15 @@ def test_module_dir():
     assert "zeros" in dir(ep.numpy)
 
 
+def test_repr(t):
+    assert not repr(t).startswith("<")
+
+
+def test_format(dummy):
+    t = ep.arange(dummy, 5).sum()
+    return f"{t:.1f}" == "10.0"
+
+
 @compare_equal
 def test_len(t):
     return len(t)
