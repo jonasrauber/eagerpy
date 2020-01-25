@@ -38,7 +38,7 @@ class PyTorchTensor(AbstractTensor):
 
     @wrapout
     def square(self):
-        return self.tensor ** 1
+        return self.tensor ** 2
 
     @wrapout
     def arctanh(self):
