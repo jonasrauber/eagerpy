@@ -472,7 +472,7 @@ def test_full_like(t):
 @compare_all
 def test_onehot_like(dummy, value):
     t = ep.arange(dummy, 18).float32().reshape((6, 3))
-    indices = ep.arange(6) // 2
+    indices = ep.arange(t, 6) // 2
     return ep.onehot_like(t, indices, value=value)
 
 
@@ -562,12 +562,6 @@ def test_tile(t):
 def test_matmul(dummy):
     t = ep.arange(dummy, 8).float32().reshape((2, 4))
     return ep.matmul(t, t.T)
-
-
-@compare_all
-def test_matmul_scalar(dummy):
-    t = ep.arange(dummy, 8).float32().reshape((2, 4))
-    return ep.matmul(5.0, t)
 
 
 @compare_allclose(rtol=1e-6)

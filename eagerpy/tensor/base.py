@@ -117,6 +117,16 @@ class AbstractTensor(AbstractBaseTensor, ABC):
 
     @unwrapin
     @wrapout
+    def __floordiv__(self, other):
+        return self.tensor.__floordiv__(other)
+
+    @unwrapin
+    @wrapout
+    def __rfloordiv__(self, other):
+        return self.tensor.__rfloordiv__(other)
+
+    @unwrapin
+    @wrapout
     def __lt__(self, other):
         return self.tensor.__lt__(other)
 
