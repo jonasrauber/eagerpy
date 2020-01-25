@@ -532,8 +532,14 @@ def test_argsort(t):
 
 
 @compare_all
-def test_transpose(t):
+def test_transpose(dummy):
+    t = ep.arange(dummy, 8).float32().reshape((2, 4))
     return ep.transpose(t)
+
+
+def test_transpose_1d(dummy):
+    t = ep.arange(dummy, 8).float32()
+    assert (ep.transpose(t) == t).all()
 
 
 @compare_all

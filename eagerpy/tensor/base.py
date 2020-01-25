@@ -185,8 +185,6 @@ class AbstractTensor(AbstractBaseTensor, ABC):
 
     @property
     def T(self):
-        if self.ndim < 2:
-            return self
         return self.transpose()
 
     def value_and_grad(self, f, *args, **kwargs):
