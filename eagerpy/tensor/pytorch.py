@@ -340,7 +340,7 @@ class PyTorchTensor(AbstractTensor):
         elif indexing == "xy":
             outputs = self.backend.meshgrid(tensors[0], self.tensor, *tensors[1:])
         else:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 f"Valid values for indexing are 'xy' and 'ij', got {indexing}"
             )
         outputs = list(self.__class__(out) for out in outputs)
@@ -357,10 +357,10 @@ class PyTorchTensor(AbstractTensor):
         if mode == "reflect":
             # PyTorch's pad has limited support for 'reflect' padding
             if self.ndim != 3 and self.ndim != 4:
-                raise NotImplementedError
+                raise NotImplementedError  # pragma: no cover
             k = self.ndim - 2
             if paddings[:k] != ((0, 0),) * k:
-                raise NotImplementedError
+                raise NotImplementedError  # pragma: no cover
             paddings = paddings[k:]
         paddings = tuple(x for p in reversed(paddings) for x in p)
         return self.backend.nn.functional.pad(

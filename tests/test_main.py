@@ -34,6 +34,9 @@ def test_module_dir():
 
 def test_repr(t):
     assert not repr(t).startswith("<")
+    t = ep.zeros(t, (10, 10))
+    assert not repr(t).startswith("<")
+    assert len(repr(t).split("\n")) > 1
 
 
 def test_logical_or_manual(t):

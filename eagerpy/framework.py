@@ -42,7 +42,7 @@ def sum(t, *args, **kwargs):
 
 
 def mean(t, *args, **kwargs):
-    return t.sum(*args, **kwargs)
+    return t.mean(*args, **kwargs)
 
 
 def min(t, *args, **kwargs):

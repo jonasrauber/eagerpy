@@ -296,7 +296,7 @@ class TensorFlowTensor(AbstractTensor):
                 )
                 return self.backend.transpose(result)
             else:
-                raise NotImplementedError
+                raise NotImplementedError  # pragma: no cover
         elif isinstance(indices, tuple):
             if all(
                 idx.dtype in [self.backend.int32, self.backend.int64] for idx in indices
@@ -311,7 +311,7 @@ class TensorFlowTensor(AbstractTensor):
                 x, self.backend.stack(indices, axis=-1), values
             )
         else:
-            raise ValueError
+            raise ValueError  # pragma: no cover
 
     @samedevice
     @wrapout
@@ -348,10 +348,10 @@ class TensorFlowTensor(AbstractTensor):
         if mode == "reflect":
             # PyTorch's pad has limited support for 'reflect' padding
             if self.ndim != 3 and self.ndim != 4:
-                raise NotImplementedError
+                raise NotImplementedError  # pragma: no cover
             k = self.ndim - 2
             if paddings[:k] != ((0, 0),) * k:
-                raise NotImplementedError
+                raise NotImplementedError  # pragma: no cover
         return self.backend.pad(self.tensor, paddings, mode=mode, constant_values=value)
 
     @wrapout

@@ -265,10 +265,10 @@ class NumPyTensor(AbstractTensor):
         if mode == "reflect":
             # PyTorch's pad has limited support for 'reflect' padding
             if self.ndim != 3 and self.ndim != 4:
-                raise NotImplementedError
+                raise NotImplementedError  # pragma: no cover
             k = self.ndim - 2
             if paddings[:k] != ((0, 0),) * k:
-                raise NotImplementedError
+                raise NotImplementedError  # pragma: no cover
         if mode == "constant":
             return self.backend.pad(
                 self.tensor, paddings, mode=mode, constant_values=value
@@ -303,4 +303,4 @@ class NumPyTensor(AbstractTensor):
 
     def _value_and_grad_fn(self, f, has_aux=False):
         # TODO: maybe implement this using https://github.com/HIPS/autograd
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover

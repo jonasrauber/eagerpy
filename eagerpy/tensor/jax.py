@@ -31,6 +31,15 @@ class JAXTensor(AbstractTensor):
         self.jax = jax
         self.backend = jax.numpy
 
+    @classmethod
+    def _get_subkey(cls):
+        import jax.random as random
+
+        if cls.key is None:
+            cls.key = random.PRNGKey(0)
+        cls.key, subkey = random.split(cls.key)
+        return subkey
+
     def numpy(self):
         return onp.asarray(self.tensor)
 
@@ -106,11 +115,7 @@ class JAXTensor(AbstractTensor):
         if not isinstance(shape, Iterable):
             shape = (shape,)
 
-        cls = self.__class__
-        if cls.key is None:
-            cls.key = random.PRNGKey(0)
-
-        cls.key, subkey = random.split(cls.key)
+        subkey = self._get_subkey()
         return random.uniform(subkey, shape, minval=low, maxval=high)
 
     @wrapout
@@ -120,11 +125,7 @@ class JAXTensor(AbstractTensor):
         if not isinstance(shape, Iterable):
             shape = (shape,)
 
-        cls = self.__class__
-        if cls.key is None:
-            cls.key = random.PRNGKey(0)
-
-        cls.key, subkey = random.split(cls.key)
+        subkey = self._get_subkey()
         return random.normal(subkey, shape) * stddev + mean
 
     @wrapout
@@ -292,10 +293,10 @@ class JAXTensor(AbstractTensor):
         if mode == "reflect":
             # PyTorch's pad has limited support for 'reflect' padding
             if self.ndim != 3 and self.ndim != 4:
-                raise NotImplementedError
+                raise NotImplementedError  # pragma: no cover
             k = self.ndim - 2
             if paddings[:k] != ((0, 0),) * k:
-                raise NotImplementedError
+                raise NotImplementedError  # pragma: no cover
         if mode == "constant":
             return self.backend.pad(
                 self.tensor, paddings, mode=mode, constant_values=value
