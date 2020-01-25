@@ -70,6 +70,15 @@ def test_astensor_tensor(t):
     assert (ep.astensor(t) == t).all()
 
 
+def test_module():
+    assert ep.istensor(ep.numpy.tanh([3, 5]))
+    assert not ep.istensor(ep.numpy.tanh(3))
+
+
+def test_module_dir():
+    assert "zeros" in dir(ep.numpy)
+
+
 @compare_equal
 def test_len(t):
     return len(t)
