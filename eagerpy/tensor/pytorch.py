@@ -126,11 +126,7 @@ class PyTorchTensor(AbstractTensor):
 
     @wrapout
     def uniform(self, shape, low=0.0, high=1.0):
-        return (
-            self.backend.rand(shape, dtype=self.tensor.dtype, device=self.tensor.device)
-            * (high - low)
-            + low
-        )
+        return (self.backend.rand(shape, dtype=self.tensor.dtype, device=self.tensor.device) * (high - low) + low)
 
     @wrapout
     def normal(self, shape, mean=0.0, stddev=1.0):
