@@ -89,6 +89,12 @@ def test_format(dummy):
 
 
 @compare_equal
+def test_item(t):
+    t = t.sum()
+    return t.item()
+
+
+@compare_equal
 def test_len(t):
     return len(t)
 
@@ -429,6 +435,10 @@ def test_logical_and_scalar(t):
     return ep.logical_and(True, t < 3)
 
 
+def test_logical_and_manual(t):
+    assert (ep.logical_and(t < 3, ep.ones_like(t).bool()) == t).all()
+
+
 @compare_all
 def test_logical_or(t):
     return ep.logical_or(t > 3, t < 1)
@@ -437,6 +447,10 @@ def test_logical_or(t):
 @compare_all
 def test_logical_or_scalar(t):
     return ep.logical_or(True, t < 1)
+
+
+def test_logical_or_manual(t):
+    assert (ep.logical_or(t < 3, ep.zeros_like(t).bool()) == t).all()
 
 
 @compare_all
@@ -640,7 +654,7 @@ def test_expand_dims(t, axis):
     return ep.expand_dims(t, axis)
 
 
-@pytest.mark.parametrize("axis", [0, 1, (0, 1)])
+@pytest.mark.parametrize("axis", [None, 0, 1, (0, 1)])
 @compare_all
 def test_squeeze(t, axis):
     t = t.expand_dims(axis=0).expand_dims(axis=1)
