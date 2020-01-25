@@ -154,7 +154,7 @@ class JAXTensor(AbstractTensor):
         assert indices.ndim == 1
         x = self.backend.arange(self.tensor.shape[1]).reshape(1, -1)
         indices = indices.reshape(-1, 1)
-        return x == indices
+        return (x == indices) * value
 
     @wrapout
     def from_numpy(self, a):
