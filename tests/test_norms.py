@@ -32,8 +32,9 @@ def test_2d(x2d, p, axis, keepdims):
         lp(x2d, p, axis=axis, keepdims=keepdims).numpy(),
         norm(x2d.numpy(), ord=p, axis=axis, keepdims=keepdims),
     )
-    if p in norms:
-        assert_allclose(
-            norms[p](x2d, axis=axis, keepdims=keepdims).numpy(),
-            norm(x2d.numpy(), ord=p, axis=axis, keepdims=keepdims),
-        )
+    if p not in norms:
+        return
+    assert_allclose(
+        norms[p](x2d, axis=axis, keepdims=keepdims).numpy(),
+        norm(x2d.numpy(), ord=p, axis=axis, keepdims=keepdims),
+    )
