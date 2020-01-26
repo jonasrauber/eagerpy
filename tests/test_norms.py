@@ -9,13 +9,13 @@ norms = {0: l0, 1: l1, 2: l2, ep.inf: linf}
 
 
 @pytest.fixture
-def x1d():
-    return ep.numpy.arange(10).float32() / 7.0
+def x1d(dummy):
+    return ep.arange(dummy, 10).float32() / 7.0
 
 
 @pytest.fixture
-def x2d():
-    return ep.numpy.arange(12).float32().reshape((3, 4)) / 7.0
+def x2d(dummy):
+    return ep.arange(dummy, 12).float32().reshape((3, 4)) / 7.0
 
 
 @pytest.mark.parametrize("p", [0, 1, 2, ep.inf])
@@ -31,10 +31,12 @@ def test_2d(x2d, p, axis, keepdims):
     assert_allclose(
         lp(x2d, p, axis=axis, keepdims=keepdims).numpy(),
         norm(x2d.numpy(), ord=p, axis=axis, keepdims=keepdims),
+        rtol=1e-6,
     )
     if p not in norms:
         return
     assert_allclose(
         norms[p](x2d, axis=axis, keepdims=keepdims).numpy(),
         norm(x2d.numpy(), ord=p, axis=axis, keepdims=keepdims),
+        rtol=1e-6,
     )

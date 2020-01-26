@@ -77,6 +77,8 @@ class TensorFlowTensor(AbstractTensor):
 
     @wrapout
     def sum(self, axis=None, keepdims=False):
+        if self.tensor.dtype == self.backend.bool:
+            return self.astype(self.backend.int64).sum(axis=axis, keepdims=keepdims)
         return self.backend.reduce_sum(self.tensor, axis=axis, keepdims=keepdims)
 
     @wrapout

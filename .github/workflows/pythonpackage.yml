@@ -43,19 +43,21 @@ jobs:
     - name: Install requirements.txt
       run: |
         pip install -r requirements.txt
-    - name: Test with pytest (NumPy)
+    - name: Test with pytest
       run: |
         pytest --cov-report term-missing --cov=eagerpy --verbose
-        pytest --cov-report term-missing --cov=eagerpy --cov-append --verbose tests/test_main.py --backend numpy
+    - name: Test with pytest (NumPy)
+      run: |
+        pytest --cov-report term-missing --cov=eagerpy --cov-append --verbose --backend numpy
     - name: Test with pytest (PyTorch)
       run: |
-        pytest --cov-report term-missing --cov=eagerpy --cov-append --verbose tests/test_main.py --backend pytorch
+        pytest --cov-report term-missing --cov=eagerpy --cov-append --verbose --backend pytorch
     - name: Test with pytest (JAX)
       run: |
-        pytest --cov-report term-missing --cov=eagerpy --cov-append --verbose tests/test_main.py --backend jax
+        pytest --cov-report term-missing --cov=eagerpy --cov-append --verbose --backend jax
     - name: Test with pytest (TensorFlow)
       run: |
-        pytest --cov-report term-missing --cov=eagerpy --cov-append --verbose tests/test_main.py --backend tensorflow
+        pytest --cov-report term-missing --cov=eagerpy --cov-append --verbose --backend tensorflow
     - name: Codecov
       env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
