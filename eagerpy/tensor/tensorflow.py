@@ -1,6 +1,7 @@
 from .base import AbstractTensor
 from .base import unwrapin
 from .base import wrapout
+from .base import istensor
 from .. import index
 
 import functools
@@ -20,12 +21,69 @@ def samedevice(f):
     return wrapper
 
 
+def common_dtype(f):
+    @functools.wraps(f)
+    def wrapper(self, *args, **kwargs):
+        dtypes = {self.dtype} | {arg.dtype for arg in args if istensor(arg)}
+        if len(dtypes) == 1:
+            # all dtypes are the same, nothing more to do
+            return f(self, *args, **kwargs)
+        numpy_dtypes = [np.dtype(dtype.name) for dtype in dtypes]
+        common = np.find_common_type(numpy_dtypes, [])
+        common = getattr(self.backend, common.name)
+        if self.dtype != common:
+            self = self.astype(common)
+        args = [
+            arg.astype(common) if istensor(arg) and arg.dtype != common else arg
+            for arg in args
+        ]
+        return f(self, *args, **kwargs)
+
+    return wrapper
+
+
 class TensorFlowTensor(AbstractTensor):
     def __init__(self, tensor):
         import tensorflow
 
         super().__init__(tensor)
         self.backend = tensorflow
+
+    @common_dtype
+    @unwrapin
+    @wrapout
+    def __lt__(self, other):
+        return self.tensor.__lt__(other)
+
+    @common_dtype
+    @unwrapin
+    @wrapout
+    def __le__(self, other):
+        return self.tensor.__le__(other)
+
+    @common_dtype
+    @unwrapin
+    @wrapout
+    def __eq__(self, other):
+        return self.tensor.__eq__(other)
+
+    @common_dtype
+    @unwrapin
+    @wrapout
+    def __ne__(self, other):
+        return self.tensor.__ne__(other)
+
+    @common_dtype
+    @unwrapin
+    @wrapout
+    def __gt__(self, other):
+        return self.tensor.__gt__(other)
+
+    @common_dtype
+    @unwrapin
+    @wrapout
+    def __ge__(self, other):
+        return self.tensor.__ge__(other)
 
     @unwrapin
     @wrapout

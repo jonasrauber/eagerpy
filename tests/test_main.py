@@ -864,3 +864,93 @@ def test_index_update_indices(dummy):
     x = ep.ones(dummy, (3, 4))
     ind = ep.from_numpy(dummy, np.array([0, 1, 2, 1]))
     return ep.index_update(x, ep.index[ind, ep.arange(x, 4)], ep.ones(x, 4) * 33.0)
+
+
+@compare_all
+def test_lt(t1, t2):
+    return t1 < t2
+
+
+@compare_all
+def test_le(t1, t2):
+    return t1 <= t2
+
+
+@compare_all
+def test_gt(t1, t2):
+    return t1 > t2
+
+
+@compare_all
+def test_ge(t1, t2):
+    return t1 >= t2
+
+
+@compare_all
+def test_eq(t1, t2):
+    return t1 == t2
+
+
+@compare_all
+def test_ne(t1, t2):
+    return t1 != t2
+
+
+@compare_all
+def test_float_int_lt(t1, t2int):
+    return t1 < t2int
+
+
+@compare_all
+def test_float_int_le(t1, t2int):
+    return t1 <= t2int
+
+
+@compare_all
+def test_float_int_gt(t1, t2int):
+    return t1 > t2int
+
+
+@compare_all
+def test_float_int_ge(t1, t2int):
+    return t1 >= t2int
+
+
+@compare_all
+def test_float_int_eq(t1, t2int):
+    return t1 == t2int
+
+
+@compare_all
+def test_float_int_ne(t1, t2int):
+    return t1 != t2int
+
+
+@compare_all
+def test_int_float_lt(t1int, t2):
+    return t1int < t2
+
+
+@compare_all
+def test_int_float_le(t1int, t2):
+    return t1int <= t2
+
+
+@compare_all
+def test_int_float_gt(t1int, t2):
+    return t1int > t2
+
+
+@compare_all
+def test_int_float_ge(t1int, t2):
+    return t1int >= t2
+
+
+@compare_all
+def test_int_float_eq(t1int, t2):
+    return t1int == t2
+
+
+@compare_all
+def test_int_float_ne(t1int, t2):
+    return t1int != t2

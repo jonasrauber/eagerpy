@@ -20,8 +20,18 @@ def t1(dummy):
 
 
 @pytest.fixture(scope="session")
+def t1int(dummy):
+    return ep.arange(dummy, 5)
+
+
+@pytest.fixture(scope="session")
 def t2(dummy):
     return ep.arange(dummy, 7, 17, 2).float32()
+
+
+@pytest.fixture(scope="session")
+def t2int(dummy):
+    return ep.arange(dummy, 7, 17, 2)
 
 
 @pytest.fixture(scope="session", params=["t1", "t2"])
