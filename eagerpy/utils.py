@@ -16,8 +16,8 @@ def get_dummy(framework):
         x = ep.torch.zeros(0)
         assert isinstance(x, ep.PyTorchTensor)
     elif framework == "pytorch-gpu":
-        x = ep.torch.zeros(0, device="cuda:0")
-        assert isinstance(x, ep.PyTorchTensor)
+        x = ep.torch.zeros(0, device="cuda:0")  # pragma: no cover
+        assert isinstance(x, ep.PyTorchTensor)  # pragma: no cover
     elif framework == "tensorflow":
         x = ep.tensorflow.zeros(0)
         assert isinstance(x, ep.TensorFlowTensor)
