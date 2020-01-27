@@ -183,13 +183,13 @@ class PyTorchTensor(AbstractTensor):
     @wrapout
     def _concatenate(self, tensors, axis=0):
         # concatenates only "tensors", but not "self"
-        tensors = [t.tensor if isinstance(t, self.__class__) else t for t in tensors]
+        tensors = [t.tensor if istensor(t) else t for t in tensors]
         return self.backend.cat(tensors, dim=axis)
 
     @wrapout
     def _stack(self, tensors, axis=0):
         # stacks only "tensors", but not "self"
-        tensors = [t.tensor if isinstance(t, self.__class__) else t for t in tensors]
+        tensors = [t.tensor if istensor(t) else t for t in tensors]
         return self.backend.stack(tensors, dim=axis)
 
     @wrapout
@@ -308,9 +308,7 @@ class PyTorchTensor(AbstractTensor):
     @wrapout
     def index_update(self, indices, values):
         if isinstance(indices, tuple):
-            indices = tuple(
-                t.tensor if isinstance(t, self.__class__) else t for t in indices
-            )
+            indices = tuple(t.tensor if istensor(t) else t for t in indices)
         x = self.tensor.clone()
         x[indices] = values
         return x

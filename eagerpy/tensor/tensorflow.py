@@ -89,9 +89,7 @@ class TensorFlowTensor(AbstractTensor):
     @wrapout
     def __getitem__(self, index):
         if isinstance(index, tuple):
-            index = tuple(
-                x.tensor if isinstance(x, self.__class__) else x for x in index
-            )
+            index = tuple(x.tensor if istensor(x) else x for x in index)
             tensors = any(
                 isinstance(x, self.backend.Tensor) or isinstance(x, np.ndarray)
                 for x in index
@@ -237,13 +235,13 @@ class TensorFlowTensor(AbstractTensor):
     @wrapout
     def _concatenate(self, tensors, axis=0):
         # concatenates only "tensors", but not "self"
-        tensors = [t.tensor if isinstance(t, self.__class__) else t for t in tensors]
+        tensors = [t.tensor if istensor(t) else t for t in tensors]
         return self.backend.concat(tensors, axis=axis)
 
     @wrapout
     def _stack(self, tensors, axis=0):
         # stacks only "tensors", but not "self"
-        tensors = [t.tensor if isinstance(t, self.__class__) else t for t in tensors]
+        tensors = [t.tensor if istensor(t) else t for t in tensors]
         return self.backend.stack(tensors, axis=axis)
 
     @wrapout
@@ -335,9 +333,7 @@ class TensorFlowTensor(AbstractTensor):
     @wrapout
     def index_update(self, indices, values):
         if isinstance(indices, tuple):
-            indices = tuple(
-                t.tensor if isinstance(t, self.__class__) else t for t in indices
-            )
+            indices = tuple(t.tensor if istensor(t) else t for t in indices)
 
         x = self.tensor
         if isinstance(indices, int):
