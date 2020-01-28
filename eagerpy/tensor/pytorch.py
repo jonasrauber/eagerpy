@@ -15,7 +15,7 @@ class PyTorchTensor(AbstractTensor):
         self.backend = torch
 
     def numpy(self):
-        return self.tensor.cpu().numpy()
+        return self.tensor.detach().cpu().numpy()
 
     def item(self):
         return self.tensor.item()
