@@ -1,10 +1,10 @@
-from .base import AbstractTensor
+from .base import AbstractBaseTensor
 from .base import unwrapin
 from .base import wrapout
 from .base import istensor
 
 
-class NumPyTensor(AbstractTensor):
+class NumPyTensor(AbstractBaseTensor):
     def __init__(self, tensor):
         import numpy
 

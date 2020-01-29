@@ -1,9 +1,20 @@
 from abc import ABC
 import functools
+from typing import TypeVar
+
+
+class AbstractTensor(ABC):
+    __array_ufunc__ = None
+
+    def __init__(self, tensor):
+        self.tensor = tensor
+
+
+Tensor = TypeVar("Tensor", bound=AbstractTensor)
 
 
 def istensor(x):
-    return isinstance(x, AbstractBaseTensor)
+    return isinstance(x, AbstractTensor)
 
 
 def wrapout(f):
@@ -24,14 +35,7 @@ def unwrapin(f):
     return wrapper
 
 
-class AbstractBaseTensor(ABC):
-    __array_ufunc__ = None
-
-    def __init__(self, tensor):
-        self.tensor = tensor
-
-
-class AbstractTensor(AbstractBaseTensor, ABC):
+class AbstractBaseTensor(AbstractTensor, ABC):
     def __repr__(self):
         lines = self.tensor.__repr__().split("\n")
         prefix = self.__class__.__name__ + "("

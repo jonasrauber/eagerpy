@@ -1,4 +1,4 @@
-from .base import AbstractTensor
+from .base import AbstractBaseTensor
 from .base import unwrapin
 from .base import wrapout
 from .base import istensor
@@ -42,7 +42,7 @@ def common_dtype(f):
     return wrapper
 
 
-class TensorFlowTensor(AbstractTensor):
+class TensorFlowTensor(AbstractBaseTensor):
     def __init__(self, tensor):
         import tensorflow
 

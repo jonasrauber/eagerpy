@@ -1,4 +1,4 @@
-from .base import AbstractTensor
+from .base import AbstractBaseTensor
 from .base import wrapout
 from .base import istensor
 from .base import unwrapin
@@ -7,7 +7,7 @@ import numpy as np
 from collections.abc import Iterable
 
 
-class PyTorchTensor(AbstractTensor):
+class PyTorchTensor(AbstractBaseTensor):
     def __init__(self, tensor):
         import torch
 

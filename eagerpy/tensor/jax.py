@@ -1,4 +1,4 @@
-from .base import AbstractTensor
+from .base import AbstractBaseTensor
 from .base import unwrapin
 from .base import wrapout
 from .base import istensor
@@ -7,7 +7,7 @@ from collections.abc import Iterable
 import numpy as onp
 
 
-class JAXTensor(AbstractTensor):
+class JAXTensor(AbstractBaseTensor):
     _registered = False
     key = None
 
