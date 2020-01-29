@@ -1,1 +1,2 @@
 include eagerpy/VERSION
+include eagerpy/py.typed
