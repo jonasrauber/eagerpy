@@ -1,20 +1,7 @@
-from abc import ABC
 import functools
-from typing import TypeVar
 
-
-class AbstractTensor(ABC):
-    __array_ufunc__ = None
-
-    def __init__(self, tensor):
-        self.tensor = tensor
-
-
-Tensor = TypeVar("Tensor", bound=AbstractTensor)
-
-
-def istensor(x):
-    return isinstance(x, AbstractTensor)
+from .tensor import AbstractTensor
+from .tensor import istensor
 
 
 def wrapout(f):
@@ -35,7 +22,10 @@ def unwrapin(f):
     return wrapper
 
 
-class AbstractBaseTensor(AbstractTensor, ABC):
+class AbstractBaseTensor(AbstractTensor):
+    def __init__(self, tensor):
+        self.tensor = tensor
+
     def __repr__(self):
         lines = self.tensor.__repr__().split("\n")
         prefix = self.__class__.__name__ + "("
@@ -59,9 +49,6 @@ class AbstractBaseTensor(AbstractTensor, ABC):
     @property
     def dtype(self):
         return self.tensor.dtype
-
-    def abs(self):
-        return self.__abs__()
 
     def __bool__(self):
         return self.tensor.__bool__()
@@ -166,9 +153,6 @@ class AbstractBaseTensor(AbstractTensor, ABC):
     def __pow__(self, exponent):
         return self.tensor.__pow__(exponent)
 
-    def pow(self, exponent):
-        return self.__pow__(exponent)
-
     @wrapout
     def sign(self):
         return self.backend.sign(self.tensor)
@@ -199,13 +183,3 @@ class AbstractBaseTensor(AbstractTensor, ABC):
     @property
     def ndim(self):
         return self.tensor.ndim
-
-    @property
-    def T(self):
-        return self.transpose()
-
-    def value_and_grad(self, f, *args, **kwargs):
-        return self._value_and_grad_fn(f)(self, *args, **kwargs)
-
-    def value_aux_and_grad(self, f, *args, **kwargs):
-        return self._value_and_grad_fn(f, has_aux=True)(self, *args, **kwargs)
