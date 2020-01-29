@@ -1,6 +1,8 @@
+import pytest
 import eagerpy as ep
 
 
-def test_kl_div_with_logits():
-    logits_p = logits_q = ep.numpy.arange(12).float32().reshape((3, 4))
-    assert (ep.kl_div_with_logits(logits_p, logits_q) == 0).all()
+@pytest.mark.parametrize("axis", [0, 1, -1])
+def test_kl_div_with_logits(dummy: ep.Tensor, axis) -> None:
+    logits_p = logits_q = ep.arange(dummy, 12).float32().reshape((3, 4))
+    assert (ep.kl_div_with_logits(logits_p, logits_q, axis=axis) == 0).all()

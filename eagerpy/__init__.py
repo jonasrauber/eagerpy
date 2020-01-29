@@ -4,15 +4,27 @@ from os.path import dirname as _dirname
 with open(_join(_dirname(__file__), "VERSION")) as _f:
     __version__ = _f.read().strip()
 
-from .utils import index  # noqa: F401
+
+class _Indexable:
+    __slots__ = ()
+
+    def __getitem__(self, index):
+        return index
+
+
+index = _Indexable()
+
 
 from .tensor import Tensor  # noqa: F401
+from .tensor import istensor  # noqa: F401
+
 from .tensor import PyTorchTensor  # noqa: F401
 from .tensor import TensorFlowTensor  # noqa: F401
 from .tensor import NumPyTensor  # noqa: F401
 from .tensor import JAXTensor  # noqa: F401
 
-from .tensor.base import istensor  # noqa: F401
+from . import utils  # noqa: F401
+
 from .astensor import astensor  # noqa: F401
 
 from .modules import torch  # noqa: F401

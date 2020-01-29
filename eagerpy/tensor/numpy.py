@@ -1,7 +1,8 @@
 from .base import AbstractBaseTensor
 from .base import unwrapin
 from .base import wrapout
-from .base import istensor
+
+from .tensor import istensor
 
 
 class NumPyTensor(AbstractBaseTensor):

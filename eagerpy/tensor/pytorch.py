@@ -1,7 +1,8 @@
 from .base import AbstractBaseTensor
 from .base import wrapout
-from .base import istensor
 from .base import unwrapin
+
+from .tensor import istensor
 
 import numpy as np
 from collections.abc import Iterable

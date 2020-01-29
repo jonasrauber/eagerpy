@@ -2,7 +2,8 @@ from importlib import import_module
 import inspect
 from types import ModuleType
 import functools
-from . import astensor
+
+from .astensor import astensor
 
 
 def wrap(f):

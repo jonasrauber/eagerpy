@@ -9,16 +9,6 @@ from . import NumPyTensor
 from . import modules
 
 
-class _Indexable:
-    __slots__ = ()
-
-    def __getitem__(self, index):
-        return index
-
-
-index = _Indexable()
-
-
 @overload
 def get_dummy(framework: Literal["pytorch"]) -> PyTorchTensor:
     ...
