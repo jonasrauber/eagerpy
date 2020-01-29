@@ -1,4 +1,12 @@
-import eagerpy as ep
+from typing import overload
+from typing_extensions import Literal
+
+from . import PyTorchTensor
+from . import TensorFlowTensor
+from . import JAXTensor
+from . import NumPyTensor
+
+from . import modules
 
 
 class _Indexable:
@@ -11,22 +19,42 @@ class _Indexable:
 index = _Indexable()
 
 
+@overload
+def get_dummy(framework: Literal["pytorch"]) -> PyTorchTensor:
+    ...
+
+
+@overload
+def get_dummy(framework: Literal["tensorflow"]) -> TensorFlowTensor:
+    ...
+
+
+@overload
+def get_dummy(framework: Literal["jax"]) -> JAXTensor:
+    ...
+
+
+@overload
+def get_dummy(framework: Literal["numpy"]) -> NumPyTensor:
+    ...
+
+
 def get_dummy(framework):
     if framework == "pytorch":
-        x = ep.torch.zeros(0)
-        assert isinstance(x, ep.PyTorchTensor)
+        x = modules.torch.zeros(0)
+        assert isinstance(x, PyTorchTensor)
     elif framework == "pytorch-gpu":
-        x = ep.torch.zeros(0, device="cuda:0")  # pragma: no cover
-        assert isinstance(x, ep.PyTorchTensor)  # pragma: no cover
+        x = modules.torch.zeros(0, device="cuda:0")  # pragma: no cover
+        assert isinstance(x, PyTorchTensor)  # pragma: no cover
     elif framework == "tensorflow":
-        x = ep.tensorflow.zeros(0)
-        assert isinstance(x, ep.TensorFlowTensor)
+        x = modules.tensorflow.zeros(0)
+        assert isinstance(x, TensorFlowTensor)
     elif framework == "jax":
-        x = ep.jax.numpy.zeros(0)
-        assert isinstance(x, ep.JAXTensor)
+        x = modules.jax.numpy.zeros(0)
+        assert isinstance(x, JAXTensor)
     elif framework == "numpy":
-        x = ep.numpy.zeros(0)
-        assert isinstance(x, ep.NumPyTensor)
+        x = modules.numpy.zeros(0)
+        assert isinstance(x, NumPyTensor)
     else:
         raise ValueError(f"unknown framework: {framework}")  # pragma: no cover
     return x.float32()
