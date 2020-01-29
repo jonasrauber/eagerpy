@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Callable, Tuple, Any, overload, SupportsAbs, Sized
+from typing import TypeVar, Callable, Tuple, Any, overload, SupportsAbs, Sized, Sequence
 from typing_extensions import Literal
 
 
@@ -45,7 +45,7 @@ class AbstractTensor(SupportsAbs, Sized, ABC):
         ...
 
     @abstractmethod
-    def __bool__(self: Tensor) -> Tensor:
+    def __bool__(self: Tensor) -> bool:
         ...
 
     @abstractmethod
@@ -162,15 +162,15 @@ class AbstractTensor(SupportsAbs, Sized, ABC):
 
     @property
     @abstractmethod
-    def ndim(self: Tensor) -> Tensor:
+    def ndim(self: Tensor) -> int:
         ...
 
     @abstractmethod
-    def numpy(self: Tensor) -> Tensor:
+    def numpy(self: Tensor):
         ...
 
     @abstractmethod
-    def item(self: Tensor) -> Tensor:
+    def item(self: Tensor):
         ...
 
     @property
@@ -271,11 +271,11 @@ class AbstractTensor(SupportsAbs, Sized, ABC):
         ...
 
     @abstractmethod
-    def _concatenate(self: Tensor, tensors, axis=0) -> Tensor:
+    def _concatenate(self: Tensor, tensors: Sequence[Tensor], axis=0) -> Tensor:
         ...
 
     @abstractmethod
-    def _stack(self: Tensor, tensors, axis=0) -> Tensor:
+    def _stack(self: Tensor, tensors: Sequence[Tensor], axis=0) -> Tensor:
         ...
 
     @abstractmethod
