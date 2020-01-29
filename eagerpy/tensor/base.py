@@ -173,12 +173,13 @@ class AbstractBaseTensor(AbstractTensor):
     def where(self, x, y):
         return self.backend.where(self.tensor, x, y)
 
-    @unwrapin
     @wrapout
     def matmul(self, other):
-        assert self.tensor.ndim == 2
-        assert other.ndim == 2
-        return self.backend.matmul(self.tensor, other)
+        if self.ndim != 2 or other.ndim != 2:
+            raise ValueError(
+                f"matmul requires both tensors to be 2D, got {self.ndim}D and {other.ndim}D"
+            )
+        return self.backend.matmul(self.tensor, other.tensor)
 
     @property
     def ndim(self):

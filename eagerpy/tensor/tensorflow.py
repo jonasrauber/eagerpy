@@ -44,6 +44,11 @@ def common_dtype(f):
     return wrapper
 
 
+def assert_bool(x):
+    if x.dtype != x.backend.bool:
+        raise ValueError(f"all only supports dtype bool, consider t.bool().all()")
+
+
 class TensorFlowTensor(AbstractBaseTensor):
     def __init__(self, tensor):
         import tensorflow
@@ -215,15 +220,17 @@ class TensorFlowTensor(AbstractBaseTensor):
         return self.backend.fill(self.tensor.shape, fill_value)
 
     @samedevice
-    @unwrapin
     @wrapout
     def onehot_like(self, indices, *, value=1):
-        assert self.tensor.ndim == 2
-        assert indices.ndim == 1
-        assert len(indices) == len(self.tensor)
+        if self.ndim != 2:
+            raise ValueError("onehot_like only supported for 2D tensors")
+        if indices.ndim != 1:
+            raise ValueError("onehot_like requires 1D indices")
+        if len(indices) != len(self.tensor):
+            raise ValueError("length of indices must match length of tensor")
         value = self.backend.cast(value, self.tensor.dtype)
         return self.backend.one_hot(
-            indices,
+            indices.tensor,
             depth=self.tensor.shape[-1],
             on_value=value,
             dtype=self.tensor.dtype,
@@ -257,29 +264,29 @@ class TensorFlowTensor(AbstractBaseTensor):
 
     @wrapout
     def all(self, axis=None, keepdims=False):
-        assert self.dtype == self.backend.bool
+        assert_bool(self)
         return self.backend.reduce_all(self.tensor, axis=axis, keepdims=keepdims)
 
     @wrapout
     def any(self, axis=None, keepdims=False):
-        assert self.dtype == self.backend.bool
+        assert_bool(self)
         return self.backend.reduce_any(self.tensor, axis=axis, keepdims=keepdims)
 
     @unwrapin
     @wrapout
     def logical_and(self, other):
-        assert self.dtype == self.backend.bool
+        assert_bool(self)
         return self.backend.logical_and(self.tensor, other)
 
     @unwrapin
     @wrapout
     def logical_or(self, other):
-        assert self.dtype == self.backend.bool
+        assert_bool(self)
         return self.backend.logical_or(self.tensor, other)
 
     @wrapout
     def logical_not(self):
-        assert self.dtype == self.backend.bool
+        assert_bool(self)
         return self.backend.logical_not(self.tensor)
 
     @wrapout
@@ -305,7 +312,8 @@ class TensorFlowTensor(AbstractBaseTensor):
     @unwrapin
     @wrapout
     def tile(self, multiples):
-        assert len(multiples) == self.ndim
+        if len(multiples) != self.ndim:
+            raise ValueError("multiples requires one entry for each dimension")
         return self.backend.tile(self.tensor, multiples)
 
     @wrapout
@@ -399,10 +407,13 @@ class TensorFlowTensor(AbstractBaseTensor):
 
     @wrapout
     def pad(self, paddings, mode="constant", value=0):
-        assert len(paddings) == self.ndim
+        if len(paddings) != self.ndim:
+            raise ValueError("pad requires a tuple for each dimension")
         for p in paddings:
-            assert len(p) == 2
-        assert mode == "constant" or mode == "reflect"
+            if len(p) != 2:
+                raise ValueError("pad requires a tuple for each dimension")
+        if not (mode == "constant" or mode == "reflect"):
+            raise ValueError("pad requires mode 'constant' or 'reflect'")
         if mode == "reflect":
             # PyTorch's pad has limited support for 'reflect' padding
             if self.ndim != 3 and self.ndim != 4:
@@ -424,8 +435,10 @@ class TensorFlowTensor(AbstractBaseTensor):
     @wrapout
     def crossentropy(self, labels):
         logits = self.tensor
-        assert logits.ndim == 2
-        assert logits.shape[:1] == labels.shape
+        if logits.ndim != 2:
+            raise ValueError("crossentropy only supported for 2D logits tensors")
+        if logits.shape[:1] != labels.shape:
+            raise ValueError("labels must be 1D and must match the length of logits")
         return self.backend.nn.sparse_softmax_cross_entropy_with_logits(labels, logits)
 
     def _value_and_grad_fn(self, f, has_aux=False):

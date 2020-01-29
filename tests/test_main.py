@@ -418,6 +418,11 @@ def test_sum_keepdims(t: Tensor):
 
 
 @compare_all
+def test_sum_none_keepdims(t: Tensor):
+    return ep.sum(t, axis=None, keepdims=True)
+
+
+@compare_all
 def test_mean(t: Tensor):
     return ep.mean(t)
 
@@ -430,6 +435,11 @@ def test_mean_axis(t: Tensor):
 @compare_all
 def test_mean_keepdims(t: Tensor):
     return ep.mean(t, axis=0, keepdims=True)
+
+
+@compare_all
+def test_mean_none_keepdims(t: Tensor):
+    return ep.mean(t, axis=None, keepdims=True)
 
 
 @compare_all
