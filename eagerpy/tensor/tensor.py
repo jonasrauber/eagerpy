@@ -1,387 +1,412 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar
+from typing import TypeVar, Callable, Tuple, Any, overload, SupportsAbs, Sized
+from typing_extensions import Literal
 
 
-class AbstractTensor(ABC):
+Tensor = TypeVar("Tensor", bound="AbstractTensor")
+
+
+class AbstractTensor(SupportsAbs, Sized, ABC):
     __array_ufunc__ = None
 
     @property
-    def T(self):
+    def T(self: Tensor) -> Tensor:
         return self.transpose()
 
-    def abs(self):
+    def abs(self: Tensor) -> Tensor:
         return self.__abs__()
 
-    def pow(self, exponent):
+    def pow(self: Tensor, exponent) -> Tensor:
         return self.__pow__(exponent)
 
-    def value_and_grad(self, f, *args, **kwargs):
-        return self._value_and_grad_fn(f)(self, *args, **kwargs)
+    def value_and_grad(self: Tensor, f, *args, **kwargs) -> Tuple[Tensor, Tensor]:
+        return self._value_and_grad_fn(f, has_aux=False)(self, *args, **kwargs)
 
-    def value_aux_and_grad(self, f, *args, **kwargs):
+    def value_aux_and_grad(
+        self: Tensor, f, *args, **kwargs
+    ) -> Tuple[Tensor, Any, Tensor]:
         return self._value_and_grad_fn(f, has_aux=True)(self, *args, **kwargs)
 
     @abstractmethod
-    def __repr__(self):
+    def __repr__(self: Tensor) -> str:
         ...
 
     @abstractmethod
-    def __format__(self, *args, **kwargs):
+    def __format__(self: Tensor, *args, **kwargs) -> str:
         ...
 
     @abstractmethod
-    def __getitem__(self, index):
-        ...
-
-    @property
-    @abstractmethod
-    def dtype(self):
-        ...
-
-    @abstractmethod
-    def __bool__(self):
-        ...
-
-    @abstractmethod
-    def __len__(self):
-        ...
-
-    @abstractmethod
-    def __abs__(self):
-        ...
-
-    @abstractmethod
-    def __neg__(self):
-        ...
-
-    @abstractmethod
-    def __add__(self, other):
-        ...
-
-    @abstractmethod
-    def __radd__(self, other):
-        ...
-
-    @abstractmethod
-    def __sub__(self, other):
-        ...
-
-    @abstractmethod
-    def __rsub__(self, other):
-        ...
-
-    @abstractmethod
-    def __mul__(self, other):
-        ...
-
-    @abstractmethod
-    def __rmul__(self, other):
-        ...
-
-    @abstractmethod
-    def __truediv__(self, other):
-        ...
-
-    @abstractmethod
-    def __rtruediv__(self, other):
-        ...
-
-    @abstractmethod
-    def __floordiv__(self, other):
-        ...
-
-    @abstractmethod
-    def __rfloordiv__(self, other):
-        ...
-
-    @abstractmethod
-    def __mod__(self, other):
-        ...
-
-    @abstractmethod
-    def __lt__(self, other):
-        ...
-
-    @abstractmethod
-    def __le__(self, other):
-        ...
-
-    @abstractmethod
-    def __eq__(self, other):
-        ...
-
-    @abstractmethod
-    def __ne__(self, other):
-        ...
-
-    @abstractmethod
-    def __gt__(self, other):
-        ...
-
-    @abstractmethod
-    def __ge__(self, other):
-        ...
-
-    @abstractmethod
-    def __pow__(self, exponent):
-        ...
-
-    @abstractmethod
-    def sign(self):
-        ...
-
-    @abstractmethod
-    def sqrt(self):
-        ...
-
-    @abstractmethod
-    def tanh(self):
-        ...
-
-    @abstractmethod
-    def float32(self):
-        ...
-
-    @abstractmethod
-    def where(self, x, y):
-        ...
-
-    @abstractmethod
-    def matmul(self, other):
+    def __getitem__(self: Tensor, index) -> Tensor:
         ...
 
     @property
     @abstractmethod
-    def ndim(self):
+    def dtype(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
-    def numpy(self):
+    def __bool__(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
-    def item(self):
+    def __len__(self: Tensor) -> int:
+        ...
+
+    @abstractmethod
+    def __abs__(self: Tensor) -> Tensor:
+        ...
+
+    @abstractmethod
+    def __neg__(self: Tensor) -> Tensor:
+        ...
+
+    @abstractmethod
+    def __add__(self: Tensor, other) -> Tensor:
+        ...
+
+    @abstractmethod
+    def __radd__(self: Tensor, other) -> Tensor:
+        ...
+
+    @abstractmethod
+    def __sub__(self: Tensor, other) -> Tensor:
+        ...
+
+    @abstractmethod
+    def __rsub__(self: Tensor, other) -> Tensor:
+        ...
+
+    @abstractmethod
+    def __mul__(self: Tensor, other) -> Tensor:
+        ...
+
+    @abstractmethod
+    def __rmul__(self: Tensor, other) -> Tensor:
+        ...
+
+    @abstractmethod
+    def __truediv__(self: Tensor, other) -> Tensor:
+        ...
+
+    @abstractmethod
+    def __rtruediv__(self: Tensor, other) -> Tensor:
+        ...
+
+    @abstractmethod
+    def __floordiv__(self: Tensor, other) -> Tensor:
+        ...
+
+    @abstractmethod
+    def __rfloordiv__(self: Tensor, other) -> Tensor:
+        ...
+
+    @abstractmethod
+    def __mod__(self: Tensor, other) -> Tensor:
+        ...
+
+    @abstractmethod
+    def __lt__(self: Tensor, other) -> Tensor:
+        ...
+
+    @abstractmethod
+    def __le__(self: Tensor, other) -> Tensor:
+        ...
+
+    @abstractmethod
+    def __eq__(self: Tensor, other) -> Tensor:  # type: ignore
+        # we ignore the type errors caused by wrong type annotations for object
+        # https://github.com/python/typeshed/issues/3685
+        ...
+
+    @abstractmethod
+    def __ne__(self: Tensor, other) -> Tensor:  # type: ignore
+        # we ignore the type errors caused by wrong type annotations for object
+        # https://github.com/python/typeshed/issues/3685
+        ...
+
+    @abstractmethod
+    def __gt__(self: Tensor, other) -> Tensor:
+        ...
+
+    @abstractmethod
+    def __ge__(self: Tensor, other) -> Tensor:
+        ...
+
+    @abstractmethod
+    def __pow__(self: Tensor, exponent) -> Tensor:
+        ...
+
+    @abstractmethod
+    def sign(self: Tensor) -> Tensor:
+        ...
+
+    @abstractmethod
+    def sqrt(self: Tensor) -> Tensor:
+        ...
+
+    @abstractmethod
+    def tanh(self: Tensor) -> Tensor:
+        ...
+
+    @abstractmethod
+    def float32(self: Tensor) -> Tensor:
+        ...
+
+    @abstractmethod
+    def where(self: Tensor, x, y) -> Tensor:
+        ...
+
+    @abstractmethod
+    def matmul(self: Tensor, other) -> Tensor:
         ...
 
     @property
     @abstractmethod
-    def shape(self):
+    def ndim(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
-    def reshape(self, shape):
+    def numpy(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
-    def astype(self, dtype):
+    def item(self: Tensor) -> Tensor:
+        ...
+
+    @property
+    @abstractmethod
+    def shape(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
-    def clip(self, min_, max_):
+    def reshape(self: Tensor, shape) -> Tensor:
         ...
 
     @abstractmethod
-    def square(self):
+    def astype(self: Tensor, dtype) -> Tensor:
         ...
 
     @abstractmethod
-    def arctanh(self):
+    def clip(self: Tensor, min_, max_) -> Tensor:
         ...
 
     @abstractmethod
-    def sum(self, axis=None, keepdims=False):
+    def square(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
-    def mean(self, axis=None, keepdims=False):
+    def arctanh(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
-    def min(self, axis=None, keepdims=False):
+    def sum(self: Tensor, axis=None, keepdims=False) -> Tensor:
         ...
 
     @abstractmethod
-    def max(self, axis=None, keepdims=False):
+    def mean(self: Tensor, axis=None, keepdims=False) -> Tensor:
         ...
 
     @abstractmethod
-    def minimum(self, other):
+    def min(self: Tensor, axis=None, keepdims=False) -> Tensor:
         ...
 
     @abstractmethod
-    def maximum(self, other):
+    def max(self: Tensor, axis=None, keepdims=False) -> Tensor:
         ...
 
     @abstractmethod
-    def argmin(self, axis=None):
+    def minimum(self: Tensor, other) -> Tensor:
         ...
 
     @abstractmethod
-    def argmax(self, axis=None):
+    def maximum(self: Tensor, other) -> Tensor:
         ...
 
     @abstractmethod
-    def argsort(self, axis=-1):
+    def argmin(self: Tensor, axis=None) -> Tensor:
         ...
 
     @abstractmethod
-    def uniform(self, shape, low=0.0, high=1.0):
+    def argmax(self: Tensor, axis=None) -> Tensor:
         ...
 
     @abstractmethod
-    def normal(self, shape, mean=0.0, stddev=1.0):
+    def argsort(self: Tensor, axis=-1) -> Tensor:
         ...
 
     @abstractmethod
-    def ones(self, shape):
+    def uniform(self: Tensor, shape, low=0.0, high=1.0) -> Tensor:
         ...
 
     @abstractmethod
-    def zeros(self, shape):
+    def normal(self: Tensor, shape, mean=0.0, stddev=1.0) -> Tensor:
         ...
 
     @abstractmethod
-    def ones_like(self):
+    def ones(self: Tensor, shape) -> Tensor:
         ...
 
     @abstractmethod
-    def zeros_like(self):
+    def zeros(self: Tensor, shape) -> Tensor:
         ...
 
     @abstractmethod
-    def full_like(self, fill_value):
+    def ones_like(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
-    def onehot_like(self, indices, *, value=1):
+    def zeros_like(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
-    def from_numpy(self, a):
+    def full_like(self: Tensor, fill_value) -> Tensor:
         ...
 
     @abstractmethod
-    def _concatenate(self, tensors, axis=0):
+    def onehot_like(self: Tensor, indices, *, value=1) -> Tensor:
         ...
 
     @abstractmethod
-    def _stack(self, tensors, axis=0):
+    def from_numpy(self: Tensor, a) -> Tensor:
         ...
 
     @abstractmethod
-    def transpose(self, axes=None):
+    def _concatenate(self: Tensor, tensors, axis=0) -> Tensor:
         ...
 
     @abstractmethod
-    def bool(self):
+    def _stack(self: Tensor, tensors, axis=0) -> Tensor:
         ...
 
     @abstractmethod
-    def all(self, axis=None, keepdims=False):
+    def transpose(self: Tensor, axes=None) -> Tensor:
         ...
 
     @abstractmethod
-    def any(self, axis=None, keepdims=False):
+    def bool(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
-    def logical_and(self, other):
+    def all(self: Tensor, axis=None, keepdims=False) -> Tensor:
         ...
 
     @abstractmethod
-    def logical_or(self, other):
+    def any(self: Tensor, axis=None, keepdims=False) -> Tensor:
         ...
 
     @abstractmethod
-    def logical_not(self):
+    def logical_and(self: Tensor, other) -> Tensor:
         ...
 
     @abstractmethod
-    def exp(self):
+    def logical_or(self: Tensor, other) -> Tensor:
         ...
 
     @abstractmethod
-    def log(self):
+    def logical_not(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
-    def log2(self):
+    def exp(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
-    def log10(self):
+    def log(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
-    def log1p(self):
+    def log2(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
-    def tile(self, multiples):
+    def log10(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
-    def softmax(self, axis=-1):
+    def log1p(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
-    def log_softmax(self, axis=-1):
+    def tile(self: Tensor, multiples) -> Tensor:
         ...
 
     @abstractmethod
-    def squeeze(self, axis=None):
+    def softmax(self: Tensor, axis=-1) -> Tensor:
         ...
 
     @abstractmethod
-    def expand_dims(self, axis=None):
+    def log_softmax(self: Tensor, axis=-1) -> Tensor:
         ...
 
     @abstractmethod
-    def full(self, shape, value):
+    def squeeze(self: Tensor, axis=None) -> Tensor:
         ...
 
     @abstractmethod
-    def index_update(self, indices, values):
+    def expand_dims(self: Tensor, axis=None) -> Tensor:
         ...
 
     @abstractmethod
-    def arange(self, *args, **kwargs):
+    def full(self: Tensor, shape, value) -> Tensor:
         ...
 
     @abstractmethod
-    def cumsum(self, axis=None):
+    def index_update(self: Tensor, indices, values) -> Tensor:
         ...
 
     @abstractmethod
-    def flip(self, axis=None):
+    def arange(self: Tensor, *args, **kwargs) -> Tensor:
         ...
 
     @abstractmethod
-    def meshgrid(self, *tensors, indexing="xy"):
+    def cumsum(self: Tensor, axis=None) -> Tensor:
         ...
 
     @abstractmethod
-    def pad(self, paddings, mode="constant", value=0):
+    def flip(self: Tensor, axis=None) -> Tensor:
         ...
 
     @abstractmethod
-    def isnan(self):
+    def meshgrid(self: Tensor, *tensors, indexing="xy") -> Tensor:
         ...
 
     @abstractmethod
-    def isinf(self):
+    def pad(self: Tensor, paddings, mode="constant", value=0) -> Tensor:
         ...
 
     @abstractmethod
-    def crossentropy(self, labels):
+    def isnan(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
+    def isinf(self: Tensor) -> Tensor:
+        ...
+
+    @abstractmethod
+    def crossentropy(self: Tensor, labels) -> Tensor:
+        ...
+
+    @overload
+    def _value_and_grad_fn(
+        self: Tensor, f: Callable
+    ) -> Callable[..., Tuple[Tensor, Tensor]]:
+        ...
+
+    @overload  # noqa: F811 (waiting for pyflakes > 2.1.1)
+    def _value_and_grad_fn(
+        self: Tensor, f: Callable, has_aux: Literal[False]
+    ) -> Callable[..., Tuple[Tensor, Tensor]]:
+        ...
+
+    @overload  # noqa: F811 (waiting for pyflakes > 2.1.1)
+    def _value_and_grad_fn(
+        self: Tensor, f: Callable, has_aux: Literal[True]
+    ) -> Callable[..., Tuple[Tensor, Any, Tensor]]:
+        ...
+
+    @abstractmethod  # noqa: F811 (waiting for pyflakes > 2.1.1)
     def _value_and_grad_fn(self, f, has_aux=False):
         ...
-
-
-Tensor = TypeVar("Tensor", bound=AbstractTensor)
 
 
 def istensor(x):
