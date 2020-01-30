@@ -1,19 +1,33 @@
 from .base import AbstractBaseTensor
-from .base import unwrapin
-from .base import wrapout
 from .base import unwrap_
 
 from .tensor import istensor
 
+# from .tensor import Tensor
+
+from typing import Tuple, cast, Union, Any, TypeVar
+from importlib import import_module
 from collections.abc import Iterable
 import numpy as onp
 
 
-def assert_bool(x):
+if False:
+    # for static analyzers
+    import jax
+    import jax.numpy as np
+else:
+    jax = None
+    np = None
+
+
+Tensor = TypeVar("Tensor", bound="JAXTensor")
+
+
+def assert_bool(x: Tensor) -> None:
     if not istensor(x):
         return
-    if x.dtype != x.backend.bool_:
-        raise ValueError(f"all only supports dtype bool, consider t.bool().all()")
+    if x.dtype != jax.numpy.bool_:
+        raise ValueError(f"requires dtype bool, consider t.bool().all()")
 
 
 class JAXTensor(AbstractBaseTensor):
@@ -34,271 +48,219 @@ class JAXTensor(AbstractBaseTensor):
             cls._registered = True
         return super().__new__(cls)
 
-    def __init__(self, tensor):
-        import jax
+    def __init__(self, raw: "np.ndarray"):
+        global jax
+        global np
+        if jax is None:
+            jax = import_module("jax")
+            np = import_module("jax.numpy")
+        super().__init__(raw)
 
-        super().__init__(tensor)
-        self.jax = jax
-        self.backend = jax.numpy
+    @property
+    def raw(self) -> "np.ndarray":
+        return super().raw
 
     @classmethod
     def _get_subkey(cls):
-        import jax.random as random
-
         if cls.key is None:
-            cls.key = random.PRNGKey(0)
-        cls.key, subkey = random.split(cls.key)
+            cls.key = jax.random.PRNGKey(0)
+        cls.key, subkey = jax.random.split(cls.key)
         return subkey
 
-    def numpy(self):
+    def numpy(self) -> Any:
         return onp.asarray(self.raw)
 
-    def item(self):
-        return self.raw.item()
+    def item(self) -> Union[int, float, bool]:
+        return self.raw.item()  # type: ignore
 
     @property
-    def shape(self):
-        return self.raw.shape
+    def shape(self) -> Tuple:
+        return cast(Tuple, self.raw.shape)
 
-    @wrapout
-    def reshape(self, shape):
-        return self.raw.reshape(shape)
+    def reshape(self: Tensor, shape) -> Tensor:
+        return type(self)(self.raw.reshape(shape))
 
-    @wrapout
-    def astype(self, dtype):
-        return self.raw.astype(dtype)
+    def astype(self: Tensor, dtype) -> Tensor:
+        return type(self)(self.raw.astype(dtype))
 
-    @wrapout
-    def clip(self, min_, max_):
-        return self.backend.clip(self.raw, min_, max_)
+    def clip(self: Tensor, min_, max_) -> Tensor:
+        return type(self)(np.clip(self.raw, min_, max_))
 
-    @wrapout
-    def square(self):
-        return self.backend.square(self.raw)
+    def square(self: Tensor) -> Tensor:
+        return type(self)(np.square(self.raw))
 
-    @wrapout
-    def arctanh(self):
-        return self.backend.arctanh(self.raw)
+    def arctanh(self: Tensor) -> Tensor:
+        return type(self)(np.arctanh(self.raw))
 
-    @wrapout
-    def sum(self, axis=None, keepdims=False):
-        return self.raw.sum(axis=axis, keepdims=keepdims)
+    def sum(self: Tensor, axis=None, keepdims=False) -> Tensor:
+        return type(self)(self.raw.sum(axis=axis, keepdims=keepdims))
 
-    @wrapout
-    def mean(self, axis=None, keepdims=False):
-        return self.raw.mean(axis=axis, keepdims=keepdims)
+    def mean(self: Tensor, axis=None, keepdims=False) -> Tensor:
+        return type(self)(self.raw.mean(axis=axis, keepdims=keepdims))
 
-    @wrapout
-    def min(self, axis=None, keepdims=False):
-        return self.raw.min(axis=axis, keepdims=keepdims)
+    def min(self: Tensor, axis=None, keepdims=False) -> Tensor:
+        return type(self)(self.raw.min(axis=axis, keepdims=keepdims))
 
-    @wrapout
-    def max(self, axis=None, keepdims=False):
-        return self.raw.max(axis=axis, keepdims=keepdims)
+    def max(self: Tensor, axis=None, keepdims=False) -> Tensor:
+        return type(self)(self.raw.max(axis=axis, keepdims=keepdims))
 
-    @unwrapin
-    @wrapout
-    def minimum(self, other):
-        return self.backend.minimum(self.raw, other)
+    def minimum(self: Tensor, other) -> Tensor:
+        return type(self)(np.minimum(self.raw, unwrap_(other)))
 
-    @unwrapin
-    @wrapout
-    def maximum(self, other):
-        return self.backend.maximum(self.raw, other)
+    def maximum(self: Tensor, other) -> Tensor:
+        return type(self)(np.maximum(self.raw, unwrap_(other)))
 
-    @wrapout
-    def argmin(self, axis=None):
-        return self.raw.argmin(axis=axis)
+    def argmin(self: Tensor, axis=None) -> Tensor:
+        return type(self)(self.raw.argmin(axis=axis))
 
-    @wrapout
-    def argmax(self, axis=None):
-        return self.raw.argmax(axis=axis)
+    def argmax(self: Tensor, axis=None) -> Tensor:
+        return type(self)(self.raw.argmax(axis=axis))
 
-    @wrapout
-    def argsort(self, axis=-1):
-        return self.raw.argsort(axis=axis)
+    def argsort(self: Tensor, axis=-1) -> Tensor:
+        return type(self)(self.raw.argsort(axis=axis))
 
-    @wrapout
-    def uniform(self, shape, low=0.0, high=1.0):
-        import jax.random as random
-
+    def uniform(self: Tensor, shape, low=0.0, high=1.0) -> Tensor:
         if not isinstance(shape, Iterable):
             shape = (shape,)
 
         subkey = self._get_subkey()
-        return random.uniform(subkey, shape, minval=low, maxval=high)
+        return type(self)(jax.random.uniform(subkey, shape, minval=low, maxval=high))
 
-    @wrapout
-    def normal(self, shape, mean=0.0, stddev=1.0):
-        import jax.random as random
-
+    def normal(self: Tensor, shape, mean=0.0, stddev=1.0) -> Tensor:
         if not isinstance(shape, Iterable):
             shape = (shape,)
 
         subkey = self._get_subkey()
-        return random.normal(subkey, shape) * stddev + mean
+        return type(self)(jax.random.normal(subkey, shape) * stddev + mean)
 
-    @wrapout
-    def ones(self, shape):
-        return self.backend.ones(shape, dtype=self.raw.dtype)
+    def ones(self: Tensor, shape) -> Tensor:
+        return type(self)(np.ones(shape, dtype=self.raw.dtype))
 
-    @wrapout
-    def zeros(self, shape):
-        return self.backend.zeros(shape, dtype=self.raw.dtype)
+    def zeros(self: Tensor, shape) -> Tensor:
+        return type(self)(np.zeros(shape, dtype=self.raw.dtype))
 
-    @wrapout
-    def ones_like(self):
-        return self.backend.ones_like(self.raw)
+    def ones_like(self: Tensor) -> Tensor:
+        return type(self)(np.ones_like(self.raw))
 
-    @wrapout
-    def zeros_like(self):
-        return self.backend.zeros_like(self.raw)
+    def zeros_like(self: Tensor) -> Tensor:
+        return type(self)(np.zeros_like(self.raw))
 
-    @wrapout
-    def full_like(self, fill_value):
-        return self.backend.full_like(self.raw, fill_value)
+    def full_like(self: Tensor, fill_value) -> Tensor:
+        return type(self)(np.full_like(self.raw, fill_value))
 
-    @unwrapin
-    @wrapout
-    def onehot_like(self, indices, *, value=1):
+    def onehot_like(self: Tensor, indices: Tensor, *, value=1) -> Tensor:
         if self.ndim != 2:
             raise ValueError("onehot_like only supported for 2D tensors")
         if indices.ndim != 1:
             raise ValueError("onehot_like requires 1D indices")
-        if len(indices) != len(self.raw):
+        if len(indices) != len(self):
             raise ValueError("length of indices must match length of tensor")
-        x = self.backend.arange(self.raw.shape[1]).reshape(1, -1)
-        indices = indices.reshape(-1, 1)
-        return (x == indices) * value
+        x = np.arange(self.raw.shape[1]).reshape(1, -1)
+        indices = indices.raw.reshape(-1, 1)
+        return type(self)((x == indices) * value)
 
-    @wrapout
-    def from_numpy(self, a):
-        return self.backend.asarray(a)
+    def from_numpy(self: Tensor, a) -> Tensor:
+        return type(self)(np.asarray(a))
 
-    @wrapout
-    def _concatenate(self, tensors, axis=0):
+    def _concatenate(self: Tensor, tensors, axis=0) -> Tensor:
         # concatenates only "tensors", but not "self"
         tensors = [t.raw if istensor(t) else t for t in tensors]
-        return self.backend.concatenate(tensors, axis=axis)
+        return type(self)(np.concatenate(tensors, axis=axis))
 
-    @wrapout
-    def _stack(self, tensors, axis=0):
+    def _stack(self: Tensor, tensors, axis=0) -> Tensor:
         # stacks only "tensors", but not "self"
         tensors = [t.raw if istensor(t) else t for t in tensors]
-        return self.backend.stack(tensors, axis=axis)
+        return type(self)(np.stack(tensors, axis=axis))
 
-    @wrapout
-    def transpose(self, axes=None):
+    def transpose(self: Tensor, axes=None) -> Tensor:
         if axes is None:
             axes = tuple(range(self.ndim - 1, -1, -1))
-        return self.backend.transpose(self.raw, axes=axes)
+        return type(self)(np.transpose(self.raw, axes=axes))
 
-    def bool(self):
-        return self.astype(self.backend.bool_)
+    def bool(self: Tensor) -> Tensor:
+        return self.astype(np.bool_)
 
-    @wrapout
-    def all(self, axis=None, keepdims=False):
+    def all(self: Tensor, axis=None, keepdims=False) -> Tensor:
         assert_bool(self)
-        return self.raw.all(axis=axis, keepdims=keepdims)
+        return type(self)(self.raw.all(axis=axis, keepdims=keepdims))
 
-    @wrapout
-    def any(self, axis=None, keepdims=False):
+    def any(self: Tensor, axis=None, keepdims=False) -> Tensor:
         assert_bool(self)
-        return self.raw.any(axis=axis, keepdims=keepdims)
+        return type(self)(self.raw.any(axis=axis, keepdims=keepdims))
 
-    @wrapout
-    def logical_and(self, other):
+    def logical_and(self: Tensor, other) -> Tensor:
         assert_bool(self)
         assert_bool(other)
-        return self.backend.logical_and(self.raw, unwrap_(other))
+        return type(self)(np.logical_and(self.raw, unwrap_(other)))
 
-    @wrapout
-    def logical_or(self, other):
+    def logical_or(self: Tensor, other) -> Tensor:
         assert_bool(self)
         assert_bool(other)
-        return self.backend.logical_or(self.raw, unwrap_(other))
+        return type(self)(np.logical_or(self.raw, unwrap_(other)))
 
-    @wrapout
-    def logical_not(self):
+    def logical_not(self: Tensor) -> Tensor:
         assert_bool(self)
-        return self.backend.logical_not(self.raw)
+        return type(self)(np.logical_not(self.raw))
 
-    @wrapout
-    def exp(self):
-        return self.backend.exp(self.raw)
+    def exp(self: Tensor) -> Tensor:
+        return type(self)(np.exp(self.raw))
 
-    @wrapout
-    def log(self):
-        return self.backend.log(self.raw)
+    def log(self: Tensor) -> Tensor:
+        return type(self)(np.log(self.raw))
 
-    @wrapout
-    def log2(self):
-        return self.backend.log2(self.raw)
+    def log2(self: Tensor) -> Tensor:
+        return type(self)(np.log2(self.raw))
 
-    @wrapout
-    def log10(self):
-        return self.backend.log10(self.raw)
+    def log10(self: Tensor) -> Tensor:
+        return type(self)(np.log10(self.raw))
 
-    @wrapout
-    def log1p(self):
-        return self.backend.log1p(self.raw)
+    def log1p(self: Tensor) -> Tensor:
+        return type(self)(np.log1p(self.raw))
 
-    @unwrapin
-    @wrapout
-    def tile(self, multiples):
+    def tile(self: Tensor, multiples) -> Tensor:
+        multiples = unwrap_(multiples)
         if len(multiples) != self.ndim:
             raise ValueError("multiples requires one entry for each dimension")
-        return self.backend.tile(self.raw, multiples)
+        return type(self)(np.tile(self.raw, multiples))
 
-    @wrapout
-    def softmax(self, axis=-1):
-        return self.jax.nn.softmax(self.raw, axis=axis)
+    def softmax(self: Tensor, axis=-1) -> Tensor:
+        return type(self)(jax.nn.softmax(self.raw, axis=axis))
 
-    @wrapout
-    def log_softmax(self, axis=-1):
-        return self.jax.nn.log_softmax(self.raw, axis=axis)
+    def log_softmax(self: Tensor, axis=-1) -> Tensor:
+        return type(self)(jax.nn.log_softmax(self.raw, axis=axis))
 
-    @wrapout
-    def squeeze(self, axis=None):
-        return self.raw.squeeze(axis=axis)
+    def squeeze(self: Tensor, axis=None) -> Tensor:
+        return type(self)(self.raw.squeeze(axis=axis))
 
-    @wrapout
-    def expand_dims(self, axis=None):
-        return self.backend.expand_dims(self.raw, axis=axis)
+    def expand_dims(self: Tensor, axis=None) -> Tensor:
+        return type(self)(np.expand_dims(self.raw, axis=axis))
 
-    @wrapout
-    def full(self, shape, value):
+    def full(self: Tensor, shape, value) -> Tensor:
         if not isinstance(shape, Iterable):
             shape = (shape,)
-        return self.backend.full(shape, value, dtype=self.raw.dtype)
+        return type(self)(np.full(shape, value, dtype=self.raw.dtype))
 
-    @unwrapin
-    @wrapout
-    def index_update(self, indices, values):
+    def index_update(self: Tensor, indices, values) -> Tensor:
+        indices, values = unwrap_(indices, values)
         if isinstance(indices, tuple):
-            indices = tuple(t.raw if istensor(t) else t for t in indices)
-        return self.jax.ops.index_update(self.raw, indices, values)
+            indices = unwrap_(indices)
+        return type(self)(jax.ops.index_update(self.raw, indices, values))
 
-    @wrapout
-    def arange(self, *args, **kwargs):
-        return self.backend.arange(*args, **kwargs)
+    def arange(self: Tensor, start, stop=None, step=None) -> Tensor:
+        return type(self)(np.arange(start, stop, step))
 
-    @wrapout
-    def cumsum(self, axis=None):
-        return self.raw.cumsum(axis=axis)
+    def cumsum(self: Tensor, axis=None) -> Tensor:
+        return type(self)(self.raw.cumsum(axis=axis))
 
-    @wrapout
-    def flip(self, axis=None):
-        return self.backend.flip(self.raw, axis=axis)
+    def flip(self: Tensor, axis=None) -> Tensor:
+        return type(self)(np.flip(self.raw, axis=axis))
 
-    @unwrapin
-    def meshgrid(self, *tensors, indexing="xy"):
-        outputs = self.backend.meshgrid(self.raw, *tensors, indexing=indexing)
-        outputs = tuple(self.__class__(out) for out in outputs)
-        return outputs
+    def meshgrid(self: Tensor, *tensors, indexing="xy") -> Tuple[Tensor, ...]:
+        tensors = unwrap_(tensors)
+        outputs = np.meshgrid(self.raw, *tensors, indexing=indexing)
+        return tuple(type(self)(out) for out in outputs)
 
-    @wrapout
-    def pad(self, paddings, mode="constant", value=0):
+    def pad(self: Tensor, paddings, mode="constant", value=0) -> Tensor:
         if len(paddings) != self.ndim:
             raise ValueError("pad requires a tuple for each dimension")
         for p in paddings:
@@ -314,40 +276,36 @@ class JAXTensor(AbstractBaseTensor):
             if paddings[:k] != ((0, 0),) * k:
                 raise NotImplementedError  # pragma: no cover
         if mode == "constant":
-            return self.backend.pad(
-                self.raw, paddings, mode=mode, constant_values=value
+            return type(self)(
+                np.pad(self.raw, paddings, mode=mode, constant_values=value)
             )
         else:
-            return self.backend.pad(self.raw, paddings, mode=mode)
+            return type(self)(np.pad(self.raw, paddings, mode=mode))
 
-    @wrapout
-    def isnan(self):
-        return self.backend.isnan(self.raw)
+    def isnan(self: Tensor) -> Tensor:
+        return type(self)(np.isnan(self.raw))
 
-    @wrapout
-    def isinf(self):
-        return self.backend.isinf(self.raw)
+    def isinf(self: Tensor) -> Tensor:
+        return type(self)(np.isinf(self.raw))
 
-    @unwrapin
-    @wrapout
-    def crossentropy(self, labels):
-        logits = self.raw
-        if logits.ndim != 2:
+    def crossentropy(self: Tensor, labels: Tensor) -> Tensor:
+        if self.ndim != 2:
             raise ValueError("crossentropy only supported for 2D logits tensors")
-        if logits.shape[:1] != labels.shape:
+        if self.shape[:1] != labels.shape:
             raise ValueError("labels must be 1D and must match the length of logits")
         # for numerical reasons we subtract the max logit
         # (mathematically it doesn't matter!)
         # otherwise exp(logits) might become too large or too small
+        logits = self.raw
         logits = logits - logits.max(axis=1, keepdims=True)
-        e = self.backend.exp(logits)
-        s = self.backend.sum(e, axis=1)
-        ces = self.backend.log(s) - self.backend.take_along_axis(
-            logits, labels[:, self.backend.newaxis], axis=1
+        e = np.exp(logits)
+        s = np.sum(e, axis=1)
+        ces = np.log(s) - np.take_along_axis(
+            logits, labels.raw[:, np.newaxis], axis=1
         ).squeeze(axis=1)
-        return ces
+        return type(self)(ces)
 
-    def _value_and_grad_fn(self, f, has_aux=False):
+    def _value_and_grad_fn(self: Tensor, f, has_aux=False) -> Any:
         # f takes and returns JAXTensor instances
         # jax.value_and_grad accepts functions that take JAXTensor instances
         # because we registered JAXTensor as JAX type, but it still requires
@@ -366,7 +324,7 @@ class JAXTensor(AbstractBaseTensor):
                 loss = f(*args, **kwargs)
                 return loss.raw
 
-        value_and_grad_jax = self.jax.value_and_grad(f_jax, has_aux=has_aux)
+        value_and_grad_jax = jax.value_and_grad(f_jax, has_aux=has_aux)
 
         # value_and_grad is like value_and_grad_jax but wraps loss
         if has_aux:
@@ -387,30 +345,50 @@ class JAXTensor(AbstractBaseTensor):
 
         return value_and_grad
 
-    @wrapout
-    def sign(self):
-        return self.backend.sign(self.raw)
+    def sign(self: Tensor) -> Tensor:
+        return type(self)(np.sign(self.raw))
 
-    @wrapout
-    def sqrt(self):
-        return self.backend.sqrt(self.raw)
+    def sqrt(self: Tensor) -> Tensor:
+        return type(self)(np.sqrt(self.raw))
 
-    @wrapout
-    def tanh(self):
-        return self.backend.tanh(self.raw)
+    def tanh(self: Tensor) -> Tensor:
+        return type(self)(np.tanh(self.raw))
 
-    def float32(self):
-        return self.astype(self.backend.float32)
+    def float32(self: Tensor) -> Tensor:
+        return self.astype(np.float32)
 
-    @unwrapin
-    @wrapout
-    def where(self, x, y):
-        return self.backend.where(self.raw, x, y)
+    def where(self: Tensor, x, y) -> Tensor:
+        x, y = unwrap_(x, y)
+        return type(self)(np.where(self.raw, x, y))
 
-    @wrapout
-    def matmul(self, other):
+    def matmul(self: Tensor, other) -> Tensor:
         if self.ndim != 2 or other.ndim != 2:
             raise ValueError(
                 f"matmul requires both tensors to be 2D, got {self.ndim}D and {other.ndim}D"
             )
-        return self.backend.matmul(self.raw, other.raw)
+        return type(self)(np.matmul(self.raw, other.raw))
+
+    def __lt__(self: Tensor, other) -> Tensor:
+        return type(self)(self.raw.__lt__(unwrap_(other)))
+
+    def __le__(self: Tensor, other) -> Tensor:
+        return type(self)(self.raw.__le__(unwrap_(other)))
+
+    def __eq__(self: Tensor, other) -> Tensor:  # type: ignore
+        return type(self)(self.raw.__eq__(unwrap_(other)))
+
+    def __ne__(self: Tensor, other) -> Tensor:  # type: ignore
+        return type(self)(self.raw.__ne__(unwrap_(other)))
+
+    def __gt__(self: Tensor, other) -> Tensor:
+        return type(self)(self.raw.__gt__(unwrap_(other)))
+
+    def __ge__(self: Tensor, other) -> Tensor:
+        return type(self)(self.raw.__ge__(unwrap_(other)))
+
+    def __getitem__(self: Tensor, index) -> Tensor:
+        if isinstance(index, tuple):
+            index = tuple(x.raw if istensor(x) else x for x in index)
+        elif istensor(index):
+            index = index.raw
+        return type(self)(self.raw[index])

@@ -1,4 +1,3 @@
-import functools
 from typing_extensions import final
 from typing import Any, cast
 
@@ -6,35 +5,12 @@ from .tensor import AbstractTensor
 from .tensor import istensor
 from .tensor import Tensor
 
-from typing import TypeVar, Callable
-
-FuncType = Callable[..., Any]
-F = TypeVar("F", bound=FuncType)
-
-
-def wrapout(f: F) -> F:
-    @functools.wraps(f)
-    def wrapper(self: Tensor, *args, **kwargs) -> Tensor:
-        out = f(self, *args, **kwargs)
-        return self.__class__(out)
-
-    return cast(F, wrapper)
-
-
-def unwrapin(f: F) -> F:
-    @functools.wraps(f)
-    def wrapper(self, *args, **kwargs) -> Any:
-        args = tuple(arg.raw if istensor(arg) else arg for arg in args)
-        return f(self, *args, **kwargs)
-
-    return cast(F, wrapper)
-
 
 def unwrap_(*args) -> Any:
     """Unwraps all EagerPy tensors if they are not already unwrapped"""
     always_tuple = False
     if len(args) == 1 and isinstance(args[0], tuple) or isinstance(args[0], list):
-        args, = args
+        (args,) = args
         always_tuple = True
     result = tuple(t.raw if istensor(t) else t for t in args)
     return result[0] if len(args) == 1 and not always_tuple else result
@@ -62,14 +38,6 @@ class AbstractBaseTensor(AbstractTensor):
     @final
     def __format__(self: Tensor, format_spec) -> str:
         return format(self.raw, format_spec)
-
-    @final
-    def __getitem__(self: Tensor, index) -> Tensor:
-        if isinstance(index, tuple):
-            index = tuple(x.raw if istensor(x) else x for x in index)
-        elif istensor(index):
-            index = index.raw
-        return type(self)(self.raw[index])
 
     @final
     @property
@@ -135,30 +103,6 @@ class AbstractBaseTensor(AbstractTensor):
     @final
     def __mod__(self: Tensor, other) -> Tensor:
         return type(self)(self.raw.__mod__(unwrap_(other)))
-
-    @final
-    def __lt__(self: Tensor, other) -> Tensor:
-        return type(self)(self.raw.__lt__(unwrap_(other)))
-
-    @final
-    def __le__(self: Tensor, other) -> Tensor:
-        return type(self)(self.raw.__le__(unwrap_(other)))
-
-    @final
-    def __eq__(self: Tensor, other) -> Tensor:  # type: ignore
-        return type(self)(self.raw.__eq__(unwrap_(other)))
-
-    @final
-    def __ne__(self: Tensor, other) -> Tensor:  # type: ignore
-        return type(self)(self.raw.__ne__(unwrap_(other)))
-
-    @final
-    def __gt__(self: Tensor, other) -> Tensor:
-        return type(self)(self.raw.__gt__(unwrap_(other)))
-
-    @final
-    def __ge__(self: Tensor, other) -> Tensor:
-        return type(self)(self.raw.__ge__(unwrap_(other)))
 
     @final
     def __pow__(self: Tensor, exponent) -> Tensor:

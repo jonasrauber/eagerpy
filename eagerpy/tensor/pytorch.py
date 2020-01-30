@@ -7,10 +7,8 @@ from .tensor import istensor
 
 import numpy as np
 from collections.abc import Iterable
-from typing import Tuple, cast, Union, TypeVar, Any
+from typing import Tuple, cast, Union, Any, TypeVar
 from importlib import import_module
-
-Tensor = TypeVar("Tensor", bound="PyTorchTensor")
 
 
 if False:
@@ -19,11 +17,14 @@ else:
     torch = None  # type: ignore
 
 
+Tensor = TypeVar("Tensor", bound="PyTorchTensor")
+
+
 def assert_bool(x: Tensor) -> None:
     if not istensor(x):
         return
     if x.dtype != torch.bool:
-        raise ValueError(f"all only supports dtype bool, consider t.bool().all()")
+        raise ValueError(f"requires dtype bool, consider t.bool().all()")
 
 
 class PyTorchTensor(AbstractBaseTensor):
@@ -47,7 +48,7 @@ class PyTorchTensor(AbstractBaseTensor):
         return self.raw.item()
 
     @property
-    def shape(self: Tensor) -> Tuple:
+    def shape(self) -> Tuple:
         return self.raw.shape
 
     def reshape(self: Tensor, shape) -> Tensor:
@@ -427,3 +428,28 @@ class PyTorchTensor(AbstractBaseTensor):
                 f"matmul requires both tensors to be 2D, got {self.ndim}D and {other.ndim}D"
             )
         return type(self)(torch.matmul(self.raw, other.raw))
+
+    def __lt__(self: Tensor, other) -> Tensor:
+        return type(self)(self.raw.__lt__(unwrap_(other)))
+
+    def __le__(self: Tensor, other) -> Tensor:
+        return type(self)(self.raw.__le__(unwrap_(other)))
+
+    def __eq__(self: Tensor, other) -> Tensor:  # type: ignore
+        return type(self)(self.raw.__eq__(unwrap_(other)))
+
+    def __ne__(self: Tensor, other) -> Tensor:  # type: ignore
+        return type(self)(self.raw.__ne__(unwrap_(other)))
+
+    def __gt__(self: Tensor, other) -> Tensor:
+        return type(self)(self.raw.__gt__(unwrap_(other)))
+
+    def __ge__(self: Tensor, other) -> Tensor:
+        return type(self)(self.raw.__ge__(unwrap_(other)))
+
+    def __getitem__(self: Tensor, index) -> Tensor:
+        if isinstance(index, tuple):
+            index = tuple(x.raw if istensor(x) else x for x in index)
+        elif istensor(index):
+            index = index.raw
+        return type(self)(self.raw[index])
