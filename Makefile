@@ -21,7 +21,7 @@ flake8:
 
 .PHONY: mypy
 mypy:
-	mypy -m eagerpy
+	mypy -p eagerpy
 
 .PHONY: install
 install:
@@ -43,3 +43,15 @@ commit:
 .PHONY: release
 release: build
 	twine upload dist/eagerpy-$(shell cat eagerpy/VERSION).tar.gz
+
+.PHONY: pyre
+pyre:
+	pyre --source-directory . check
+
+.PHONY: pytype
+pytype:
+	pytype .
+
+.PHONY: pyright
+pyright:
+	pyright .
