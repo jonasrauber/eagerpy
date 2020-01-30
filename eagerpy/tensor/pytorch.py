@@ -1,6 +1,7 @@
 from .base import AbstractBaseTensor
 from .base import wrapout
 from .base import unwrapin
+from .base import unwrap_
 
 from .tensor import istensor
 
@@ -9,6 +10,8 @@ from collections.abc import Iterable
 
 
 def assert_bool(x):
+    if not istensor(x):
+        return
     if x.dtype != x.backend.bool:
         raise ValueError(f"all only supports dtype bool, consider t.bool().all()")
 
@@ -245,17 +248,17 @@ class PyTorchTensor(AbstractBaseTensor):
             x = x.any(i, keepdim=keepdims)
         return x
 
-    @unwrapin
     @wrapout
     def logical_and(self, other):
         assert_bool(self)
-        return self.tensor & other
+        assert_bool(other)
+        return self.tensor & unwrap_(other)
 
-    @unwrapin
     @wrapout
     def logical_or(self, other):
         assert_bool(self)
-        return self.tensor | other
+        assert_bool(other)
+        return self.tensor | unwrap_(other)
 
     @wrapout
     def logical_not(self):

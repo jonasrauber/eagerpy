@@ -22,6 +22,12 @@ def unwrapin(f):
     return wrapper
 
 
+def unwrap_(*args):
+    """Unwraps all EagerPy tensors if they are not already unwrapped"""
+    result = tuple(t.tensor if istensor(t) else t for t in args)
+    return result[0] if len(args) == 1 else result
+
+
 class AbstractBaseTensor(AbstractTensor):
     def __init__(self, tensor):
         self.tensor = tensor

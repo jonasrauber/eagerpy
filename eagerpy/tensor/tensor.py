@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Callable, Tuple, Any, overload, SupportsAbs, Sized, Sequence
+from typing import TypeVar, Callable, Tuple, Any, overload, Sequence, cast
 from typing_extensions import Literal
 
 
 Tensor = TypeVar("Tensor", bound="AbstractTensor")
 
 
-class AbstractTensor(SupportsAbs, Sized, ABC):
+class AbstractTensor(ABC):
     __array_ufunc__ = None
 
     @property
@@ -14,7 +14,7 @@ class AbstractTensor(SupportsAbs, Sized, ABC):
         return self.transpose()
 
     def abs(self: Tensor) -> Tensor:
-        return self.__abs__()
+        return cast(Tensor, self.__abs__())
 
     def pow(self: Tensor, exponent) -> Tensor:
         return self.__pow__(exponent)
@@ -53,7 +53,7 @@ class AbstractTensor(SupportsAbs, Sized, ABC):
         ...
 
     @abstractmethod
-    def __abs__(self: Tensor) -> Tensor:
+    def __abs__(self):
         ...
 
     @abstractmethod

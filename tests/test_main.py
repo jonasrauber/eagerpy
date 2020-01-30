@@ -157,6 +157,83 @@ def test_transpose_1d(dummy: Tensor):
     assert (ep.transpose(t) == t).all()
 
 
+def test_onehot_like_raises(dummy: Tensor):
+    t = ep.arange(dummy, 18).float32().reshape((6, 3))
+    indices = ep.arange(t, 6) // 2
+    ep.onehot_like(t, indices)
+
+    t = ep.arange(dummy, 90).float32().reshape((6, 3, 5))
+    indices = ep.arange(t, 6) // 2
+    with pytest.raises(ValueError):
+        ep.onehot_like(t, indices)
+
+    t = ep.arange(dummy, 18).float32().reshape((6, 3))
+    indices = ep.arange(t, 6).reshape((6, 1)) // 2
+    with pytest.raises(ValueError):
+        ep.onehot_like(t, indices)
+
+    t = ep.arange(dummy, 18).float32().reshape((6, 3))
+    indices = ep.arange(t, 5) // 2
+    with pytest.raises(ValueError):
+        ep.onehot_like(t, indices)
+
+
+def test_tile_raises(t: Tensor):
+    ep.tile(t, (3,) * t.ndim)
+    with pytest.raises(ValueError):
+        ep.tile(t, (3,) * (t.ndim - 1))
+
+
+def test_pad_raises(dummy: Tensor):
+    t = ep.arange(dummy, 120).reshape((2, 3, 4, 5)).float32()
+    ep.pad(t, ((0, 0), (0, 0), (2, 3), (1, 2)), mode="constant")
+    with pytest.raises(ValueError):
+        ep.pad(t, ((0, 0), (2, 3), (1, 2)), mode="constant")
+    with pytest.raises(ValueError):
+        ep.pad(t, ((0, 0), (0, 0, 1, 2), (2, 3), (1, 2)), mode="constant")
+    with pytest.raises(ValueError):
+        ep.pad(t, ((0, 0), (0, 0), (2, 3), (1, 2)), mode="foo")
+
+
+@pytest.mark.parametrize("f", [ep.logical_and, ep.logical_or])
+def test_logical_and_nonboolean(t: Tensor, f):
+    t = t.float32()
+    f(t > 1, t > 1)
+    with pytest.raises(ValueError):
+        f(t, t > 1)
+    with pytest.raises(ValueError):
+        f(t > 1, t)
+    with pytest.raises(ValueError):
+        f(t, t)
+
+
+def test_crossentropy_raises(dummy: Tensor):
+    t = ep.arange(dummy, 50).reshape((10, 5)).float32()
+    t = t / t.max()
+    ep.crossentropy(t, t.argmax(axis=-1))
+
+    t = ep.arange(dummy, 150).reshape((10, 5, 3)).float32()
+    t = t / t.max()
+    with pytest.raises(ValueError):
+        ep.crossentropy(t, t.argmax(axis=-1))
+
+    t = ep.arange(dummy, 50).reshape((10, 5)).float32()
+    t = t / t.max()
+    with pytest.raises(ValueError):
+        ep.crossentropy(t, t.argmax(axis=-1)[:8])
+
+
+def test_matmul_raise(dummy: Tensor):
+    t = ep.arange(dummy, 8).float32().reshape((2, 4))
+    ep.matmul(t, t.T)
+    with pytest.raises(ValueError):
+        ep.matmul(t, t[0])
+    with pytest.raises(ValueError):
+        ep.matmul(t[0], t)
+    with pytest.raises(ValueError):
+        ep.matmul(t[0], t[0])
+
+
 ###############################################################################
 # special tests
 # - decorated with compare_*
@@ -458,6 +535,11 @@ def test_all_keepdims(t: Tensor):
 
 
 @compare_all
+def test_all_none_keepdims(t: Tensor):
+    return ep.all(t > 3, axis=None, keepdims=True)
+
+
+@compare_all
 def test_any(t: Tensor):
     return ep.any(t > 3)
 
@@ -470,6 +552,11 @@ def test_any_axis(t: Tensor):
 @compare_all
 def test_any_keepdims(t: Tensor):
     return ep.any(t > 3, axis=0, keepdims=True)
+
+
+@compare_all
+def test_any_none_keepdims(t: Tensor):
+    return ep.any(t > 3, axis=None, keepdims=True)
 
 
 @compare_all
@@ -488,6 +575,11 @@ def test_min_keepdims(t: Tensor):
 
 
 @compare_all
+def test_min_none_keepdims(t: Tensor):
+    return ep.min(t, axis=None, keepdims=True)
+
+
+@compare_all
 def test_max(t: Tensor):
     return ep.max(t)
 
@@ -500,6 +592,11 @@ def test_max_axis(t: Tensor):
 @compare_all
 def test_max_keepdims(t: Tensor):
     return ep.max(t, axis=0, keepdims=True)
+
+
+@compare_all
+def test_max_none_keepdims(t: Tensor):
+    return ep.max(t, axis=None, keepdims=True)
 
 
 @compare_allclose
