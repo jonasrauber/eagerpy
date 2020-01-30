@@ -255,7 +255,7 @@ def flip(t: Tensor, *args, **kwargs) -> Tensor:
     return t.flip(*args, **kwargs)
 
 
-def meshgrid(t: Tensor, *args, **kwargs) -> Tensor:
+def meshgrid(t: Tensor, *args, **kwargs) -> Tuple[Tensor, ...]:
     return t.meshgrid(*args, **kwargs)
 
 

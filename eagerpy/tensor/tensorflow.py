@@ -95,7 +95,6 @@ class TensorFlowTensor(AbstractBaseTensor):
     def __ge__(self, other):
         return self.raw.__ge__(other)
 
-    @unwrapin
     @wrapout
     def __getitem__(self, index):
         if isinstance(index, tuple):
@@ -109,6 +108,8 @@ class TensorFlowTensor(AbstractBaseTensor):
                 index = self.backend.convert_to_tensor(index)
                 index = self.backend.transpose(index)
                 return self.backend.gather_nd(self.raw, index)
+        elif istensor(index):
+            return self.backend.gather(self.raw, index.raw)
         return self.raw.__getitem__(index)
 
     def numpy(self):

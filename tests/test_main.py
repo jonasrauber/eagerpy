@@ -441,6 +441,13 @@ def test_getitem_tuple(dummy: Tensor):
 
 
 @compare_all
+def test_getitem_tensor(dummy: Tensor):
+    t = ep.arange(dummy, 32).float32()
+    indices = ep.arange(t, 3, 10, 2)
+    return t[indices]
+
+
+@compare_all
 def test_getitem_tuple_tensors(dummy: Tensor):
     t = ep.arange(dummy, 32).float32().reshape((8, 4))
     rows = ep.arange(t, len(t))

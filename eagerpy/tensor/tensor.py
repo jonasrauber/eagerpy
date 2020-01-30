@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Callable, Tuple, Any, overload, Sequence
+from typing import TypeVar, Callable, Tuple, Any, overload, Sequence, Union
 from typing_extensions import Literal, final
 
 
@@ -17,12 +17,12 @@ class AbstractTensor(ABC):
 
     @property
     @abstractmethod
-    def raw(self):
+    def raw(self) -> Any:
         ...
 
     @property
     @abstractmethod
-    def dtype(self: Tensor) -> Tensor:
+    def dtype(self: Tensor) -> Any:
         ...
 
     @abstractmethod
@@ -30,7 +30,7 @@ class AbstractTensor(ABC):
         ...
 
     @abstractmethod
-    def __format__(self: Tensor, *args, **kwargs) -> str:
+    def __format__(self: Tensor, format_spec) -> str:
         ...
 
     @abstractmethod
@@ -159,16 +159,16 @@ class AbstractTensor(ABC):
         ...
 
     @abstractmethod
-    def numpy(self: Tensor):
+    def numpy(self: Tensor) -> Any:
         ...
 
     @abstractmethod
-    def item(self: Tensor):
+    def item(self: Tensor) -> Union[int, float, bool]:
         ...
 
     @property
     @abstractmethod
-    def shape(self: Tensor) -> Tensor:
+    def shape(self: Tensor) -> Tuple:
         ...
 
     @abstractmethod
@@ -348,7 +348,7 @@ class AbstractTensor(ABC):
         ...
 
     @abstractmethod
-    def arange(self: Tensor, *args, **kwargs) -> Tensor:
+    def arange(self: Tensor, start, stop=None, step=None) -> Tensor:
         ...
 
     @abstractmethod
@@ -360,7 +360,7 @@ class AbstractTensor(ABC):
         ...
 
     @abstractmethod
-    def meshgrid(self: Tensor, *tensors, indexing="xy") -> Tensor:
+    def meshgrid(self: Tensor, *tensors, indexing="xy") -> Tuple[Tensor, ...]:
         ...
 
     @abstractmethod
@@ -376,7 +376,7 @@ class AbstractTensor(ABC):
         ...
 
     @abstractmethod
-    def crossentropy(self: Tensor, labels) -> Tensor:
+    def crossentropy(self: Tensor, labels: Tensor) -> Tensor:
         ...
 
     @overload
