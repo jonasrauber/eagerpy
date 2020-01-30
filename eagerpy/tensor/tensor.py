@@ -1,31 +1,29 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Callable, Tuple, Any, overload, Sequence, cast
-from typing_extensions import Literal
+from typing import TypeVar, Callable, Tuple, Any, overload, Sequence
+from typing_extensions import Literal, final
 
 
 Tensor = TypeVar("Tensor", bound="AbstractTensor")
 
 
 class AbstractTensor(ABC):
+    """Base class defining the common interface of all EagerPy Tensors"""
+
     __array_ufunc__ = None
 
+    @abstractmethod
+    def __init__(self, raw):
+        ...
+
     @property
-    def T(self: Tensor) -> Tensor:
-        return self.transpose()
+    @abstractmethod
+    def raw(self):
+        ...
 
-    def abs(self: Tensor) -> Tensor:
-        return cast(Tensor, self.__abs__())
-
-    def pow(self: Tensor, exponent) -> Tensor:
-        return self.__pow__(exponent)
-
-    def value_and_grad(self: Tensor, f, *args, **kwargs) -> Tuple[Tensor, Tensor]:
-        return self._value_and_grad_fn(f, has_aux=False)(self, *args, **kwargs)
-
-    def value_aux_and_grad(
-        self: Tensor, f, *args, **kwargs
-    ) -> Tuple[Tensor, Any, Tensor]:
-        return self._value_and_grad_fn(f, has_aux=True)(self, *args, **kwargs)
+    @property
+    @abstractmethod
+    def dtype(self: Tensor) -> Tensor:
+        ...
 
     @abstractmethod
     def __repr__(self: Tensor) -> str:
@@ -39,11 +37,6 @@ class AbstractTensor(ABC):
     def __getitem__(self: Tensor, index) -> Tensor:
         ...
 
-    @property
-    @abstractmethod
-    def dtype(self: Tensor) -> Tensor:
-        ...
-
     @abstractmethod
     def __bool__(self: Tensor) -> bool:
         ...
@@ -53,7 +46,7 @@ class AbstractTensor(ABC):
         ...
 
     @abstractmethod
-    def __abs__(self):
+    def __abs__(self: Tensor) -> Tensor:
         ...
 
     @abstractmethod
@@ -408,6 +401,33 @@ class AbstractTensor(ABC):
     def _value_and_grad_fn(self, f, has_aux=False):
         ...
 
+    # #########################################################################
+    # aliases
+    # #########################################################################
 
-def istensor(x):
+    @final
+    @property
+    def T(self: Tensor) -> Tensor:
+        return self.transpose()
+
+    @final
+    def abs(self: Tensor) -> Tensor:
+        return self.__abs__()
+
+    @final
+    def pow(self: Tensor, exponent) -> Tensor:
+        return self.__pow__(exponent)
+
+    @final
+    def value_and_grad(self: Tensor, f, *args, **kwargs) -> Tuple[Tensor, Tensor]:
+        return self._value_and_grad_fn(f, has_aux=False)(self, *args, **kwargs)
+
+    @final
+    def value_aux_and_grad(
+        self: Tensor, f, *args, **kwargs
+    ) -> Tuple[Tensor, Any, Tensor]:
+        return self._value_and_grad_fn(f, has_aux=True)(self, *args, **kwargs)
+
+
+def istensor(x) -> bool:
     return isinstance(x, AbstractTensor)

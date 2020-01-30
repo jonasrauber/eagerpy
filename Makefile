@@ -21,7 +21,7 @@ flake8:
 
 .PHONY: mypy
 mypy:
-	mypy -p eagerpy
+	mypy -p eagerpy --python-version 3.6 --ignore-missing-imports --warn-unused-ignores --warn-unused-configs --warn-return-any --warn-redundant-casts
 
 .PHONY: install
 install:

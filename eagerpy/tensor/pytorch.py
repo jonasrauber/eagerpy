@@ -5,8 +5,15 @@ from .base import unwrap_
 
 from .tensor import istensor
 
+# from .tensor import Tensor
+
 import numpy as np
 from collections.abc import Iterable
+
+# from typing import TypeVar
+
+
+# PyTensor = TypeVar("PyTensor", bound="PyTorchTensor")
 
 
 def assert_bool(x):
@@ -24,30 +31,30 @@ class PyTorchTensor(AbstractBaseTensor):
         self.backend = torch
 
     def numpy(self):
-        return self.tensor.detach().cpu().numpy()
+        return self.raw.detach().cpu().numpy()
 
     def item(self):
-        return self.tensor.item()
+        return self.raw.item()
 
     @property
     def shape(self):
-        return self.tensor.shape
+        return self.raw.shape
 
     @wrapout
     def reshape(self, shape):
-        return self.tensor.reshape(shape)
+        return self.raw.reshape(shape)
 
     @wrapout
     def astype(self, dtype):
-        return self.tensor.to(dtype)
+        return self.raw.to(dtype)
 
     @wrapout
     def clip(self, min_, max_):
-        return self.tensor.clamp(min_, max_)
+        return self.raw.clamp(min_, max_)
 
     @wrapout
     def square(self):
-        return self.tensor ** 2
+        return self.raw ** 2
 
     @wrapout
     def arctanh(self):
@@ -55,23 +62,23 @@ class PyTorchTensor(AbstractBaseTensor):
         improve once this issue has been fixed:
         https://github.com/pytorch/pytorch/issues/10324
         """
-        return 0.5 * self.backend.log((1 + self.tensor) / (1 - self.tensor))
+        return 0.5 * self.backend.log((1 + self.raw) / (1 - self.raw))
 
     @wrapout
     def sum(self, axis=None, keepdims=False):
         if axis is None and not keepdims:
-            return self.tensor.sum()
+            return self.raw.sum()
         if axis is None:
             axis = tuple(range(self.ndim))
-        return self.tensor.sum(dim=axis, keepdim=keepdims)
+        return self.raw.sum(dim=axis, keepdim=keepdims)
 
     @wrapout
     def mean(self, axis=None, keepdims=False):
         if axis is None and not keepdims:
-            return self.tensor.mean()
+            return self.raw.mean()
         if axis is None:
             axis = tuple(range(self.ndim))
-        return self.tensor.mean(dim=axis, keepdim=keepdims)
+        return self.raw.mean(dim=axis, keepdim=keepdims)
 
     @wrapout
     def min(self, axis=None, keepdims=False):
@@ -80,13 +87,13 @@ class PyTorchTensor(AbstractBaseTensor):
         https://github.com/pytorch/pytorch/issues/28213
         """
         if axis is None and not keepdims:
-            return self.tensor.min()
+            return self.raw.min()
         if axis is None:
             axis = tuple(range(self.ndim))
         elif not isinstance(axis, Iterable):
             axis = (axis,)
         axis = reversed(sorted(axis))
-        x = self.tensor
+        x = self.raw
         for i in axis:
             x, _ = x.min(i, keepdim=keepdims)
         return x
@@ -98,13 +105,13 @@ class PyTorchTensor(AbstractBaseTensor):
         https://github.com/pytorch/pytorch/issues/28213
         """
         if axis is None and not keepdims:
-            return self.tensor.max()
+            return self.raw.max()
         if axis is None:
             axis = tuple(range(self.ndim))
         elif not isinstance(axis, Iterable):
             axis = (axis,)
         axis = reversed(sorted(axis))
-        x = self.tensor
+        x = self.raw
         for i in axis:
             x, _ = x.max(i, keepdim=keepdims)
         return x
@@ -112,35 +119,35 @@ class PyTorchTensor(AbstractBaseTensor):
     @wrapout
     def minimum(self, other):
         if istensor(other):
-            other = other.tensor
+            other = other.raw
         else:
-            other = self.backend.ones_like(self.tensor) * other
-        return self.backend.min(self.tensor, other)
+            other = self.backend.ones_like(self.raw) * other
+        return self.backend.min(self.raw, other)
 
     @wrapout
     def maximum(self, other):
         if istensor(other):
-            other = other.tensor
+            other = other.raw
         else:
-            other = self.backend.ones_like(self.tensor) * other
-        return self.backend.max(self.tensor, other)
+            other = self.backend.ones_like(self.raw) * other
+        return self.backend.max(self.raw, other)
 
     @wrapout
     def argmin(self, axis=None):
-        return self.tensor.argmin(dim=axis)
+        return self.raw.argmin(dim=axis)
 
     @wrapout
     def argmax(self, axis=None):
-        return self.tensor.argmax(dim=axis)
+        return self.raw.argmax(dim=axis)
 
     @wrapout
     def argsort(self, axis=-1):
-        return self.tensor.argsort(dim=axis)
+        return self.raw.argsort(dim=axis)
 
     @wrapout
     def uniform(self, shape, low=0.0, high=1.0):
         return (
-            self.backend.rand(shape, dtype=self.tensor.dtype, device=self.tensor.device)
+            self.backend.rand(shape, dtype=self.raw.dtype, device=self.raw.device)
             * (high - low)
             + low
         )
@@ -148,36 +155,30 @@ class PyTorchTensor(AbstractBaseTensor):
     @wrapout
     def normal(self, shape, mean=0.0, stddev=1.0):
         return (
-            self.backend.randn(
-                shape, dtype=self.tensor.dtype, device=self.tensor.device
-            )
+            self.backend.randn(shape, dtype=self.raw.dtype, device=self.raw.device)
             * stddev
             + mean
         )
 
     @wrapout
     def ones(self, shape):
-        return self.backend.ones(
-            shape, dtype=self.tensor.dtype, device=self.tensor.device
-        )
+        return self.backend.ones(shape, dtype=self.raw.dtype, device=self.raw.device)
 
     @wrapout
     def zeros(self, shape):
-        return self.backend.zeros(
-            shape, dtype=self.tensor.dtype, device=self.tensor.device
-        )
+        return self.backend.zeros(shape, dtype=self.raw.dtype, device=self.raw.device)
 
     @wrapout
     def ones_like(self):
-        return self.backend.ones_like(self.tensor)
+        return self.backend.ones_like(self.raw)
 
     @wrapout
     def zeros_like(self):
-        return self.backend.zeros_like(self.tensor)
+        return self.backend.zeros_like(self.raw)
 
     @wrapout
     def full_like(self, fill_value):
-        return self.backend.full_like(self.tensor, fill_value)
+        return self.backend.full_like(self.raw, fill_value)
 
     @unwrapin
     @wrapout
@@ -186,34 +187,34 @@ class PyTorchTensor(AbstractBaseTensor):
             raise ValueError("onehot_like only supported for 2D tensors")
         if indices.ndim != 1:
             raise ValueError("onehot_like requires 1D indices")
-        if len(indices) != len(self.tensor):
+        if len(indices) != len(self.raw):
             raise ValueError("length of indices must match length of tensor")
-        x = self.backend.zeros_like(self.tensor)
+        x = self.backend.zeros_like(self.raw)
         rows = np.arange(len(x))
         x[rows, indices] = value
         return x
 
     @wrapout
     def from_numpy(self, a):
-        return self.backend.as_tensor(a, device=self.tensor.device)
+        return self.backend.as_tensor(a, device=self.raw.device)
 
     @wrapout
     def _concatenate(self, tensors, axis=0):
         # concatenates only "tensors", but not "self"
-        tensors = [t.tensor if istensor(t) else t for t in tensors]
+        tensors = [t.raw if istensor(t) else t for t in tensors]
         return self.backend.cat(tensors, dim=axis)
 
     @wrapout
     def _stack(self, tensors, axis=0):
         # stacks only "tensors", but not "self"
-        tensors = [t.tensor if istensor(t) else t for t in tensors]
+        tensors = [t.raw if istensor(t) else t for t in tensors]
         return self.backend.stack(tensors, dim=axis)
 
     @wrapout
     def transpose(self, axes=None):
         if axes is None:
             axes = tuple(range(self.ndim - 1, -1, -1))
-        return self.tensor.permute(*axes)
+        return self.raw.permute(*axes)
 
     def bool(self):
         return self.astype(self.backend.bool)
@@ -222,13 +223,13 @@ class PyTorchTensor(AbstractBaseTensor):
     def all(self, axis=None, keepdims=False):
         assert_bool(self)
         if axis is None and not keepdims:
-            return self.tensor.all()
+            return self.raw.all()
         if axis is None:
             axis = tuple(range(self.ndim))
         elif not isinstance(axis, Iterable):
             axis = (axis,)
         axis = reversed(sorted(axis))
-        x = self.tensor
+        x = self.raw
         for i in axis:
             x = x.all(i, keepdim=keepdims)
         return x
@@ -237,13 +238,13 @@ class PyTorchTensor(AbstractBaseTensor):
     def any(self, axis=None, keepdims=False):
         assert_bool(self)
         if axis is None and not keepdims:
-            return self.tensor.any()
+            return self.raw.any()
         if axis is None:
             axis = tuple(range(self.ndim))
         elif not isinstance(axis, Iterable):
             axis = (axis,)
         axis = reversed(sorted(axis))
-        x = self.tensor
+        x = self.raw
         for i in axis:
             x = x.any(i, keepdim=keepdims)
         return x
@@ -252,96 +253,96 @@ class PyTorchTensor(AbstractBaseTensor):
     def logical_and(self, other):
         assert_bool(self)
         assert_bool(other)
-        return self.tensor & unwrap_(other)
+        return self.raw & unwrap_(other)
 
     @wrapout
     def logical_or(self, other):
         assert_bool(self)
         assert_bool(other)
-        return self.tensor | unwrap_(other)
+        return self.raw | unwrap_(other)
 
     @wrapout
     def logical_not(self):
         assert_bool(self)
-        return ~self.tensor
+        return ~self.raw
 
     @wrapout
     def exp(self):
-        return self.backend.exp(self.tensor)
+        return self.backend.exp(self.raw)
 
     @wrapout
     def log(self):
-        return self.backend.log(self.tensor)
+        return self.backend.log(self.raw)
 
     @wrapout
     def log2(self):
-        return self.backend.log2(self.tensor)
+        return self.backend.log2(self.raw)
 
     @wrapout
     def log10(self):
-        return self.backend.log10(self.tensor)
+        return self.backend.log10(self.raw)
 
     @wrapout
     def log1p(self):
-        return self.backend.log1p(self.tensor)
+        return self.backend.log1p(self.raw)
 
     @unwrapin
     @wrapout
     def tile(self, multiples):
         if len(multiples) != self.ndim:
             raise ValueError("multiples requires one entry for each dimension")
-        return self.tensor.repeat(multiples)
+        return self.raw.repeat(multiples)
 
     @wrapout
     def softmax(self, axis=-1):
-        return self.backend.nn.functional.softmax(self.tensor, dim=axis)
+        return self.backend.nn.functional.softmax(self.raw, dim=axis)
 
     @wrapout
     def log_softmax(self, axis=-1):
-        return self.backend.nn.functional.log_softmax(self.tensor, dim=axis)
+        return self.backend.nn.functional.log_softmax(self.raw, dim=axis)
 
     @wrapout
     def squeeze(self, axis=None):
         if axis is None:
-            return self.tensor.squeeze()
+            return self.raw.squeeze()
         if not isinstance(axis, Iterable):
             axis = (axis,)
         axis = reversed(sorted(axis))
-        x = self.tensor
+        x = self.raw
         for i in axis:
             x = x.squeeze(dim=i)
         return x
 
     @wrapout
     def expand_dims(self, axis=None):
-        return self.tensor.unsqueeze(axis=axis)
+        return self.raw.unsqueeze(axis=axis)
 
     @wrapout
     def full(self, shape, value):
         if not isinstance(shape, Iterable):
             shape = (shape,)
         return self.backend.full(
-            shape, value, dtype=self.tensor.dtype, device=self.tensor.device
+            shape, value, dtype=self.raw.dtype, device=self.raw.device
         )
 
     @unwrapin
     @wrapout
     def index_update(self, indices, values):
         if isinstance(indices, tuple):
-            indices = tuple(t.tensor if istensor(t) else t for t in indices)
-        x = self.tensor.clone()
+            indices = tuple(t.raw if istensor(t) else t for t in indices)
+        x = self.raw.clone()
         x[indices] = values
         return x
 
     @wrapout
     def arange(self, *args, **kwargs):
-        return self.backend.arange(*args, **kwargs, device=self.tensor.device)
+        return self.backend.arange(*args, **kwargs, device=self.raw.device)
 
     @wrapout
     def cumsum(self, axis=None):
         if axis is None:
-            return self.tensor.reshape(-1).cumsum(dim=0)
-        return self.tensor.cumsum(dim=axis)
+            return self.raw.reshape(-1).cumsum(dim=0)
+        return self.raw.cumsum(dim=axis)
 
     @wrapout
     def flip(self, axis=None):
@@ -349,14 +350,14 @@ class PyTorchTensor(AbstractBaseTensor):
             axis = tuple(range(self.ndim))
         if not isinstance(axis, Iterable):
             axis = (axis,)
-        return self.tensor.flip(dims=axis)
+        return self.raw.flip(dims=axis)
 
     @unwrapin
     def meshgrid(self, *tensors, indexing="xy"):
         if indexing == "ij" or len(tensors) == 0:
-            outputs = self.backend.meshgrid(self.tensor, *tensors)
+            outputs = self.backend.meshgrid(self.raw, *tensors)
         elif indexing == "xy":
-            outputs = self.backend.meshgrid(tensors[0], self.tensor, *tensors[1:])
+            outputs = self.backend.meshgrid(tensors[0], self.raw, *tensors[1:])
         else:
             raise ValueError(  # pragma: no cover
                 f"Valid values for indexing are 'xy' and 'ij', got {indexing}"
@@ -385,21 +386,21 @@ class PyTorchTensor(AbstractBaseTensor):
             paddings = paddings[k:]
         paddings = tuple(x for p in reversed(paddings) for x in p)
         return self.backend.nn.functional.pad(
-            self.tensor, paddings, mode=mode, value=value
+            self.raw, paddings, mode=mode, value=value
         )
 
     @wrapout
     def isnan(self):
-        return self.backend.isnan(self.tensor)
+        return self.backend.isnan(self.raw)
 
     @wrapout
     def isinf(self):
-        return self.backend.isinf(self.tensor)
+        return self.backend.isinf(self.raw)
 
     @unwrapin
     @wrapout
     def crossentropy(self, labels):
-        logits = self.tensor
+        logits = self.raw
         if logits.ndim != 2:
             raise ValueError("crossentropy only supported for 2D logits tensors")
         if logits.shape[:1] != labels.shape:
@@ -411,7 +412,7 @@ class PyTorchTensor(AbstractBaseTensor):
     def _value_and_grad_fn(self, f, has_aux=False):
         def value_and_grad(x, *args, **kwargs):
             assert isinstance(x, PyTorchTensor)
-            x = x.tensor
+            x = x.raw
             x = x.clone()
             x.requires_grad_()
             x = PyTorchTensor(x)
@@ -419,18 +420,18 @@ class PyTorchTensor(AbstractBaseTensor):
                 loss, aux = f(x, *args, **kwargs)
             else:
                 loss = f(x, *args, **kwargs)
-            loss = loss.tensor
+            loss = loss.raw
             loss.backward()
-            grad = PyTorchTensor(x.tensor.grad)
+            grad = PyTorchTensor(x.raw.grad)
             assert grad.shape == x.shape
             loss = loss.detach()
             loss = PyTorchTensor(loss)
             if has_aux:
                 if isinstance(aux, PyTorchTensor):
-                    aux = PyTorchTensor(aux.tensor.detach())
+                    aux = PyTorchTensor(aux.raw.detach())
                 elif isinstance(aux, tuple):
                     aux = tuple(
-                        PyTorchTensor(t.tensor.detach())
+                        PyTorchTensor(t.raw.detach())
                         if isinstance(t, PyTorchTensor)
                         else t
                         for t in aux
@@ -440,3 +441,31 @@ class PyTorchTensor(AbstractBaseTensor):
                 return loss, grad
 
         return value_and_grad
+
+    @wrapout
+    def sign(self):
+        return self.backend.sign(self.raw)
+
+    @wrapout
+    def sqrt(self):
+        return self.backend.sqrt(self.raw)
+
+    @wrapout
+    def tanh(self):
+        return self.backend.tanh(self.raw)
+
+    def float32(self):
+        return self.astype(self.backend.float32)
+
+    @unwrapin
+    @wrapout
+    def where(self, x, y):
+        return self.backend.where(self.raw, x, y)
+
+    @wrapout
+    def matmul(self, other):
+        if self.ndim != 2 or other.ndim != 2:
+            raise ValueError(
+                f"matmul requires both tensors to be 2D, got {self.ndim}D and {other.ndim}D"
+            )
+        return self.backend.matmul(self.raw, other.raw)

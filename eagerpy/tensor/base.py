@@ -1,7 +1,10 @@
 import functools
+from typing_extensions import final
+from typing import Any
 
 from .tensor import AbstractTensor
 from .tensor import istensor
+from .tensor import Tensor
 
 
 def wrapout(f):
@@ -16,7 +19,7 @@ def wrapout(f):
 def unwrapin(f):
     @functools.wraps(f)
     def wrapper(self, *args, **kwargs):
-        args = [arg.tensor if istensor(arg) else arg for arg in args]
+        args = [arg.raw if istensor(arg) else arg for arg in args]
         return f(self, *args, **kwargs)
 
     return wrapper
@@ -24,16 +27,22 @@ def unwrapin(f):
 
 def unwrap_(*args):
     """Unwraps all EagerPy tensors if they are not already unwrapped"""
-    result = tuple(t.tensor if istensor(t) else t for t in args)
+    result = tuple(t.raw if istensor(t) else t for t in args)
     return result[0] if len(args) == 1 else result
 
 
 class AbstractBaseTensor(AbstractTensor):
-    def __init__(self, tensor):
-        self.tensor = tensor
+    def __init__(self, raw):
+        self._raw = raw
 
-    def __repr__(self):
-        lines = self.tensor.__repr__().split("\n")
+    @final
+    @property
+    def raw(self) -> Any:
+        return self._raw
+
+    @final
+    def __repr__(self: Tensor) -> str:
+        lines = self.raw.__repr__().split("\n")
         prefix = self.__class__.__name__ + "("
         lines[0] = prefix + lines[0]
         prefix = " " * len(prefix)
@@ -43,150 +52,120 @@ class AbstractBaseTensor(AbstractTensor):
         return "\n".join(lines)
 
     def __format__(self, *args, **kwargs):
-        return self.tensor.__format__(*args, **kwargs)
+        return self.raw.__format__(*args, **kwargs)
 
     @unwrapin
     @wrapout
     def __getitem__(self, index):
         if isinstance(index, tuple):
-            index = tuple(x.tensor if istensor(x) else x for x in index)
-        return self.tensor.__getitem__(index)
+            index = tuple(x.raw if istensor(x) else x for x in index)
+        return self.raw.__getitem__(index)
 
     @property
     def dtype(self):
-        return self.tensor.dtype
+        return self.raw.dtype
 
     def __bool__(self):
-        return self.tensor.__bool__()
+        return self.raw.__bool__()
 
     def __len__(self):
-        return self.tensor.__len__()
+        return self.raw.__len__()
 
-    @wrapout
-    def __abs__(self):
-        return self.tensor.__abs__()
+    def __abs__(self: Tensor) -> Tensor:
+        return type(self)(self.raw.__abs__())
 
     @wrapout
     def __neg__(self):
-        return self.tensor.__neg__()
+        return self.raw.__neg__()
 
     @unwrapin
     @wrapout
     def __add__(self, other):
-        return self.tensor.__add__(other)
+        return self.raw.__add__(other)
 
     @unwrapin
     @wrapout
     def __radd__(self, other):
-        return self.tensor.__radd__(other)
+        return self.raw.__radd__(other)
 
     @unwrapin
     @wrapout
     def __sub__(self, other):
-        return self.tensor.__sub__(other)
+        return self.raw.__sub__(other)
 
     @unwrapin
     @wrapout
     def __rsub__(self, other):
-        return self.tensor.__rsub__(other)
+        return self.raw.__rsub__(other)
 
     @unwrapin
     @wrapout
     def __mul__(self, other):
-        return self.tensor.__mul__(other)
+        return self.raw.__mul__(other)
 
     @unwrapin
     @wrapout
     def __rmul__(self, other):
-        return self.tensor.__rmul__(other)
+        return self.raw.__rmul__(other)
 
     @unwrapin
     @wrapout
     def __truediv__(self, other):
-        return self.tensor.__truediv__(other)
+        return self.raw.__truediv__(other)
 
     @unwrapin
     @wrapout
     def __rtruediv__(self, other):
-        return self.tensor.__rtruediv__(other)
+        return self.raw.__rtruediv__(other)
 
     @unwrapin
     @wrapout
     def __floordiv__(self, other):
-        return self.tensor.__floordiv__(other)
+        return self.raw.__floordiv__(other)
 
     @unwrapin
     @wrapout
     def __rfloordiv__(self, other):
-        return self.tensor.__rfloordiv__(other)
+        return self.raw.__rfloordiv__(other)
 
     @unwrapin
     @wrapout
     def __mod__(self, other):
-        return self.tensor.__mod__(other)
+        return self.raw.__mod__(other)
 
     @unwrapin
     @wrapout
     def __lt__(self, other):
-        return self.tensor.__lt__(other)
+        return self.raw.__lt__(other)
 
     @unwrapin
     @wrapout
     def __le__(self, other):
-        return self.tensor.__le__(other)
+        return self.raw.__le__(other)
 
     @unwrapin
     @wrapout
     def __eq__(self, other):
-        return self.tensor.__eq__(other)
+        return self.raw.__eq__(other)
 
     @unwrapin
     @wrapout
     def __ne__(self, other):
-        return self.tensor.__ne__(other)
+        return self.raw.__ne__(other)
 
     @unwrapin
     @wrapout
     def __gt__(self, other):
-        return self.tensor.__gt__(other)
+        return self.raw.__gt__(other)
 
     @unwrapin
     @wrapout
     def __ge__(self, other):
-        return self.tensor.__ge__(other)
+        return self.raw.__ge__(other)
 
-    @wrapout
-    def __pow__(self, exponent):
-        return self.tensor.__pow__(exponent)
-
-    @wrapout
-    def sign(self):
-        return self.backend.sign(self.tensor)
-
-    @wrapout
-    def sqrt(self):
-        return self.backend.sqrt(self.tensor)
-
-    @wrapout
-    def tanh(self):
-        return self.backend.tanh(self.tensor)
-
-    def float32(self):
-        return self.astype(self.backend.float32)
-
-    @unwrapin
-    @wrapout
-    def where(self, x, y):
-        return self.backend.where(self.tensor, x, y)
-
-    @wrapout
-    def matmul(self, other):
-        if self.ndim != 2 or other.ndim != 2:
-            raise ValueError(
-                f"matmul requires both tensors to be 2D, got {self.ndim}D and {other.ndim}D"
-            )
-        return self.backend.matmul(self.tensor, other.tensor)
+    def __pow__(self: Tensor, exponent) -> Tensor:
+        return type(self)(self.raw.__pow__(exponent))
 
     @property
     def ndim(self):
-        return self.tensor.ndim
+        return self.raw.ndim
