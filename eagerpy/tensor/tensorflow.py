@@ -1,27 +1,25 @@
-from .base import AbstractBaseTensor
-from .base import unwrap_
-
-from .tensor import istensor
-from .tensor import Tensor
-
-from .. import index
-
 import functools
 from typing import Tuple, cast, Union, Any, TypeVar, Callable, TYPE_CHECKING
 from importlib import import_module
 from collections.abc import Iterable
 import numpy as np
 
+from .. import index
 
-FuncType = Callable[..., Any]
-F = TypeVar("F", bound=FuncType)
+from .tensor import istensor
+from .tensor import TensorType
 
+from .base import BaseTensor
+from .base import unwrap_
 
 if TYPE_CHECKING:
     import tensorflow as tf  # for static analyzers
 else:
     # lazy import in TensorFlowTensor
     tf = None
+
+FuncType = Callable[..., Any]
+F = TypeVar("F", bound=FuncType)
 
 
 def samedevice(f: F) -> F:
@@ -54,14 +52,14 @@ def common_dtype(f: F) -> F:
     return cast(F, wrapper)
 
 
-def assert_bool(x: Tensor) -> None:
+def assert_bool(x: TensorType) -> None:
     if not istensor(x):
         return
     if x.dtype != tf.bool:
         raise ValueError(f"requires dtype bool, consider t.bool().all()")
 
 
-class TensorFlowTensor(AbstractBaseTensor):
+class TensorFlowTensor(BaseTensor):
     def __init__(self, raw: "tf.Tensor"):
         global tf
         if tf is None:
@@ -72,62 +70,62 @@ class TensorFlowTensor(AbstractBaseTensor):
     def raw(self) -> "tf.Tensor":
         return super().raw
 
-    def numpy(self: Tensor) -> Any:
+    def numpy(self: TensorType) -> Any:
         return self.raw.numpy()
 
-    def item(self: Tensor) -> Union[int, float, bool]:
+    def item(self: TensorType) -> Union[int, float, bool]:
         return self.numpy().item()  # type: ignore
 
     @property
-    def shape(self: Tensor) -> Tuple:
+    def shape(self: TensorType) -> Tuple:
         return tuple(self.raw.shape.as_list())
 
-    def reshape(self: Tensor, shape) -> Tensor:
+    def reshape(self: TensorType, shape) -> TensorType:
         return type(self)(tf.reshape(self.raw, shape))
 
-    def astype(self: Tensor, dtype) -> Tensor:
+    def astype(self: TensorType, dtype) -> TensorType:
         return type(self)(tf.cast(self.raw, dtype))
 
-    def clip(self: Tensor, min_, max_) -> Tensor:
+    def clip(self: TensorType, min_, max_) -> TensorType:
         return type(self)(tf.clip_by_value(self.raw, min_, max_))
 
-    def square(self: Tensor) -> Tensor:
+    def square(self: TensorType) -> TensorType:
         return type(self)(tf.square(self.raw))
 
-    def arctanh(self: Tensor) -> Tensor:
+    def arctanh(self: TensorType) -> TensorType:
         return type(self)(tf.atanh(self.raw))
 
-    def sum(self: Tensor, axis=None, keepdims=False) -> Tensor:
+    def sum(self: TensorType, axis=None, keepdims=False) -> TensorType:
         if self.raw.dtype == tf.bool:
             return type(self)(self.astype(tf.int64).sum(axis=axis, keepdims=keepdims))
         return type(self)(tf.reduce_sum(self.raw, axis=axis, keepdims=keepdims))
 
-    def mean(self: Tensor, axis=None, keepdims=False) -> Tensor:
+    def mean(self: TensorType, axis=None, keepdims=False) -> TensorType:
         return type(self)(tf.reduce_mean(self.raw, axis=axis, keepdims=keepdims))
 
-    def min(self: Tensor, axis=None, keepdims=False) -> Tensor:
+    def min(self: TensorType, axis=None, keepdims=False) -> TensorType:
         return type(self)(tf.reduce_min(self.raw, axis=axis, keepdims=keepdims))
 
-    def max(self: Tensor, axis=None, keepdims=False) -> Tensor:
+    def max(self: TensorType, axis=None, keepdims=False) -> TensorType:
         return type(self)(tf.reduce_max(self.raw, axis=axis, keepdims=keepdims))
 
-    def minimum(self: Tensor, other) -> Tensor:
+    def minimum(self: TensorType, other) -> TensorType:
         return type(self)(tf.minimum(self.raw, unwrap_(other)))
 
-    def maximum(self: Tensor, other) -> Tensor:
+    def maximum(self: TensorType, other) -> TensorType:
         return type(self)(tf.maximum(self.raw, unwrap_(other)))
 
-    def argmin(self: Tensor, axis=None) -> Tensor:
+    def argmin(self: TensorType, axis=None) -> TensorType:
         return type(self)(tf.argmin(self.raw, axis=axis))
 
-    def argmax(self: Tensor, axis=None) -> Tensor:
+    def argmax(self: TensorType, axis=None) -> TensorType:
         return type(self)(tf.argmax(self.raw, axis=axis))
 
-    def argsort(self: Tensor, axis=-1) -> Tensor:
+    def argsort(self: TensorType, axis=-1) -> TensorType:
         return type(self)(tf.argsort(self.raw, axis=axis))
 
     @samedevice
-    def uniform(self: Tensor, shape, low=0.0, high=1.0) -> Tensor:
+    def uniform(self: TensorType, shape, low=0.0, high=1.0) -> TensorType:
         if not isinstance(shape, Iterable):
             shape = (shape,)
         return type(self)(
@@ -135,7 +133,7 @@ class TensorFlowTensor(AbstractBaseTensor):
         )
 
     @samedevice
-    def normal(self: Tensor, shape, mean=0.0, stddev=1.0) -> Tensor:
+    def normal(self: TensorType, shape, mean=0.0, stddev=1.0) -> TensorType:
         if not isinstance(shape, Iterable):
             shape = (shape,)
         return type(self)(
@@ -143,25 +141,25 @@ class TensorFlowTensor(AbstractBaseTensor):
         )
 
     @samedevice
-    def ones(self: Tensor, shape) -> Tensor:
+    def ones(self: TensorType, shape) -> TensorType:
         return type(self)(tf.ones(shape, dtype=self.raw.dtype))
 
     @samedevice
-    def zeros(self: Tensor, shape) -> Tensor:
+    def zeros(self: TensorType, shape) -> TensorType:
         return type(self)(tf.zeros(shape, dtype=self.raw.dtype))
 
-    def ones_like(self: Tensor) -> Tensor:
+    def ones_like(self: TensorType) -> TensorType:
         return type(self)(tf.ones_like(self.raw))
 
-    def zeros_like(self: Tensor) -> Tensor:
+    def zeros_like(self: TensorType) -> TensorType:
         return type(self)(tf.zeros_like(self.raw))
 
-    def full_like(self: Tensor, fill_value) -> Tensor:
+    def full_like(self: TensorType, fill_value) -> TensorType:
         fill_value = tf.cast(fill_value, self.raw.dtype)
         return type(self)(tf.fill(self.raw.shape, fill_value))
 
     @samedevice
-    def onehot_like(self: Tensor, indices: Tensor, *, value=1) -> Tensor:
+    def onehot_like(self: TensorType, indices: TensorType, *, value=1) -> TensorType:
         if self.ndim != 2:
             raise ValueError("onehot_like only supported for 2D tensors")
         if indices.ndim != 1:
@@ -179,89 +177,89 @@ class TensorFlowTensor(AbstractBaseTensor):
         )
 
     @samedevice
-    def from_numpy(self: Tensor, a) -> Tensor:
+    def from_numpy(self: TensorType, a) -> TensorType:
         return type(self)(tf.convert_to_tensor(a))
 
-    def _concatenate(self: Tensor, tensors, axis=0) -> Tensor:
+    def _concatenate(self: TensorType, tensors, axis=0) -> TensorType:
         # concatenates only "tensors", but not "self"
         tensors = [t.raw if istensor(t) else t for t in tensors]
         return type(self)(tf.concat(tensors, axis=axis))
 
-    def _stack(self: Tensor, tensors, axis=0) -> Tensor:
+    def _stack(self: TensorType, tensors, axis=0) -> TensorType:
         # stacks only "tensors", but not "self"
         tensors = [t.raw if istensor(t) else t for t in tensors]
         return type(self)(tf.stack(tensors, axis=axis))
 
-    def transpose(self: Tensor, axes=None) -> Tensor:
+    def transpose(self: TensorType, axes=None) -> TensorType:
         if axes is None:
             axes = tuple(range(self.ndim - 1, -1, -1))
         return type(self)(tf.transpose(self.raw, perm=axes))
 
-    def bool(self: Tensor) -> Tensor:
+    def bool(self: TensorType) -> TensorType:
         return self.astype(tf.bool)
 
-    def all(self: Tensor, axis=None, keepdims=False) -> Tensor:
+    def all(self: TensorType, axis=None, keepdims=False) -> TensorType:
         assert_bool(self)
         return type(self)(tf.reduce_all(self.raw, axis=axis, keepdims=keepdims))
 
-    def any(self: Tensor, axis=None, keepdims=False) -> Tensor:
+    def any(self: TensorType, axis=None, keepdims=False) -> TensorType:
         assert_bool(self)
         return type(self)(tf.reduce_any(self.raw, axis=axis, keepdims=keepdims))
 
-    def logical_and(self: Tensor, other) -> Tensor:
+    def logical_and(self: TensorType, other) -> TensorType:
         assert_bool(self)
         assert_bool(other)
         return type(self)(tf.logical_and(self.raw, unwrap_(other)))
 
-    def logical_or(self: Tensor, other) -> Tensor:
+    def logical_or(self: TensorType, other) -> TensorType:
         assert_bool(self)
         assert_bool(other)
         return type(self)(tf.logical_or(self.raw, unwrap_(other)))
 
-    def logical_not(self: Tensor) -> Tensor:
+    def logical_not(self: TensorType) -> TensorType:
         assert_bool(self)
         return type(self)(tf.logical_not(self.raw))
 
-    def exp(self: Tensor) -> Tensor:
+    def exp(self: TensorType) -> TensorType:
         return type(self)(tf.exp(self.raw))
 
-    def log(self: Tensor) -> Tensor:
+    def log(self: TensorType) -> TensorType:
         return type(self)(tf.math.log(self.raw))
 
-    def log2(self: Tensor) -> Tensor:
+    def log2(self: TensorType) -> TensorType:
         return type(self)(tf.math.log(self.raw) / tf.math.log(2.0))
 
-    def log10(self: Tensor) -> Tensor:
+    def log10(self: TensorType) -> TensorType:
         return type(self)(tf.math.log(self.raw) / tf.math.log(10.0))
 
-    def log1p(self: Tensor) -> Tensor:
+    def log1p(self: TensorType) -> TensorType:
         return type(self)(tf.math.log1p(self.raw))
 
-    def tile(self: Tensor, multiples) -> Tensor:
+    def tile(self: TensorType, multiples) -> TensorType:
         multiples = unwrap_(multiples)
         if len(multiples) != self.ndim:
             raise ValueError("multiples requires one entry for each dimension")
         return type(self)(tf.tile(self.raw, multiples))
 
-    def softmax(self: Tensor, axis=-1) -> Tensor:
+    def softmax(self: TensorType, axis=-1) -> TensorType:
         return type(self)(tf.nn.softmax(self.raw, axis=axis))
 
-    def log_softmax(self: Tensor, axis=-1) -> Tensor:
+    def log_softmax(self: TensorType, axis=-1) -> TensorType:
         return type(self)(tf.nn.log_softmax(self.raw, axis=axis))
 
-    def squeeze(self: Tensor, axis=None) -> Tensor:
+    def squeeze(self: TensorType, axis=None) -> TensorType:
         return type(self)(tf.squeeze(self.raw, axis=axis))
 
-    def expand_dims(self: Tensor, axis=None) -> Tensor:
+    def expand_dims(self: TensorType, axis=None) -> TensorType:
         return type(self)(tf.expand_dims(self.raw, axis=axis))
 
     @samedevice
-    def full(self: Tensor, shape, value) -> Tensor:
+    def full(self: TensorType, shape, value) -> TensorType:
         if not isinstance(shape, Iterable):
             shape = (shape,)
         return type(self)(tf.fill(shape, value))
 
-    def index_update(self: Tensor, indices, values) -> Tensor:
+    def index_update(self: TensorType, indices, values) -> TensorType:
         indices, values = unwrap_(indices, values)
         if isinstance(indices, tuple):
             indices = unwrap_(indices)
@@ -295,7 +293,7 @@ class TensorFlowTensor(AbstractBaseTensor):
             raise ValueError  # pragma: no cover
 
     @samedevice
-    def arange(self: Tensor, start, stop=None, step=None) -> Tensor:
+    def arange(self: TensorType, start, stop=None, step=None) -> TensorType:
         if step is None:
             step = 1
         if stop is None:
@@ -303,25 +301,25 @@ class TensorFlowTensor(AbstractBaseTensor):
             start = 0
         return type(self)(tf.range(start, stop, step))
 
-    def cumsum(self: Tensor, axis=None) -> Tensor:
+    def cumsum(self: TensorType, axis=None) -> TensorType:
         if axis is None:
             x = tf.reshape(self.raw, (-1,))
             return type(self)(tf.cumsum(x, axis=0))
         return type(self)(tf.cumsum(self.raw, axis=axis))
 
-    def flip(self: Tensor, axis=None) -> Tensor:
+    def flip(self: TensorType, axis=None) -> TensorType:
         if axis is None:
             axis = tuple(range(self.ndim))
         if not isinstance(axis, Iterable):
             axis = (axis,)
         return type(self)(tf.reverse(self.raw, axis=axis))
 
-    def meshgrid(self: Tensor, *tensors, indexing="xy") -> Tuple[Tensor, ...]:
+    def meshgrid(self: TensorType, *tensors, indexing="xy") -> Tuple[TensorType, ...]:
         tensors = unwrap_(tensors)
         outputs = tf.meshgrid(self.raw, *tensors, indexing=indexing)
         return tuple(type(self)(out) for out in outputs)
 
-    def pad(self: Tensor, paddings, mode="constant", value=0) -> Tensor:
+    def pad(self: TensorType, paddings, mode="constant", value=0) -> TensorType:
         if len(paddings) != self.ndim:
             raise ValueError("pad requires a tuple for each dimension")
         for p in paddings:
@@ -338,13 +336,13 @@ class TensorFlowTensor(AbstractBaseTensor):
                 raise NotImplementedError  # pragma: no cover
         return type(self)(tf.pad(self.raw, paddings, mode=mode, constant_values=value))
 
-    def isnan(self: Tensor) -> Tensor:
+    def isnan(self: TensorType) -> TensorType:
         return type(self)(tf.math.is_nan(self.raw))
 
-    def isinf(self: Tensor) -> Tensor:
+    def isinf(self: TensorType) -> TensorType:
         return type(self)(tf.math.is_inf(self.raw))
 
-    def crossentropy(self: Tensor, labels: Tensor) -> Tensor:
+    def crossentropy(self: TensorType, labels: TensorType) -> TensorType:
         if self.ndim != 2:
             raise ValueError("crossentropy only supported for 2D logits tensors")
         if self.shape[:1] != labels.shape:
@@ -353,7 +351,7 @@ class TensorFlowTensor(AbstractBaseTensor):
             tf.nn.sparse_softmax_cross_entropy_with_logits(labels.raw, self.raw)
         )
 
-    def _value_and_grad_fn(self: Tensor, f, has_aux=False) -> Any:
+    def _value_and_grad_fn(self: TensorType, f, has_aux=False) -> Any:
         def value_and_grad(x, *args, **kwargs):
             # using tf.identity to make x independent from possible other instances of x in args
             x = x.raw
@@ -376,23 +374,23 @@ class TensorFlowTensor(AbstractBaseTensor):
 
         return value_and_grad
 
-    def sign(self: Tensor) -> Tensor:
+    def sign(self: TensorType) -> TensorType:
         return type(self)(tf.sign(self.raw))
 
-    def sqrt(self: Tensor) -> Tensor:
+    def sqrt(self: TensorType) -> TensorType:
         return type(self)(tf.sqrt(self.raw))
 
-    def tanh(self: Tensor) -> Tensor:
+    def tanh(self: TensorType) -> TensorType:
         return type(self)(tf.tanh(self.raw))
 
-    def float32(self: Tensor) -> Tensor:
+    def float32(self: TensorType) -> TensorType:
         return self.astype(tf.float32)
 
-    def where(self: Tensor, x, y) -> Tensor:
+    def where(self: TensorType, x, y) -> TensorType:
         x, y = unwrap_(x, y)
         return type(self)(tf.where(self.raw, x, y))
 
-    def matmul(self: Tensor, other) -> Tensor:
+    def matmul(self: TensorType, other) -> TensorType:
         if self.ndim != 2 or other.ndim != 2:
             raise ValueError(
                 f"matmul requires both tensors to be 2D, got {self.ndim}D and {other.ndim}D"
@@ -400,30 +398,30 @@ class TensorFlowTensor(AbstractBaseTensor):
         return type(self)(tf.matmul(self.raw, other.raw))
 
     @common_dtype
-    def __lt__(self: Tensor, other) -> Tensor:
+    def __lt__(self: TensorType, other) -> TensorType:
         return type(self)(self.raw.__lt__(unwrap_(other)))
 
     @common_dtype
-    def __le__(self: Tensor, other) -> Tensor:
+    def __le__(self: TensorType, other) -> TensorType:
         return type(self)(self.raw.__le__(unwrap_(other)))
 
     @common_dtype
-    def __eq__(self: Tensor, other) -> Tensor:  # type: ignore
+    def __eq__(self: TensorType, other) -> TensorType:  # type: ignore
         return type(self)(self.raw.__eq__(unwrap_(other)))
 
     @common_dtype
-    def __ne__(self: Tensor, other) -> Tensor:  # type: ignore
+    def __ne__(self: TensorType, other) -> TensorType:  # type: ignore
         return type(self)(self.raw.__ne__(unwrap_(other)))
 
     @common_dtype
-    def __gt__(self: Tensor, other) -> Tensor:
+    def __gt__(self: TensorType, other) -> TensorType:
         return type(self)(self.raw.__gt__(unwrap_(other)))
 
     @common_dtype
-    def __ge__(self: Tensor, other) -> Tensor:
+    def __ge__(self: TensorType, other) -> TensorType:
         return type(self)(self.raw.__ge__(unwrap_(other)))
 
-    def __getitem__(self: Tensor, index) -> Tensor:
+    def __getitem__(self: TensorType, index) -> TensorType:
         if isinstance(index, tuple):
             index = tuple(x.raw if istensor(x) else x for x in index)
             tensors = any(

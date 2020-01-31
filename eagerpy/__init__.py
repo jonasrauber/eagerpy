@@ -15,7 +15,8 @@ class _Indexable:
 index = _Indexable()
 
 
-from .tensor import AbstractTensor  # noqa: F401
+from .tensor import Tensor  # noqa: F401
+from .tensor import TensorType  # noqa: F401
 from .tensor import istensor  # noqa: F401
 
 from .tensor import PyTorchTensor  # noqa: F401
@@ -23,7 +24,7 @@ from .tensor import TensorFlowTensor  # noqa: F401
 from .tensor import NumPyTensor  # noqa: F401
 from .tensor import JAXTensor  # noqa: F401
 
-from . import utils  # noqa: F401
+from . import types  # noqa: F401
 
 from .astensor import astensor  # noqa: F401
 
@@ -32,8 +33,9 @@ from .modules import tensorflow  # noqa: F401
 from .modules import jax  # noqa: F401
 from .modules import numpy  # noqa: F401
 
+from . import utils  # noqa: F401
+
 from .framework import *  # noqa: F401,F403
 
 from . import norms  # noqa: F401
-
 from .lib import *  # noqa: F401,F403

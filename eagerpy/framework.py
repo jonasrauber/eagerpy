@@ -1,69 +1,69 @@
 from typing import overload, Sequence, Callable, Tuple, Any
 from typing_extensions import Literal
 
+from .tensor import TensorType
 from .tensor import istensor
-from .tensor import Tensor
 
 newaxis = None
 inf = float("inf")
 nan = float("nan")
 
 
-def clip(t: Tensor, min_, max_) -> Tensor:
+def clip(t: TensorType, min_, max_) -> TensorType:
     return t.clip(min_, max_)
 
 
-def abs(t: Tensor) -> Tensor:
+def abs(t: TensorType) -> TensorType:
     return t.abs()
 
 
-def sign(t: Tensor) -> Tensor:
+def sign(t: TensorType) -> TensorType:
     return t.sign()
 
 
-def sqrt(t: Tensor) -> Tensor:
+def sqrt(t: TensorType) -> TensorType:
     return t.sqrt()
 
 
-def square(t: Tensor) -> Tensor:
+def square(t: TensorType) -> TensorType:
     return t.square()
 
 
-def pow(t: Tensor, exponent) -> Tensor:
+def pow(t: TensorType, exponent) -> TensorType:
     return t.pow(exponent)
 
 
-def tanh(t: Tensor) -> Tensor:
+def tanh(t: TensorType) -> TensorType:
     return t.tanh()
 
 
-def arctanh(t: Tensor) -> Tensor:
+def arctanh(t: TensorType) -> TensorType:
     return t.arctanh()
 
 
-def sum(t: Tensor, axis=None, keepdims=False) -> Tensor:
+def sum(t: TensorType, axis=None, keepdims=False) -> TensorType:
     return t.sum(axis=axis, keepdims=keepdims)
 
 
-def mean(t: Tensor, axis=None, keepdims=False) -> Tensor:
+def mean(t: TensorType, axis=None, keepdims=False) -> TensorType:
     return t.mean(axis=axis, keepdims=keepdims)
 
 
-def min(t: Tensor, axis=None, keepdims=False) -> Tensor:
+def min(t: TensorType, axis=None, keepdims=False) -> TensorType:
     return t.min(axis=axis, keepdims=keepdims)
 
 
-def max(t: Tensor, axis=None, keepdims=False) -> Tensor:
+def max(t: TensorType, axis=None, keepdims=False) -> TensorType:
     return t.max(axis=axis, keepdims=keepdims)
 
 
 @overload
-def minimum(x: Tensor, y) -> Tensor:
+def minimum(x: TensorType, y) -> TensorType:
     ...
 
 
 @overload
-def minimum(x, y: Tensor) -> Tensor:
+def minimum(x, y: TensorType) -> TensorType:
     ...
 
 
@@ -74,12 +74,12 @@ def minimum(x, y):
 
 
 @overload
-def maximum(x: Tensor, y) -> Tensor:
+def maximum(x: TensorType, y) -> TensorType:
     ...
 
 
 @overload
-def maximum(x, y: Tensor) -> Tensor:
+def maximum(x, y: TensorType) -> TensorType:
     ...
 
 
@@ -89,70 +89,70 @@ def maximum(x, y):
     return x.maximum(y)
 
 
-def argmin(t: Tensor, axis=None) -> Tensor:
+def argmin(t: TensorType, axis=None) -> TensorType:
     return t.argmin(axis=axis)
 
 
-def argmax(t: Tensor, axis=None) -> Tensor:
+def argmax(t: TensorType, axis=None) -> TensorType:
     return t.argmax(axis=axis)
 
 
-def argsort(t: Tensor, *args, **kwargs) -> Tensor:
+def argsort(t: TensorType, *args, **kwargs) -> TensorType:
     return t.argsort(*args, **kwargs)
 
 
-def uniform(t: Tensor, *args, **kwargs) -> Tensor:
+def uniform(t: TensorType, *args, **kwargs) -> TensorType:
     return t.uniform(*args, **kwargs)
 
 
-def normal(t: Tensor, *args, **kwargs) -> Tensor:
+def normal(t: TensorType, *args, **kwargs) -> TensorType:
     return t.normal(*args, **kwargs)
 
 
-def ones(t: Tensor, *args, **kwargs) -> Tensor:
+def ones(t: TensorType, *args, **kwargs) -> TensorType:
     return t.ones(*args, **kwargs)
 
 
-def zeros(t: Tensor, *args, **kwargs) -> Tensor:
+def zeros(t: TensorType, *args, **kwargs) -> TensorType:
     return t.zeros(*args, **kwargs)
 
 
-def ones_like(t: Tensor) -> Tensor:
+def ones_like(t: TensorType) -> TensorType:
     return t.ones_like()
 
 
-def zeros_like(t: Tensor) -> Tensor:
+def zeros_like(t: TensorType) -> TensorType:
     return t.zeros_like()
 
 
-def full_like(t: Tensor, *args, **kwargs) -> Tensor:
+def full_like(t: TensorType, *args, **kwargs) -> TensorType:
     return t.full_like(*args, **kwargs)
 
 
-def onehot_like(t: Tensor, *args, **kwargs) -> Tensor:
+def onehot_like(t: TensorType, *args, **kwargs) -> TensorType:
     return t.onehot_like(*args, **kwargs)
 
 
-def from_numpy(t: Tensor, *args, **kwargs) -> Tensor:
+def from_numpy(t: TensorType, *args, **kwargs) -> TensorType:
     return t.from_numpy(*args, **kwargs)
 
 
-def concatenate(tensors: Sequence[Tensor], axis=0) -> Tensor:
+def concatenate(tensors: Sequence[TensorType], axis=0) -> TensorType:
     t = tensors[0]
     return t._concatenate(tensors, axis=axis)
 
 
-def transpose(t: Tensor, axes=None) -> Tensor:
+def transpose(t: TensorType, axes=None) -> TensorType:
     return t.transpose(axes=axes)
 
 
 @overload
-def logical_and(x: Tensor, y) -> Tensor:
+def logical_and(x: TensorType, y) -> TensorType:
     ...
 
 
 @overload
-def logical_and(x, y: Tensor) -> Tensor:
+def logical_and(x, y: TensorType) -> TensorType:
     ...
 
 
@@ -163,12 +163,12 @@ def logical_and(x, y):
 
 
 @overload
-def logical_or(x: Tensor, y) -> Tensor:
+def logical_or(x: TensorType, y) -> TensorType:
     ...
 
 
 @overload
-def logical_or(x, y: Tensor) -> Tensor:
+def logical_or(x, y: TensorType) -> TensorType:
     ...
 
 
@@ -178,127 +178,129 @@ def logical_or(x, y):
     return x.logical_or(y)
 
 
-def logical_not(t: Tensor) -> Tensor:
+def logical_not(t: TensorType) -> TensorType:
     return t.logical_not()
 
 
-def exp(t: Tensor) -> Tensor:
+def exp(t: TensorType) -> TensorType:
     return t.exp()
 
 
-def log(t: Tensor) -> Tensor:
+def log(t: TensorType) -> TensorType:
     return t.log()
 
 
-def log2(t: Tensor) -> Tensor:
+def log2(t: TensorType) -> TensorType:
     return t.log2()
 
 
-def log10(t: Tensor) -> Tensor:
+def log10(t: TensorType) -> TensorType:
     return t.log10()
 
 
-def log1p(t: Tensor) -> Tensor:
+def log1p(t: TensorType) -> TensorType:
     return t.log1p()
 
 
-def where(condition: Tensor, x, y) -> Tensor:
+def where(condition: TensorType, x, y) -> TensorType:
     return condition.where(x, y)
 
 
-def tile(t: Tensor, multiples) -> Tensor:
+def tile(t: TensorType, multiples) -> TensorType:
     return t.tile(multiples)
 
 
-def matmul(x: Tensor, y: Tensor) -> Tensor:
+def matmul(x: TensorType, y: TensorType) -> TensorType:
     return x.matmul(y)
 
 
-def softmax(t: Tensor, axis=-1) -> Tensor:
+def softmax(t: TensorType, axis=-1) -> TensorType:
     return t.softmax(axis=axis)
 
 
-def log_softmax(t: Tensor, axis=-1) -> Tensor:
+def log_softmax(t: TensorType, axis=-1) -> TensorType:
     return t.log_softmax(axis=axis)
 
 
-def stack(tensors: Sequence[Tensor], axis=0) -> Tensor:
+def stack(tensors: Sequence[TensorType], axis=0) -> TensorType:
     t = tensors[0]
     return t._stack(tensors, axis=axis)
 
 
-def squeeze(t: Tensor, *args, **kwargs) -> Tensor:
+def squeeze(t: TensorType, *args, **kwargs) -> TensorType:
     return t.squeeze(*args, **kwargs)
 
 
-def expand_dims(t: Tensor, *args, **kwargs) -> Tensor:
+def expand_dims(t: TensorType, *args, **kwargs) -> TensorType:
     return t.expand_dims(*args, **kwargs)
 
 
-def full(t: Tensor, shape, value) -> Tensor:
+def full(t: TensorType, shape, value) -> TensorType:
     return t.full(shape, value)
 
 
-def index_update(t: Tensor, *args, **kwargs) -> Tensor:
+def index_update(t: TensorType, *args, **kwargs) -> TensorType:
     return t.index_update(*args, **kwargs)
 
 
-def arange(t: Tensor, *args, **kwargs) -> Tensor:
+def arange(t: TensorType, *args, **kwargs) -> TensorType:
     return t.arange(*args, **kwargs)
 
 
-def cumsum(t: Tensor, axis=None) -> Tensor:
+def cumsum(t: TensorType, axis=None) -> TensorType:
     return t.cumsum(axis=axis)
 
 
-def flip(t: Tensor, axis=None) -> Tensor:
+def flip(t: TensorType, axis=None) -> TensorType:
     return t.flip(axis=axis)
 
 
-def meshgrid(t: Tensor, *args, **kwargs) -> Tuple[Tensor, ...]:
+def meshgrid(t: TensorType, *args, **kwargs) -> Tuple[TensorType, ...]:
     return t.meshgrid(*args, **kwargs)
 
 
-def pad(t: Tensor, paddings, mode="constant", value=0) -> Tensor:
+def pad(t: TensorType, paddings, mode="constant", value=0) -> TensorType:
     return t.pad(paddings, mode=mode, value=value)
 
 
-def isnan(t: Tensor) -> Tensor:
+def isnan(t: TensorType) -> TensorType:
     return t.isnan()
 
 
-def isinf(t: Tensor) -> Tensor:
+def isinf(t: TensorType) -> TensorType:
     return t.isinf()
 
 
-def all(t: Tensor, *args, **kwargs) -> Tensor:
+def all(t: TensorType, *args, **kwargs) -> TensorType:
     return t.all(*args, **kwargs)
 
 
-def any(t: Tensor, *args, **kwargs) -> Tensor:
+def any(t: TensorType, *args, **kwargs) -> TensorType:
     return t.any(*args, **kwargs)
 
 
-def crossentropy(logits: Tensor, labels: Tensor) -> Tensor:
+def crossentropy(logits: TensorType, labels: TensorType) -> TensorType:
     return logits.crossentropy(labels)
 
 
 @overload
-def value_and_grad_fn(t: Tensor, f: Callable) -> Callable[..., Tuple[Tensor, Tensor]]:
+def value_and_grad_fn(
+    t: TensorType, f: Callable
+) -> Callable[..., Tuple[TensorType, TensorType]]:
     ...
 
 
 @overload
 def value_and_grad_fn(
-    t: Tensor, f: Callable, has_aux: Literal[False]
-) -> Callable[..., Tuple[Tensor, Tensor]]:
+    t: TensorType, f: Callable, has_aux: Literal[False]
+) -> Callable[..., Tuple[TensorType, TensorType]]:
     ...
 
 
 @overload
 def value_and_grad_fn(
-    t: Tensor, f: Callable, has_aux: Literal[True]
-) -> Callable[..., Tuple[Tensor, Any, Tensor]]:
+    t: TensorType, f: Callable, has_aux: Literal[True]
+) -> Callable[..., Tuple[TensorType, Any, TensorType]]:
     ...
 
 
@@ -306,15 +308,17 @@ def value_and_grad_fn(t, f, has_aux=False):
     return t._value_and_grad_fn(f, has_aux=has_aux)
 
 
-def value_and_grad(f: Callable, t: Tensor, *args, **kwargs) -> Tuple[Tensor, Tensor]:
+def value_and_grad(
+    f: Callable, t: TensorType, *args, **kwargs
+) -> Tuple[TensorType, TensorType]:
     return t.value_and_grad(f, *args, **kwargs)
 
 
 def value_aux_and_grad(
-    f: Callable, t: Tensor, *args, **kwargs
-) -> Tuple[Tensor, Any, Tensor]:
+    f: Callable, t: TensorType, *args, **kwargs
+) -> Tuple[TensorType, Any, TensorType]:
     return t.value_aux_and_grad(f, *args, **kwargs)
 
 
-def reshape(t: Tensor, shape) -> Tensor:
+def reshape(t: TensorType, shape) -> TensorType:
     return t.reshape(shape)

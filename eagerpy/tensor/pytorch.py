@@ -1,15 +1,12 @@
-from .base import AbstractBaseTensor
-from .base import unwrap_
-
-from .tensor import istensor
-
-# from .tensor import Tensor
-
 import numpy as np
 from collections.abc import Iterable
 from typing import Tuple, cast, Union, Any, TypeVar, TYPE_CHECKING
 from importlib import import_module
 
+from .tensor import istensor
+
+from .base import BaseTensor
+from .base import unwrap_
 
 if TYPE_CHECKING:
     import torch  # for static analyzers
@@ -18,17 +15,18 @@ else:
     torch = None
 
 
-Tensor = TypeVar("Tensor", bound="PyTorchTensor")
+# stricter TensorType to get additional type information from the raw method
+TensorType = TypeVar("TensorType", bound="PyTorchTensor")
 
 
-def assert_bool(x: Tensor) -> None:
+def assert_bool(x: TensorType) -> None:
     if not istensor(x):
         return
     if x.dtype != torch.bool:
         raise ValueError(f"requires dtype bool, consider t.bool().all()")
 
 
-class PyTorchTensor(AbstractBaseTensor):
+class PyTorchTensor(BaseTensor):
     def __init__(self, raw: "torch.Tensor"):
         global torch
         if torch is None:
@@ -39,10 +37,10 @@ class PyTorchTensor(AbstractBaseTensor):
     def raw(self) -> "torch.Tensor":
         return cast(torch.Tensor, super().raw)
 
-    def tanh(self: Tensor) -> Tensor:
+    def tanh(self: TensorType) -> TensorType:
         return type(self)(torch.tanh(self.raw))
 
-    def numpy(self: Tensor) -> Any:
+    def numpy(self: TensorType) -> Any:
         return self.raw.detach().cpu().numpy()
 
     def item(self) -> Union[int, float, bool]:
@@ -52,40 +50,40 @@ class PyTorchTensor(AbstractBaseTensor):
     def shape(self) -> Tuple:
         return self.raw.shape
 
-    def reshape(self: Tensor, shape) -> Tensor:
+    def reshape(self: TensorType, shape) -> TensorType:
         return type(self)(self.raw.reshape(shape))
 
-    def astype(self: Tensor, dtype) -> Tensor:
+    def astype(self: TensorType, dtype) -> TensorType:
         return type(self)(self.raw.to(dtype))
 
-    def clip(self: Tensor, min_, max_) -> Tensor:
+    def clip(self: TensorType, min_, max_) -> TensorType:
         return type(self)(self.raw.clamp(min_, max_))
 
-    def square(self: Tensor) -> Tensor:
+    def square(self: TensorType) -> TensorType:
         return type(self)(self.raw ** 2)
 
-    def arctanh(self: Tensor) -> Tensor:
+    def arctanh(self: TensorType) -> TensorType:
         """
         improve once this issue has been fixed:
         https://github.com/pytorch/pytorch/issues/10324
         """
         return type(self)(0.5 * (torch.log1p(self.raw) - torch.log1p(-self.raw)))
 
-    def sum(self: Tensor, axis=None, keepdims=False) -> Tensor:
+    def sum(self: TensorType, axis=None, keepdims=False) -> TensorType:
         if axis is None and not keepdims:
             return type(self)(self.raw.sum())
         if axis is None:
             axis = tuple(range(self.ndim))
         return type(self)(self.raw.sum(dim=axis, keepdim=keepdims))
 
-    def mean(self: Tensor, axis=None, keepdims=False) -> Tensor:
+    def mean(self: TensorType, axis=None, keepdims=False) -> TensorType:
         if axis is None and not keepdims:
             return type(self)(self.raw.mean())
         if axis is None:
             axis = tuple(range(self.ndim))
         return type(self)(self.raw.mean(dim=axis, keepdim=keepdims))
 
-    def min(self: Tensor, axis=None, keepdims=False) -> Tensor:
+    def min(self: TensorType, axis=None, keepdims=False) -> TensorType:
         """
         simplify once this issue has been fixed:
         https://github.com/pytorch/pytorch/issues/28213
@@ -102,7 +100,7 @@ class PyTorchTensor(AbstractBaseTensor):
             x, _ = x.min(i, keepdim=keepdims)
         return type(self)(x)
 
-    def max(self: Tensor, axis=None, keepdims=False) -> Tensor:
+    def max(self: TensorType, axis=None, keepdims=False) -> TensorType:
         """
         simplify once this issue has been fixed:
         https://github.com/pytorch/pytorch/issues/28213
@@ -119,62 +117,62 @@ class PyTorchTensor(AbstractBaseTensor):
             x, _ = x.max(i, keepdim=keepdims)
         return type(self)(x)
 
-    def minimum(self: Tensor, other) -> Tensor:
+    def minimum(self: TensorType, other) -> TensorType:
         if istensor(other):
             other = other.raw
         else:
             other = torch.ones_like(self.raw) * other
         return type(self)(torch.min(self.raw, other))
 
-    def maximum(self: Tensor, other) -> Tensor:
+    def maximum(self: TensorType, other) -> TensorType:
         if istensor(other):
             other = other.raw
         else:
             other = torch.ones_like(self.raw) * other
         return type(self)(torch.max(self.raw, other))
 
-    def argmin(self: Tensor, axis=None) -> Tensor:
+    def argmin(self: TensorType, axis=None) -> TensorType:
         return type(self)(self.raw.argmin(dim=axis))
 
-    def argmax(self: Tensor, axis=None) -> Tensor:
+    def argmax(self: TensorType, axis=None) -> TensorType:
         return type(self)(self.raw.argmax(dim=axis))
 
-    def argsort(self: Tensor, axis=-1) -> Tensor:
+    def argsort(self: TensorType, axis=-1) -> TensorType:
         return type(self)(self.raw.argsort(dim=axis))
 
-    def uniform(self: Tensor, shape, low=0.0, high=1.0) -> Tensor:
+    def uniform(self: TensorType, shape, low=0.0, high=1.0) -> TensorType:
         return type(self)(
             torch.rand(shape, dtype=self.raw.dtype, device=self.raw.device)
             * (high - low)
             + low
         )
 
-    def normal(self: Tensor, shape, mean=0.0, stddev=1.0) -> Tensor:
+    def normal(self: TensorType, shape, mean=0.0, stddev=1.0) -> TensorType:
         return type(self)(
             torch.randn(shape, dtype=self.raw.dtype, device=self.raw.device) * stddev
             + mean
         )
 
-    def ones(self: Tensor, shape) -> Tensor:
+    def ones(self: TensorType, shape) -> TensorType:
         return type(self)(
             torch.ones(shape, dtype=self.raw.dtype, device=self.raw.device)
         )
 
-    def zeros(self: Tensor, shape) -> Tensor:
+    def zeros(self: TensorType, shape) -> TensorType:
         return type(self)(
             torch.zeros(shape, dtype=self.raw.dtype, device=self.raw.device)
         )
 
-    def ones_like(self: Tensor) -> Tensor:
+    def ones_like(self: TensorType) -> TensorType:
         return type(self)(torch.ones_like(self.raw))
 
-    def zeros_like(self: Tensor) -> Tensor:
+    def zeros_like(self: TensorType) -> TensorType:
         return type(self)(torch.zeros_like(self.raw))
 
-    def full_like(self: Tensor, fill_value) -> Tensor:
+    def full_like(self: TensorType, fill_value) -> TensorType:
         return type(self)(torch.full_like(self.raw, fill_value))
 
-    def onehot_like(self: Tensor, indices: Tensor, *, value=1) -> Tensor:
+    def onehot_like(self: TensorType, indices: TensorType, *, value=1) -> TensorType:
         if self.ndim != 2:
             raise ValueError("onehot_like only supported for 2D tensors")
         if indices.ndim != 1:
@@ -186,28 +184,28 @@ class PyTorchTensor(AbstractBaseTensor):
         x[rows, indices.raw] = value
         return type(self)(x)
 
-    def from_numpy(self: Tensor, a) -> Tensor:
+    def from_numpy(self: TensorType, a) -> TensorType:
         return type(self)(torch.as_tensor(a, device=self.raw.device))
 
-    def _concatenate(self: Tensor, tensors, axis=0) -> Tensor:
+    def _concatenate(self: TensorType, tensors, axis=0) -> TensorType:
         # concatenates only "tensors", but not "self"
         tensors = unwrap_(tensors)
         return type(self)(torch.cat(tensors, dim=axis))
 
-    def _stack(self: Tensor, tensors, axis=0) -> Tensor:
+    def _stack(self: TensorType, tensors, axis=0) -> TensorType:
         # stacks only "tensors", but not "self"
         tensors = unwrap_(tensors)
         return type(self)(torch.stack(tensors, dim=axis))
 
-    def transpose(self: Tensor, axes=None) -> Tensor:
+    def transpose(self: TensorType, axes=None) -> TensorType:
         if axes is None:
             axes = tuple(range(self.ndim - 1, -1, -1))
         return type(self)(self.raw.permute(*axes))
 
-    def bool(self: Tensor) -> Tensor:
+    def bool(self: TensorType) -> TensorType:
         return self.astype(torch.bool)
 
-    def all(self: Tensor, axis=None, keepdims=False) -> Tensor:
+    def all(self: TensorType, axis=None, keepdims=False) -> TensorType:
         assert_bool(self)
         if axis is None and not keepdims:
             return type(self)(self.raw.all())
@@ -221,7 +219,7 @@ class PyTorchTensor(AbstractBaseTensor):
             x = x.all(i, keepdim=keepdims)
         return type(self)(x)
 
-    def any(self: Tensor, axis=None, keepdims=False) -> Tensor:
+    def any(self: TensorType, axis=None, keepdims=False) -> TensorType:
         assert_bool(self)
         if axis is None and not keepdims:
             return type(self)(self.raw.any())
@@ -235,48 +233,48 @@ class PyTorchTensor(AbstractBaseTensor):
             x = x.any(i, keepdim=keepdims)
         return type(self)(x)
 
-    def logical_and(self: Tensor, other) -> Tensor:
+    def logical_and(self: TensorType, other) -> TensorType:
         assert_bool(self)
         assert_bool(other)
         return type(self)(self.raw & unwrap_(other))
 
-    def logical_or(self: Tensor, other) -> Tensor:
+    def logical_or(self: TensorType, other) -> TensorType:
         assert_bool(self)
         assert_bool(other)
         return type(self)(self.raw | unwrap_(other))
 
-    def logical_not(self: Tensor) -> Tensor:
+    def logical_not(self: TensorType) -> TensorType:
         assert_bool(self)
         return type(self)(~self.raw)
 
-    def exp(self: Tensor) -> Tensor:
+    def exp(self: TensorType) -> TensorType:
         return type(self)(torch.exp(self.raw))
 
-    def log(self: Tensor) -> Tensor:
+    def log(self: TensorType) -> TensorType:
         return type(self)(torch.log(self.raw))
 
-    def log2(self: Tensor) -> Tensor:
+    def log2(self: TensorType) -> TensorType:
         return type(self)(torch.log2(self.raw))
 
-    def log10(self: Tensor) -> Tensor:
+    def log10(self: TensorType) -> TensorType:
         return type(self)(torch.log10(self.raw))
 
-    def log1p(self: Tensor) -> Tensor:
+    def log1p(self: TensorType) -> TensorType:
         return type(self)(torch.log1p(self.raw))
 
-    def tile(self: Tensor, multiples) -> Tensor:
+    def tile(self: TensorType, multiples) -> TensorType:
         multiples = unwrap_(multiples)
         if len(multiples) != self.ndim:
             raise ValueError("multiples requires one entry for each dimension")
         return type(self)(self.raw.repeat(multiples))
 
-    def softmax(self: Tensor, axis=-1) -> Tensor:
+    def softmax(self: TensorType, axis=-1) -> TensorType:
         return type(self)(torch.nn.functional.softmax(self.raw, dim=axis))
 
-    def log_softmax(self: Tensor, axis=-1) -> Tensor:
+    def log_softmax(self: TensorType, axis=-1) -> TensorType:
         return type(self)(torch.nn.functional.log_softmax(self.raw, dim=axis))
 
-    def squeeze(self: Tensor, axis=None) -> Tensor:
+    def squeeze(self: TensorType, axis=None) -> TensorType:
         if axis is None:
             return type(self)(self.raw.squeeze())
         if not isinstance(axis, Iterable):
@@ -287,17 +285,17 @@ class PyTorchTensor(AbstractBaseTensor):
             x = x.squeeze(dim=i)
         return type(self)(x)
 
-    def expand_dims(self: Tensor, axis=None) -> Tensor:
+    def expand_dims(self: TensorType, axis=None) -> TensorType:
         return type(self)(self.raw.unsqueeze(dim=axis))
 
-    def full(self: Tensor, shape, value) -> Tensor:
+    def full(self: TensorType, shape, value) -> TensorType:
         if not isinstance(shape, Iterable):
             shape = (shape,)
         return type(self)(
             torch.full(shape, value, dtype=self.raw.dtype, device=self.raw.device)
         )
 
-    def index_update(self: Tensor, indices, values) -> Tensor:
+    def index_update(self: TensorType, indices, values) -> TensorType:
         indices, values = unwrap_(indices, values)
         if isinstance(indices, tuple):
             indices = unwrap_(indices)
@@ -305,7 +303,7 @@ class PyTorchTensor(AbstractBaseTensor):
         x[indices] = values
         return type(self)(x)
 
-    def arange(self: Tensor, start, stop=None, step=None) -> Tensor:
+    def arange(self: TensorType, start, stop=None, step=None) -> TensorType:
         if step is None:
             step = 1
         if stop is None:
@@ -315,19 +313,19 @@ class PyTorchTensor(AbstractBaseTensor):
             torch.arange(start=start, end=stop, step=step, device=self.raw.device)
         )
 
-    def cumsum(self: Tensor, axis=None) -> Tensor:
+    def cumsum(self: TensorType, axis=None) -> TensorType:
         if axis is None:
             return type(self)(self.raw.reshape(-1).cumsum(dim=0))
         return type(self)(self.raw.cumsum(dim=axis))
 
-    def flip(self: Tensor, axis=None) -> Tensor:
+    def flip(self: TensorType, axis=None) -> TensorType:
         if axis is None:
             axis = tuple(range(self.ndim))
         if not isinstance(axis, Iterable):
             axis = (axis,)
         return type(self)(self.raw.flip(dims=axis))
 
-    def meshgrid(self: Tensor, *tensors, indexing="xy") -> Tuple[Tensor, ...]:
+    def meshgrid(self: TensorType, *tensors, indexing="xy") -> Tuple[TensorType, ...]:
         tensors = unwrap_(tensors)
         if indexing == "ij" or len(tensors) == 0:
             outputs = torch.meshgrid(self.raw, *tensors)
@@ -342,7 +340,7 @@ class PyTorchTensor(AbstractBaseTensor):
             results[0], results[1] = results[1], results[0]
         return tuple(results)
 
-    def pad(self: Tensor, paddings, mode="constant", value=0) -> Tensor:
+    def pad(self: TensorType, paddings, mode="constant", value=0) -> TensorType:
         if len(paddings) != self.ndim:
             raise ValueError("pad requires a tuple for each dimension")
         for p in paddings:
@@ -363,13 +361,13 @@ class PyTorchTensor(AbstractBaseTensor):
             torch.nn.functional.pad(self.raw, paddings, mode=mode, value=value)
         )
 
-    def isnan(self: Tensor) -> Tensor:
+    def isnan(self: TensorType) -> TensorType:
         return type(self)(torch.isnan(self.raw))
 
-    def isinf(self: Tensor) -> Tensor:
+    def isinf(self: TensorType) -> TensorType:
         return type(self)(torch.isinf(self.raw))
 
-    def crossentropy(self: Tensor, labels: Tensor) -> Tensor:
+    def crossentropy(self: TensorType, labels: TensorType) -> TensorType:
         if self.ndim != 2:
             raise ValueError("crossentropy only supported for 2D logits tensors")
         if self.shape[:1] != labels.shape:
@@ -378,10 +376,10 @@ class PyTorchTensor(AbstractBaseTensor):
             torch.nn.functional.cross_entropy(self.raw, labels.raw, reduction="none")
         )
 
-    def _value_and_grad_fn(self: Tensor, f, has_aux=False) -> Any:
+    def _value_and_grad_fn(self: TensorType, f, has_aux=False) -> Any:
         def value_and_grad(
-            x: Tensor, *args, **kwargs
-        ) -> Union[Tuple[Tensor, Tensor], Tuple[Tensor, Any, Tensor]]:
+            x: TensorType, *args, **kwargs
+        ) -> Union[Tuple[TensorType, TensorType], Tuple[TensorType, Any, TensorType]]:
             x = type(self)(x.raw.clone().requires_grad_())
             if has_aux:
                 loss, aux = f(x, *args, **kwargs)
@@ -410,45 +408,45 @@ class PyTorchTensor(AbstractBaseTensor):
 
         return value_and_grad
 
-    def sign(self: Tensor) -> Tensor:
+    def sign(self: TensorType) -> TensorType:
         return type(self)(torch.sign(self.raw))
 
-    def sqrt(self: Tensor) -> Tensor:
+    def sqrt(self: TensorType) -> TensorType:
         return type(self)(torch.sqrt(self.raw))
 
-    def float32(self: Tensor) -> Tensor:
+    def float32(self: TensorType) -> TensorType:
         return self.astype(torch.float32)
 
-    def where(self: Tensor, x, y) -> Tensor:
+    def where(self: TensorType, x, y) -> TensorType:
         x, y = unwrap_(x, y)
         return type(self)(torch.where(self.raw, x, y))
 
-    def matmul(self: Tensor, other) -> Tensor:
+    def matmul(self: TensorType, other) -> TensorType:
         if self.ndim != 2 or other.ndim != 2:
             raise ValueError(
                 f"matmul requires both tensors to be 2D, got {self.ndim}D and {other.ndim}D"
             )
         return type(self)(torch.matmul(self.raw, other.raw))
 
-    def __lt__(self: Tensor, other) -> Tensor:
+    def __lt__(self: TensorType, other) -> TensorType:
         return type(self)(self.raw.__lt__(unwrap_(other)))
 
-    def __le__(self: Tensor, other) -> Tensor:
+    def __le__(self: TensorType, other) -> TensorType:
         return type(self)(self.raw.__le__(unwrap_(other)))
 
-    def __eq__(self: Tensor, other) -> Tensor:  # type: ignore
+    def __eq__(self: TensorType, other) -> TensorType:  # type: ignore
         return type(self)(self.raw.__eq__(unwrap_(other)))
 
-    def __ne__(self: Tensor, other) -> Tensor:  # type: ignore
+    def __ne__(self: TensorType, other) -> TensorType:  # type: ignore
         return type(self)(self.raw.__ne__(unwrap_(other)))
 
-    def __gt__(self: Tensor, other) -> Tensor:
+    def __gt__(self: TensorType, other) -> TensorType:
         return type(self)(self.raw.__gt__(unwrap_(other)))
 
-    def __ge__(self: Tensor, other) -> Tensor:
+    def __ge__(self: TensorType, other) -> TensorType:
         return type(self)(self.raw.__ge__(unwrap_(other)))
 
-    def __getitem__(self: Tensor, index) -> Tensor:
+    def __getitem__(self: TensorType, index) -> TensorType:
         if isinstance(index, tuple):
             index = tuple(x.raw if istensor(x) else x for x in index)
         elif istensor(index):

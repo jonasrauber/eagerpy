@@ -1,13 +1,13 @@
 from typing import TYPE_CHECKING, Union, overload
 import sys
 
+from .tensor import Tensor
+from .tensor import TensorType
+
 from .tensor import PyTorchTensor
 from .tensor import TensorFlowTensor
 from .tensor import JAXTensor
 from .tensor import NumPyTensor
-
-from .tensor import Tensor
-from .tensor.base import AbstractTensor
 
 from .types import NativeTensor
 
@@ -22,7 +22,7 @@ def _get_module_name(x) -> str:
 
 
 @overload
-def astensor(x: Tensor) -> Tensor:
+def astensor(x: TensorType) -> TensorType:
     ...
 
 
@@ -32,12 +32,12 @@ def astensor(x: "torch.Tensor") -> PyTorchTensor:
 
 
 @overload
-def astensor(x: NativeTensor) -> AbstractTensor:
+def astensor(x: NativeTensor) -> Tensor:
     ...
 
 
-def astensor(x: Union[NativeTensor, AbstractTensor]) -> AbstractTensor:
-    if isinstance(x, AbstractTensor):
+def astensor(x: Union[NativeTensor, Tensor]) -> Tensor:
+    if isinstance(x, Tensor):
         return x
     # we use the module name instead of isinstance
     # to avoid importing all the frameworks
