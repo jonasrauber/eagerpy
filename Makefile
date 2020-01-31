@@ -55,3 +55,9 @@ pytype:
 .PHONY: pyright
 pyright:
 	pyright .
+
+
+.PHONY: mypyreport
+mypyreport:
+	-mypy . --html-report build
+	python3 -m http.server 9999

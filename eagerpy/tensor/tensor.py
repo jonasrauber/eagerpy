@@ -429,5 +429,5 @@ class AbstractTensor(ABC):
         return self._value_and_grad_fn(f, has_aux=True)(self, *args, **kwargs)
 
 
-def istensor(x) -> bool:
+def istensor(x: Any) -> bool:
     return isinstance(x, AbstractTensor)

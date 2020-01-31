@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING, Union, overload
 import sys
 
 from .tensor import PyTorchTensor
@@ -5,7 +6,23 @@ from .tensor import TensorFlowTensor
 from .tensor import JAXTensor
 from .tensor import NumPyTensor
 
+from .tensor import Tensor
+
 from .tensor.base import AbstractTensor
+
+
+if TYPE_CHECKING:
+    # for static analyzers
+    import torch  # noqa: F401
+    import tensorflow  # noqa: F401
+    import jax  # noqa: F401
+    import numpy  # noqa: F401
+
+# tensorflow.Tensor, jax.numpy.ndarray and numpy.ndarray currently evaluate to Any
+# we can therefore only provide additional type information for torch.Tensor
+NativeTensor = Union[
+    "torch.Tensor", "tensorflow.Tensor", "jax.numpy.ndarray", "numpy.ndarray"
+]
 
 
 def _get_module_name(x) -> str:
@@ -13,7 +30,22 @@ def _get_module_name(x) -> str:
     return type(x).__module__.split(".")[0]
 
 
-def astensor(x) -> AbstractTensor:
+@overload
+def astensor(x: Tensor) -> Tensor:
+    ...
+
+
+@overload
+def astensor(x: "torch.Tensor") -> PyTorchTensor:
+    ...
+
+
+@overload
+def astensor(x: NativeTensor) -> AbstractTensor:
+    ...
+
+
+def astensor(x: Union[NativeTensor, AbstractTensor]) -> AbstractTensor:
     if isinstance(x, AbstractTensor):
         return x
     # we use the module name instead of isinstance

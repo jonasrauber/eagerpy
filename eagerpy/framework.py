@@ -1,4 +1,4 @@
-from typing import overload, Sequence, Callable, cast, Tuple, Any
+from typing import overload, Sequence, Callable, Tuple, Any
 from typing_extensions import Literal
 
 from . import istensor
@@ -9,8 +9,8 @@ inf = float("inf")
 nan = float("nan")
 
 
-def clip(t: Tensor, *args, **kwargs) -> Tensor:
-    return t.clip(*args, **kwargs)
+def clip(t: Tensor, min_, max_) -> Tensor:
+    return t.clip(min_, max_)
 
 
 def abs(t: Tensor) -> Tensor:
@@ -41,20 +41,20 @@ def arctanh(t: Tensor) -> Tensor:
     return t.arctanh()
 
 
-def sum(t: Tensor, *args, **kwargs) -> Tensor:
-    return t.sum(*args, **kwargs)
+def sum(t: Tensor, axis=None, keepdims=False) -> Tensor:
+    return t.sum(axis=axis, keepdims=keepdims)
 
 
-def mean(t: Tensor, *args, **kwargs) -> Tensor:
-    return t.mean(*args, **kwargs)
+def mean(t: Tensor, axis=None, keepdims=False) -> Tensor:
+    return t.mean(axis=axis, keepdims=keepdims)
 
 
-def min(t: Tensor, *args, **kwargs) -> Tensor:
-    return t.min(*args, **kwargs)
+def min(t: Tensor, axis=None, keepdims=False) -> Tensor:
+    return t.min(axis=axis, keepdims=keepdims)
 
 
-def max(t: Tensor, *args, **kwargs) -> Tensor:
-    return t.max(*args, **kwargs)
+def max(t: Tensor, axis=None, keepdims=False) -> Tensor:
+    return t.max(axis=axis, keepdims=keepdims)
 
 
 @overload
@@ -67,10 +67,10 @@ def minimum(x, y: Tensor) -> Tensor:
     ...
 
 
-def minimum(x, y) -> Tensor:
+def minimum(x, y):
     if not istensor(x):
-        return cast(Tensor, y).minimum(x)
-    return cast(Tensor, x).minimum(y)
+        return y.minimum(x)
+    return x.minimum(y)
 
 
 @overload
@@ -83,18 +83,18 @@ def maximum(x, y: Tensor) -> Tensor:
     ...
 
 
-def maximum(x, y) -> Tensor:
+def maximum(x, y):
     if not istensor(x):
-        return cast(Tensor, y).maximum(x)
-    return cast(Tensor, x).maximum(y)
+        return y.maximum(x)
+    return x.maximum(y)
 
 
-def argmin(t: Tensor, *args, **kwargs) -> Tensor:
-    return t.argmin(*args, **kwargs)
+def argmin(t: Tensor, axis=None) -> Tensor:
+    return t.argmin(axis=axis)
 
 
-def argmax(t: Tensor, *args, **kwargs) -> Tensor:
-    return t.argmax(*args, **kwargs)
+def argmax(t: Tensor, axis=None) -> Tensor:
+    return t.argmax(axis=axis)
 
 
 def argsort(t: Tensor, *args, **kwargs) -> Tensor:
@@ -156,10 +156,10 @@ def logical_and(x, y: Tensor) -> Tensor:
     ...
 
 
-def logical_and(x, y) -> Tensor:
+def logical_and(x, y):
     if not istensor(x):
-        return cast(Tensor, y).logical_and(x)
-    return cast(Tensor, x).logical_and(y)
+        return y.logical_and(x)
+    return x.logical_and(y)
 
 
 @overload
@@ -172,10 +172,10 @@ def logical_or(x, y: Tensor) -> Tensor:
     ...
 
 
-def logical_or(x, y) -> Tensor:
+def logical_or(x, y):
     if not istensor(x):
-        return cast(Tensor, y).logical_or(x)
-    return cast(Tensor, x).logical_or(y)
+        return y.logical_or(x)
+    return x.logical_or(y)
 
 
 def logical_not(t: Tensor) -> Tensor:
@@ -235,8 +235,8 @@ def expand_dims(t: Tensor, *args, **kwargs) -> Tensor:
     return t.expand_dims(*args, **kwargs)
 
 
-def full(t: Tensor, *args, **kwargs) -> Tensor:
-    return t.full(*args, **kwargs)
+def full(t: Tensor, shape, value) -> Tensor:
+    return t.full(shape, value)
 
 
 def index_update(t: Tensor, *args, **kwargs) -> Tensor:
@@ -247,20 +247,20 @@ def arange(t: Tensor, *args, **kwargs) -> Tensor:
     return t.arange(*args, **kwargs)
 
 
-def cumsum(t: Tensor, *args, **kwargs) -> Tensor:
-    return t.cumsum(*args, **kwargs)
+def cumsum(t: Tensor, axis=None) -> Tensor:
+    return t.cumsum(axis=axis)
 
 
-def flip(t: Tensor, *args, **kwargs) -> Tensor:
-    return t.flip(*args, **kwargs)
+def flip(t: Tensor, axis=None) -> Tensor:
+    return t.flip(axis=axis)
 
 
 def meshgrid(t: Tensor, *args, **kwargs) -> Tuple[Tensor, ...]:
     return t.meshgrid(*args, **kwargs)
 
 
-def pad(t: Tensor, *args, **kwargs) -> Tensor:
-    return t.pad(*args, **kwargs)
+def pad(t: Tensor, paddings, mode="constant", value=0) -> Tensor:
+    return t.pad(paddings, mode=mode, value=value)
 
 
 def isnan(t: Tensor) -> Tensor:

@@ -1,24 +1,29 @@
+from typing import Union, Optional
+
 from . import inf
 from . import Tensor
+from .types import Axes
 
 
-def l0(x: Tensor, axis=None, keepdims=False) -> Tensor:
+def l0(x: Tensor, axis: Optional[Axes] = None, keepdims=False) -> Tensor:
     return (x != 0).sum(axis=axis, keepdims=keepdims)
 
 
-def l1(x: Tensor, axis=None, keepdims=False) -> Tensor:
+def l1(x: Tensor, axis: Optional[Axes] = None, keepdims=False) -> Tensor:
     return x.abs().sum(axis=axis, keepdims=keepdims)
 
 
-def l2(x: Tensor, axis=None, keepdims=False) -> Tensor:
+def l2(x: Tensor, axis: Optional[Axes] = None, keepdims=False) -> Tensor:
     return x.square().sum(axis=axis, keepdims=keepdims).sqrt()
 
 
-def linf(x: Tensor, axis=None, keepdims=False) -> Tensor:
+def linf(x: Tensor, axis: Optional[Axes] = None, keepdims=False) -> Tensor:
     return x.abs().max(axis=axis, keepdims=keepdims)
 
 
-def lp(x: Tensor, p, axis=None, keepdims=False) -> Tensor:
+def lp(
+    x: Tensor, p: Union[int, float], axis: Optional[Axes] = None, keepdims=False
+) -> Tensor:
     if p == 0:
         return l0(x, axis=axis, keepdims=keepdims)
     if p == 1:

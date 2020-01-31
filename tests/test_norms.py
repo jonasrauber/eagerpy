@@ -1,6 +1,7 @@
 import pytest
 from numpy.testing import assert_allclose
 from numpy.linalg import norm
+import numpy as np
 import eagerpy as ep
 from eagerpy import Tensor
 from eagerpy.norms import l0, l1, l2, linf, lp
@@ -18,6 +19,11 @@ def x2d(dummy: Tensor):
     return ep.arange(dummy, 12).float32().reshape((3, 4)) / 7.0
 
 
+@pytest.fixture
+def x4d(dummy: Tensor):
+    return ep.arange(dummy, 2 * 3 * 4 * 5).float32().reshape((2, 3, 4, 5)) / 7.0
+
+
 @pytest.mark.parametrize("p", [0, 1, 2, ep.inf])
 def test_1d(x1d: Tensor, p):
     assert_allclose(lp(x1d, p).numpy(), norm(x1d.numpy(), ord=p))
@@ -28,6 +34,7 @@ def test_1d(x1d: Tensor, p):
 @pytest.mark.parametrize("axis", [0, 1, -1])
 @pytest.mark.parametrize("keepdims", [False, True])
 def test_2d(x2d: Tensor, p, axis, keepdims):
+    assert isinstance(axis, int)  # see test4d for the more general test
     assert_allclose(
         lp(x2d, p, axis=axis, keepdims=keepdims).numpy(),
         norm(x2d.numpy(), ord=p, axis=axis, keepdims=keepdims),
@@ -40,3 +47,46 @@ def test_2d(x2d: Tensor, p, axis, keepdims):
         norm(x2d.numpy(), ord=p, axis=axis, keepdims=keepdims),
         rtol=1e-6,
     )
+
+
+@pytest.mark.parametrize("p", [0, 1, 2, 3, 4, ep.inf])
+@pytest.mark.parametrize(
+    "axis",
+    [
+        None,
+        0,
+        1,
+        2,
+        3,
+        -1,
+        -2,
+        -3,
+        -4,
+        (0, 1),
+        (1, 2),
+        (1, 3),
+        (1, 2, 3),
+        (0, 1, 3),
+        (2, 1, 0),
+    ],
+)
+@pytest.mark.parametrize("keepdims", [False, True])
+def test_4d(x4d: Tensor, p, axis, keepdims):
+    actual = lp(x4d, p, axis=axis, keepdims=keepdims).numpy()
+
+    # numpy does not support arbitrary axes (limited to vector and matrix norms)
+    if axis is None:
+        axis = tuple(range(x4d.ndim))
+    if not isinstance(axis, tuple):
+        axis = (axis,)
+    axis = tuple(i % x4d.ndim for i in axis)
+    x = x4d.numpy()
+    other = tuple(i for i in range(x.ndim) if i not in axis)
+    x = np.transpose(x, other + axis)
+    x = x.reshape(x.shape[: len(other)] + (-1,))
+    desired = norm(x, ord=p, axis=-1)
+    if keepdims:
+        shape = tuple(1 if i in axis else x4d.shape[i] for i in range(x4d.ndim))
+        desired = desired.reshape(shape)
+
+    assert_allclose(actual, desired, rtol=1e-6)

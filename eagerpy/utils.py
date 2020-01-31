@@ -1,10 +1,11 @@
 from typing import overload
 from typing_extensions import Literal
 
-from . import PyTorchTensor
-from . import TensorFlowTensor
-from . import JAXTensor
-from . import NumPyTensor
+from .tensor.tensor import AbstractTensor
+from .tensor import PyTorchTensor
+from .tensor import TensorFlowTensor
+from .tensor import JAXTensor
+from .tensor import NumPyTensor
 
 from . import modules
 
@@ -29,7 +30,8 @@ def get_dummy(framework: Literal["numpy"]) -> NumPyTensor:
     ...
 
 
-def get_dummy(framework):
+def get_dummy(framework: str) -> AbstractTensor:
+    x: AbstractTensor
     if framework == "pytorch":
         x = modules.torch.zeros(0)
         assert isinstance(x, PyTorchTensor)
