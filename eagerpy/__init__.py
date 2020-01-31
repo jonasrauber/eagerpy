@@ -27,6 +27,9 @@ from .tensor import JAXTensor  # noqa: F401
 from . import types  # noqa: F401
 
 from .astensor import astensor  # noqa: F401
+from .astensor import astensors  # noqa: F401
+from .astensor import astensor_  # noqa: F401
+from .astensor import astensors_  # noqa: F401
 
 from .modules import torch  # noqa: F401
 from .modules import tensorflow  # noqa: F401

@@ -19,9 +19,89 @@ from eagerpy import Tensor
 ###############################################################################
 
 
+def test_astensor_raw(t: Tensor):
+    assert (ep.astensor(t.raw) == t).all()
+
+
 def test_astensor_tensor(t: Tensor):
-    assert ep.istensor(t)
     assert (ep.astensor(t) == t).all()
+
+
+def test_astensor_restore_raw(t: Tensor):
+    r = t.raw
+    y, restore_type = ep.astensor_(r)
+    assert (y == t).all()
+    assert type(restore_type(y)) == type(r)
+    y = y + 1
+    assert type(restore_type(y)) == type(r)
+
+
+def test_astensor_restore_tensor(t: Tensor):
+    r = t
+    y, restore_type = ep.astensor_(r)
+    assert (y == t).all()
+    assert type(restore_type(y)) == type(r)
+    y = y + 1
+    assert type(restore_type(y)) == type(r)
+
+
+def test_astensors_raw(t: Tensor):
+    ts = (t, t + 1, t + 2)
+    rs = tuple(t.raw for t in ts)
+    ys = ep.astensors(*rs)
+    assert isinstance(ys, tuple)
+    assert len(ts) == len(ys)
+    for ti, yi in zip(ts, ys):
+        assert (ti == yi).all()
+
+
+def test_astensors_tensor(t: Tensor):
+    ts = (t, t + 1, t + 2)
+    ys = ep.astensors(*ts)
+    assert isinstance(ys, tuple)
+    assert len(ts) == len(ys)
+    for ti, yi in zip(ts, ys):
+        assert (ti == yi).all()
+
+
+def test_astensors_raw_restore(t: Tensor):
+    ts = (t, t + 1, t + 2)
+    rs = tuple(t.raw for t in ts)
+    ys, restore_type = ep.astensors_(*rs)
+    assert isinstance(ys, tuple)
+    assert len(ts) == len(ys)
+    for ti, yi in zip(ts, ys):
+        assert (ti == yi).all()
+
+    ys = tuple(y + 1 for y in ys)
+    xs = restore_type(*ys)
+    assert isinstance(xs, tuple)
+    assert len(xs) == len(ys)
+    for xi, ri in zip(xs, rs):
+        assert type(xi) == type(ri)
+
+    x0 = restore_type(ys[0])
+    assert not isinstance(x0, tuple)
+
+
+def test_astensors_tensors_restore(t: Tensor):
+    ts = (t, t + 1, t + 2)
+    rs = ts
+    ys, restore_type = ep.astensors_(*rs)
+    assert isinstance(ys, tuple)
+    assert len(ts) == len(ys)
+    for ti, yi in zip(ts, ys):
+        assert (ti == yi).all()
+
+    ys = tuple(y + 1 for y in ys)
+    xs = restore_type(*ys)
+    assert isinstance(xs, tuple)
+    assert len(xs) == len(ys)
+    for xi, ri in zip(xs, rs):
+        assert type(xi) == type(ri)
+
+    x0 = restore_type(ys[0])
+    assert not isinstance(x0, tuple)
 
 
 def test_module():
