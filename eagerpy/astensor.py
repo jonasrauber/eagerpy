@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Union, overload, Tuple, TypeVar, Generic
+from typing import TYPE_CHECKING, Union, overload, Tuple, TypeVar, Generic, Any
 import sys
 
 from .tensor import Tensor
@@ -66,7 +66,7 @@ class RestoreTypeFunc(Generic[T]):
     def __init__(self, x: T):
         self.unwrap = not istensor(x)
 
-    @overload
+    @overload  # noqa: F811
     def __call__(self, x: Tensor) -> T:
         ...
 
@@ -76,6 +76,11 @@ class RestoreTypeFunc(Generic[T]):
 
     @overload  # noqa: F811
     def __call__(self, x: Tensor, y: Tensor, z: Tensor, *args: Tensor) -> Tuple[T, ...]:
+        ...
+
+    @overload  # noqa: F811
+    def __call__(self, *args: Any) -> Any:
+        # catch other types, otherwise we would return type T for input type Any
         ...
 
     def __call__(self, *args):  # noqa: F811
