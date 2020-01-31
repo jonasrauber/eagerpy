@@ -18,17 +18,14 @@ def astensor(x) -> AbstractTensor:
         return x
     # we use the module name instead of isinstance
     # to avoid importing all the frameworks
-    module = _get_module_name(x)
-    if module == "torch" and isinstance(x, sys.modules[module].Tensor):  # type: ignore
+    name = _get_module_name(x)
+    m = sys.modules
+    if name == "torch" and isinstance(x, m[name].Tensor):  # type: ignore
         return PyTorchTensor(x)
-    if module == "tensorflow" and isinstance(
-        x, sys.modules[module].Tensor
-    ):  # type: ignore
+    if name == "tensorflow" and isinstance(x, m[name].Tensor):  # type: ignore
         return TensorFlowTensor(x)
-    if module == "jax" and isinstance(
-        x, sys.modules[module].numpy.ndarray
-    ):  # type: ignore
+    if name == "jax" and isinstance(x, m[name].numpy.ndarray):  # type: ignore
         return JAXTensor(x)
-    if module == "numpy" and isinstance(x, sys.modules[module].ndarray):  # type: ignore
+    if name == "numpy" and isinstance(x, m[name].ndarray):  # type: ignore
         return NumPyTensor(x)
     raise ValueError(f"Unknown type: {type(x)}")
