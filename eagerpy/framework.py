@@ -1,8 +1,8 @@
 from typing import overload, Sequence, Callable, Tuple, Any
 from typing_extensions import Literal
 
-from . import istensor
-from . import Tensor
+from .tensor import istensor
+from .tensor import Tensor
 
 newaxis = None
 inf = float("inf")

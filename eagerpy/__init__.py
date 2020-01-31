@@ -15,7 +15,7 @@ class _Indexable:
 index = _Indexable()
 
 
-from .tensor import Tensor  # noqa: F401
+from .tensor import AbstractTensor  # noqa: F401
 from .tensor import istensor  # noqa: F401
 
 from .tensor import PyTorchTensor  # noqa: F401
