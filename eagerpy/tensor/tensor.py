@@ -11,6 +11,9 @@ class Tensor(ABC):
 
     __array_ufunc__ = None
 
+    # shorten the class name to eagerpy.Tensor (does not help with MyPy)
+    __module__ = "eagerpy"
+
     @abstractmethod
     def __init__(self, raw):
         ...
