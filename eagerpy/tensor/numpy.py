@@ -5,13 +5,7 @@ from .tensor import istensor
 from .tensor import Tensor
 
 from typing import Tuple, cast, Union, Any
-from importlib import import_module
-
-
-if False:
-    import numpy as np  # for static analyzers
-else:
-    np = None
+import numpy as np
 
 
 def assert_bool(x: Tensor) -> None:
@@ -23,9 +17,6 @@ def assert_bool(x: Tensor) -> None:
 
 class NumPyTensor(AbstractBaseTensor):
     def __init__(self, raw: "np.ndarray"):
-        global np
-        if np is None:
-            np = import_module("numpy")
         super().__init__(raw)
 
     @property
