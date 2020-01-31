@@ -5,17 +5,18 @@ from .tensor import istensor
 
 # from .tensor import Tensor
 
-from typing import Tuple, cast, Union, Any, TypeVar
+from typing import Tuple, cast, Union, Any, TypeVar, TYPE_CHECKING
 from importlib import import_module
 from collections.abc import Iterable
 import numpy as onp
 
 
-if False:
+if TYPE_CHECKING:
     # for static analyzers
     import jax
     import jax.numpy as np
 else:
+    # lazy import in JAXTensor
     jax = None
     np = None
 

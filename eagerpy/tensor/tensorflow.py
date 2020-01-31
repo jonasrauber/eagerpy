@@ -7,7 +7,7 @@ from .tensor import Tensor
 from .. import index
 
 import functools
-from typing import Tuple, cast, Union, Any, TypeVar, Callable
+from typing import Tuple, cast, Union, Any, TypeVar, Callable, TYPE_CHECKING
 from importlib import import_module
 from collections.abc import Iterable
 import numpy as np
@@ -17,9 +17,10 @@ FuncType = Callable[..., Any]
 F = TypeVar("F", bound=FuncType)
 
 
-if False:
+if TYPE_CHECKING:
     import tensorflow as tf  # for static analyzers
 else:
+    # lazy import in TensorFlowTensor
     tf = None
 
 

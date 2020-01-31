@@ -1,6 +1,7 @@
 from importlib import import_module
 import inspect
 from types import ModuleType
+from typing import Any
 import functools
 
 from .astensor import astensor
@@ -32,7 +33,7 @@ class ModuleWrapper(ModuleType):
         # makes sure tab completion works
         return import_module(self.__name__).__dir__()
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Any:
         attr = getattr(import_module(self.__name__), name)
         if callable(attr):
             attr = wrap(attr)

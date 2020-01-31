@@ -7,14 +7,15 @@ from .tensor import istensor
 
 import numpy as np
 from collections.abc import Iterable
-from typing import Tuple, cast, Union, Any, TypeVar
+from typing import Tuple, cast, Union, Any, TypeVar, TYPE_CHECKING
 from importlib import import_module
 
 
-if False:
+if TYPE_CHECKING:
     import torch  # for static analyzers
 else:
-    torch = None  # type: ignore
+    # lazy import in PyTorchTensor
+    torch = None
 
 
 Tensor = TypeVar("Tensor", bound="PyTorchTensor")
