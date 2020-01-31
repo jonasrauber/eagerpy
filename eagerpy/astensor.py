@@ -1,30 +1,34 @@
 import sys
 
-from . import PyTorchTensor
-from . import TensorFlowTensor
-from . import JAXTensor
-from . import NumPyTensor
+from .tensor import PyTorchTensor
+from .tensor import TensorFlowTensor
+from .tensor import JAXTensor
+from .tensor import NumPyTensor
 
-from . import istensor
+from .tensor.base import AbstractTensor
 
 
-def _get_module_name(x):
+def _get_module_name(x) -> str:
     # splitting is necessary for TensorFlow tensors
-    return x.__class__.__module__.split(".")[0]
+    return type(x).__module__.split(".")[0]
 
 
-def astensor(x):
-    if istensor(x):
+def astensor(x) -> AbstractTensor:
+    if isinstance(x, AbstractTensor):
         return x
     # we use the module name instead of isinstance
     # to avoid importing all the frameworks
     module = _get_module_name(x)
-    if module == "torch" and isinstance(x, sys.modules[module].Tensor):
+    if module == "torch" and isinstance(x, sys.modules[module].Tensor):  # type: ignore
         return PyTorchTensor(x)
-    if module == "tensorflow" and isinstance(x, sys.modules[module].Tensor):
+    if module == "tensorflow" and isinstance(
+        x, sys.modules[module].Tensor
+    ):  # type: ignore
         return TensorFlowTensor(x)
-    if module == "jax" and isinstance(x, sys.modules[module].numpy.ndarray):
+    if module == "jax" and isinstance(
+        x, sys.modules[module].numpy.ndarray
+    ):  # type: ignore
         return JAXTensor(x)
-    if module == "numpy" and isinstance(x, sys.modules[module].ndarray):
+    if module == "numpy" and isinstance(x, sys.modules[module].ndarray):  # type: ignore
         return NumPyTensor(x)
     raise ValueError(f"Unknown type: {type(x)}")
