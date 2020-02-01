@@ -86,7 +86,7 @@ class RestoreTypeFunc(Generic[T]):
     def __call__(self, *args):  # noqa: F811
         result = tuple(x.raw for x in args) if self.unwrap else args
         if len(result) == 1:
-            result, = result
+            (result,) = result
         return result
 
 

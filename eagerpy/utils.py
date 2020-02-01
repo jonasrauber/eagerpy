@@ -30,6 +30,11 @@ def get_dummy(framework: Literal["numpy"]) -> NumPyTensor:
     ...
 
 
+@overload
+def get_dummy(framework: str) -> Tensor:
+    ...
+
+
 def get_dummy(framework: str) -> Tensor:
     x: Tensor
     if framework == "pytorch":
