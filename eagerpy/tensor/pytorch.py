@@ -328,9 +328,9 @@ class PyTorchTensor(BaseTensor):
     def meshgrid(self: TensorType, *tensors, indexing="xy") -> Tuple[TensorType, ...]:
         tensors = unwrap_(tensors)
         if indexing == "ij" or len(tensors) == 0:
-            outputs = torch.meshgrid(self.raw, *tensors)
+            outputs = torch.meshgrid(self.raw, *tensors)  # type: ignore
         elif indexing == "xy":
-            outputs = torch.meshgrid(tensors[0], self.raw, *tensors[1:])
+            outputs = torch.meshgrid(tensors[0], self.raw, *tensors[1:])  # type: ignore
         else:
             raise ValueError(  # pragma: no cover
                 f"Valid values for indexing are 'xy' and 'ij', got {indexing}"
@@ -365,7 +365,7 @@ class PyTorchTensor(BaseTensor):
         return type(self)(torch.isnan(self.raw))
 
     def isinf(self: TensorType) -> TensorType:
-        return type(self)(torch.isinf(self.raw))
+        return type(self)(torch.isinf(self.raw))  # type: ignore
 
     def crossentropy(self: TensorType, labels: TensorType) -> TensorType:
         if self.ndim != 2:

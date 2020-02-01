@@ -61,7 +61,7 @@ class JAXTensor(BaseTensor):
         return super().raw
 
     @classmethod
-    def _get_subkey(cls):
+    def _get_subkey(cls) -> Any:
         if cls.key is None:
             cls.key = jax.random.PRNGKey(0)
         cls.key, subkey = jax.random.split(cls.key)

@@ -1,13 +1,13 @@
 from importlib import import_module
 import inspect
 from types import ModuleType
-from typing import Any
+from typing import Any, Callable
 import functools
 
 from .astensor import astensor
 
 
-def wrap(f):
+def wrap(f: Callable) -> Callable:
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
         result = f(*args, **kwargs)
@@ -24,7 +24,7 @@ class ModuleWrapper(ModuleType):
     """A wrapper for modules that delays the import until it is needed
     and wraps the output of functions as EagerPy tensors"""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         if self.__doc__ is None:
             self.__doc__ = f"EagerPy wrapper of the '{self.__name__}' module"

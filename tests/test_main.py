@@ -3,6 +3,7 @@ import functools
 import numpy as np
 import eagerpy as ep
 from eagerpy import Tensor
+from typing import Callable
 
 
 # make sure there are no undecorated tests in the "special tests" section below
@@ -344,10 +345,10 @@ def compare_all(f):
     return test_fn
 
 
-def compare_allclose(*args, rtol=1e-07, atol=0):
+def compare_allclose(*args, rtol: float = 1e-07, atol: float = 0):
     """A decorator to simplify writing test functions"""
 
-    def compare_allclose_inner(f):
+    def compare_allclose_inner(f: Callable) -> Callable:
         @functools.wraps(f)
         def test_fn(*args, **kwargs):
             assert len(args) == 0
