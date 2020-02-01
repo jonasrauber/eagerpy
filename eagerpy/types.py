@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     import numpy  # noqa: F401
 
 Axes = Union[int, Tuple[int, ...]]
+Shape = Tuple[int, ...]
 
 # tensorflow.Tensor, jax.numpy.ndarray and numpy.ndarray currently evaluate to Any
 # we can therefore only provide additional type information for torch.Tensor

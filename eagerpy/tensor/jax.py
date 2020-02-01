@@ -3,6 +3,8 @@ from importlib import import_module
 from collections.abc import Iterable
 import numpy as onp
 
+from ..types import Shape
+
 from .tensor import istensor
 
 from .base import BaseTensor
@@ -74,7 +76,7 @@ class JAXTensor(BaseTensor):
         return self.raw.item()  # type: ignore
 
     @property
-    def shape(self) -> Tuple:
+    def shape(self) -> Shape:
         return cast(Tuple, self.raw.shape)
 
     def reshape(self: TensorType, shape) -> TensorType:

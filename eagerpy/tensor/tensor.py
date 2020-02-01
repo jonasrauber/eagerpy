@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from typing import TypeVar, Callable, Tuple, Any, overload, Sequence, Union
 from typing_extensions import Literal, final
 
+from ..types import Shape
+
 
 TensorType = TypeVar("TensorType", bound="Tensor")
 
@@ -171,7 +173,7 @@ class Tensor(ABC):
 
     @property
     @abstractmethod
-    def shape(self: TensorType) -> Tuple:
+    def shape(self: TensorType) -> Shape:
         ...
 
     @abstractmethod

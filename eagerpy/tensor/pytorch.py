@@ -3,6 +3,8 @@ from collections.abc import Iterable
 from typing import Tuple, cast, Union, Any, TypeVar, TYPE_CHECKING
 from importlib import import_module
 
+from ..types import Shape
+
 from .tensor import istensor
 
 from .base import BaseTensor
@@ -47,7 +49,7 @@ class PyTorchTensor(BaseTensor):
         return self.raw.item()
 
     @property
-    def shape(self) -> Tuple:
+    def shape(self) -> Shape:
         return self.raw.shape
 
     def reshape(self: TensorType, shape) -> TensorType:

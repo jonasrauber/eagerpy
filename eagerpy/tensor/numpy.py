@@ -1,6 +1,8 @@
 from typing import Tuple, cast, Union, Any
 import numpy as np
 
+from ..types import Shape
+
 from .tensor import istensor
 from .tensor import TensorType
 
@@ -30,7 +32,7 @@ class NumPyTensor(BaseTensor):
         return self.raw.item()  # type: ignore
 
     @property
-    def shape(self: TensorType) -> Tuple:
+    def shape(self: TensorType) -> Shape:
         return cast(Tuple, self.raw.shape)
 
     def reshape(self: TensorType, shape) -> TensorType:

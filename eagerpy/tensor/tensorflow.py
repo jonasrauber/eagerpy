@@ -4,6 +4,8 @@ from importlib import import_module
 from collections.abc import Iterable
 import numpy as np
 
+from ..types import Shape
+
 from .. import index
 
 from .tensor import istensor
@@ -77,7 +79,7 @@ class TensorFlowTensor(BaseTensor):
         return self.numpy().item()  # type: ignore
 
     @property
-    def shape(self: TensorType) -> Tuple:
+    def shape(self: TensorType) -> Shape:
         return tuple(self.raw.shape.as_list())
 
     def reshape(self: TensorType, shape) -> TensorType:
