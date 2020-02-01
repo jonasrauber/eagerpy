@@ -928,6 +928,21 @@ def test_where(t: Tensor):
 
 
 @compare_all
+def test_where_first_scalar(t: Tensor):
+    return ep.where(t >= 3, 2, -t)
+
+
+@compare_all
+def test_where_second_scalar(t: Tensor):
+    return ep.where(t >= 3, t, 2)
+
+
+@compare_all
+def test_where_both_scalars(t: Tensor):
+    return ep.where(t >= 3, 2, 5)
+
+
+@compare_all
 def test_tile(t: Tensor):
     return ep.tile(t, (3,) * t.ndim)
 

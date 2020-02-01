@@ -121,14 +121,14 @@ class PyTorchTensor(BaseTensor):
         if istensor(other):
             other = other.raw
         else:
-            other = torch.ones_like(self.raw) * other
+            other = torch.full_like(self.raw, other)
         return type(self)(torch.min(self.raw, other))
 
     def maximum(self: TensorType, other) -> TensorType:
         if istensor(other):
             other = other.raw
         else:
-            other = torch.ones_like(self.raw) * other
+            other = torch.full_like(self.raw, other)
         return type(self)(torch.max(self.raw, other))
 
     def argmin(self: TensorType, axis=None) -> TensorType:
@@ -418,7 +418,14 @@ class PyTorchTensor(BaseTensor):
         return self.astype(torch.float32)
 
     def where(self: TensorType, x, y) -> TensorType:
-        x, y = unwrap_(x, y)
+        if istensor(x):
+            x = x.raw
+        else:
+            x = torch.full_like(self.raw, x, dtype=torch.float32)
+        if istensor(y):
+            y = y.raw
+        else:
+            y = torch.full_like(self.raw, y, dtype=torch.float32)
         return type(self)(torch.where(self.raw, x, y))
 
     def matmul(self: TensorType, other) -> TensorType:
