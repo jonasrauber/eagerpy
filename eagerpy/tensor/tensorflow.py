@@ -60,14 +60,14 @@ def assert_bool(x: TensorType) -> None:
 
 
 class TensorFlowTensor(BaseTensor):
-    def __init__(self, raw: "tf.Tensor"):
+    def __init__(self, raw: "tf.Tensor"):  # type: ignore
         global tf
         if tf is None:
             tf = import_module("tensorflow")
         super().__init__(raw)
 
     @property
-    def raw(self) -> "tf.Tensor":
+    def raw(self) -> "tf.Tensor":  # type: ignore
         return super().raw
 
     def numpy(self: TensorType) -> Any:

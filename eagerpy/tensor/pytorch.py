@@ -30,7 +30,7 @@ class PyTorchTensor(BaseTensor):
     def __init__(self, raw: "torch.Tensor"):
         global torch
         if torch is None:
-            torch = import_module("torch")
+            torch = import_module("torch")  # type: ignore
         super().__init__(raw)
 
     @property

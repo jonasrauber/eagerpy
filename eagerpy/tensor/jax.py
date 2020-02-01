@@ -48,7 +48,7 @@ class JAXTensor(BaseTensor):
             cls._registered = True
         return super().__new__(cls)
 
-    def __init__(self, raw: "np.ndarray"):
+    def __init__(self, raw: "np.ndarray"):  # type: ignore
         global jax
         global np
         if jax is None:
@@ -57,7 +57,7 @@ class JAXTensor(BaseTensor):
         super().__init__(raw)
 
     @property
-    def raw(self) -> "np.ndarray":
+    def raw(self) -> "np.ndarray":  # type: ignore
         return super().raw
 
     @classmethod

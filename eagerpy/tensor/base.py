@@ -17,7 +17,7 @@ def unwrap_(*args) -> Any:
 
 
 class BaseTensor(Tensor):
-    def __init__(self: TensorType, raw):
+    def __init__(self: TensorType, raw) -> None:
         self._raw = raw
 
     @property

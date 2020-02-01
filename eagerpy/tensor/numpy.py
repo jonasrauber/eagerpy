@@ -16,11 +16,11 @@ def assert_bool(x: TensorType) -> None:
 
 
 class NumPyTensor(BaseTensor):
-    def __init__(self, raw: "np.ndarray"):
+    def __init__(self, raw: "np.ndarray"):  # type: ignore
         super().__init__(raw)
 
     @property
-    def raw(self) -> "np.ndarray":
+    def raw(self) -> "np.ndarray":  # type: ignore
         return super().raw
 
     def numpy(self: TensorType) -> Any:

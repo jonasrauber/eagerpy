@@ -15,7 +15,7 @@ class Tensor(ABC):
     __module__ = "eagerpy"
 
     @abstractmethod
-    def __init__(self, raw):
+    def __init__(self, raw) -> None:
         ...
 
     @property

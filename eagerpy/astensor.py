@@ -33,11 +33,11 @@ def astensor(x: "torch.Tensor") -> PyTorchTensor:
 
 
 @overload
-def astensor(x: NativeTensor) -> Tensor:
+def astensor(x: NativeTensor) -> Tensor:  # type: ignore
     ...
 
 
-def astensor(x: Union[NativeTensor, Tensor]) -> Tensor:
+def astensor(x: Union[NativeTensor, Tensor]) -> Tensor:  # type: ignore
     if isinstance(x, Tensor):
         return x
     # we use the module name instead of isinstance
@@ -55,7 +55,7 @@ def astensor(x: Union[NativeTensor, Tensor]) -> Tensor:
     raise ValueError(f"Unknown type: {type(x)}")
 
 
-def astensors(*xs: Union[NativeTensor, Tensor]) -> Tuple[Tensor, ...]:
+def astensors(*xs: Union[NativeTensor, Tensor]) -> Tuple[Tensor, ...]:  # type: ignore
     return tuple(astensor(x) for x in xs)
 
 
