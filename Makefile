@@ -22,6 +22,7 @@ flake8:
 .PHONY: mypy
 mypy:
 	mypy -p eagerpy
+	mypy tests/
 
 .PHONY: install
 install:
