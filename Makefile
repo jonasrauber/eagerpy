@@ -24,6 +24,20 @@ mypy:
 	mypy -p eagerpy
 	mypy tests/
 
+.PHONY: docs
+docs:
+	pydocmd generate
+	cd docs && vuepress build
+
+.PHONY: servedocs
+servedocs:
+	cd docs/.vuepress/dist/ && python3 -m http.server 9999
+
+.PHONY: pushdocs
+pushdocs:
+	cd docs/.vuepress/dist/ && git init && git add -A && git commit -m 'deploy'
+	cd docs/.vuepress/dist/ && git push -f git@github.com:jonasrauber/eagerpy.git master:gh-pages
+
 .PHONY: install
 install:
 	pip3 install -e .

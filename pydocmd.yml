@@ -1,0 +1,117 @@
+site_name: ""
+
+generate:
+- norms.md:
+    - eagerpy.norms:
+        - eagerpy.norms.l0
+        - eagerpy.norms.l1
+        - eagerpy.norms.l2
+        - eagerpy.norms.linf
+        - eagerpy.norms.lp
+- tensor.md:
+    - eagerpy.PyTorchTensor
+    - eagerpy.TensorFlowTensor
+    - eagerpy.JAXTensor
+    - eagerpy.NumPyTensor
+    - eagerpy.Tensor:
+        - eagerpy.Tensor.__init__
+        - eagerpy.Tensor.raw
+        - eagerpy.Tensor.dtype
+        - eagerpy.Tensor.__repr__
+        - eagerpy.Tensor.__format__
+        - eagerpy.Tensor.__getitem__
+        - eagerpy.Tensor.__bool__
+        - eagerpy.Tensor.__len__
+        - eagerpy.Tensor.__abs__
+        - eagerpy.Tensor.__neg__
+        - eagerpy.Tensor.__add__
+        - eagerpy.Tensor.__radd__
+        - eagerpy.Tensor.__sub__
+        - eagerpy.Tensor.__rsub__
+        - eagerpy.Tensor.__mul__
+        - eagerpy.Tensor.__rmul__
+        - eagerpy.Tensor.__truediv__
+        - eagerpy.Tensor.__rtruediv__
+        - eagerpy.Tensor.__floordiv__
+        - eagerpy.Tensor.__rfloordiv__
+        - eagerpy.Tensor.__mod__
+        - eagerpy.Tensor.__lt__
+        - eagerpy.Tensor.__le__
+        - eagerpy.Tensor.__eq__
+        - eagerpy.Tensor.__ne__
+        - eagerpy.Tensor.__gt__
+        - eagerpy.Tensor.__ge__
+        - eagerpy.Tensor.__pow__
+        - eagerpy.Tensor.sign
+        - eagerpy.Tensor.sqrt
+        - eagerpy.Tensor.tanh
+        - eagerpy.Tensor.float32
+        - eagerpy.Tensor.where
+        - eagerpy.Tensor.matmul
+        - eagerpy.Tensor.ndim
+        - eagerpy.Tensor.numpy
+        - eagerpy.Tensor.item
+        - eagerpy.Tensor.shape
+        - eagerpy.Tensor.reshape
+        - eagerpy.Tensor.astype
+        - eagerpy.Tensor.clip
+        - eagerpy.Tensor.square
+        - eagerpy.Tensor.arctanh
+        - eagerpy.Tensor.sum
+        - eagerpy.Tensor.mean
+        - eagerpy.Tensor.min
+        - eagerpy.Tensor.max
+        - eagerpy.Tensor.minimum
+        - eagerpy.Tensor.maximum
+        - eagerpy.Tensor.argmin
+        - eagerpy.Tensor.argmax
+        - eagerpy.Tensor.argsort
+        - eagerpy.Tensor.uniform
+        - eagerpy.Tensor.normal
+        - eagerpy.Tensor.ones
+        - eagerpy.Tensor.zeros
+        - eagerpy.Tensor.ones_like
+        - eagerpy.Tensor.zeros_like
+        - eagerpy.Tensor.full_like
+        - eagerpy.Tensor.onehot_like
+        - eagerpy.Tensor.from_numpy
+        - eagerpy.Tensor.transpose
+        - eagerpy.Tensor.bool
+        - eagerpy.Tensor.all
+        - eagerpy.Tensor.any
+        - eagerpy.Tensor.logical_and
+        - eagerpy.Tensor.logical_or
+        - eagerpy.Tensor.logical_not
+        - eagerpy.Tensor.exp
+        - eagerpy.Tensor.log
+        - eagerpy.Tensor.log2
+        - eagerpy.Tensor.log10
+        - eagerpy.Tensor.log1p
+        - eagerpy.Tensor.tile
+        - eagerpy.Tensor.softmax
+        - eagerpy.Tensor.log_softmax
+        - eagerpy.Tensor.squeeze
+        - eagerpy.Tensor.expand_dims
+        - eagerpy.Tensor.full
+        - eagerpy.Tensor.index_update
+        - eagerpy.Tensor.arange
+        - eagerpy.Tensor.cumsum
+        - eagerpy.Tensor.flip
+        - eagerpy.Tensor.meshgrid
+        - eagerpy.Tensor.pad
+        - eagerpy.Tensor.isnan
+        - eagerpy.Tensor.isinf
+        - eagerpy.Tensor.crossentropy
+        - eagerpy.Tensor.T
+        - eagerpy.Tensor.abs
+        - eagerpy.Tensor.pow
+        - eagerpy.Tensor.value_and_grad
+        - eagerpy.Tensor.value_aux_and_grad
+
+# Required by Pydoc-Markdown, but irrelevant to us.
+pages: []
+
+gens_dir: ./docs/api
+
+# Render headers are Markdown tags rather than HTML <hX>
+headers: markdown
