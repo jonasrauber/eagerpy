@@ -27,7 +27,14 @@ mypy:
 .PHONY: docs
 docs:
 	pydocmd generate
-	cd docs && vuepress build
+	cd docs && vuepress build --temp /tmp/
+
+.PHONY: installvuepress
+installvuepress:
+	curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+	echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+	sudo apt update && sudo apt install yarn
+	sudo yarn global add vuepress
 
 .PHONY: servedocs
 servedocs:
