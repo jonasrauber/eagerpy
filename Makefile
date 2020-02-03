@@ -1,11 +1,11 @@
 .PHONY: test
 test:
-	pytest --cov-report term-missing --cov=eagerpy --verbose
-	pytest --cov-report term-missing --cov=eagerpy --cov-append --verbose --backend numpy
-	pytest --cov-report term-missing --cov=eagerpy --cov-append --verbose --backend pytorch
-	pytest --cov-report term-missing --cov=eagerpy --cov-append --verbose --backend jax
-	pytest --cov-report term-missing --cov=eagerpy --cov-append --verbose --backend tensorflow
-	pytest --cov-report term-missing --cov=eagerpy --cov-append --verbose --backend pytorch-gpu
+	pytest --pdb --cov-report term-missing --cov=eagerpy --verbose
+	pytest --pdb --cov-report term-missing --cov=eagerpy --cov-append --verbose --backend numpy
+	pytest --pdb --cov-report term-missing --cov=eagerpy --cov-append --verbose --backend pytorch
+	pytest --pdb --cov-report term-missing --cov=eagerpy --cov-append --verbose --backend jax
+	pytest --pdb --cov-report term-missing --cov=eagerpy --cov-append --verbose --backend tensorflow
+	pytest --pdb --cov-report term-missing --cov=eagerpy --cov-append --verbose --backend pytorch-gpu
 
 .PHONY: black
 black:
