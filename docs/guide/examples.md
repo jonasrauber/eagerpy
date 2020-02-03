@@ -24,19 +24,19 @@ import torch
 norm(torch.tensor([1., 2., 3.]))
 ```
 
-```
+```python
 import tensorflow as tf
 
 norm(tf.constant([1., 2., 3.]))
 ```
 
-```
+```python
 import jax.numpy as np
 
 norm(np.array([1., 2., 3.]))
 ```
 
-```
+```python
 import numpy as np
 
 norm(np.array([1., 2., 3.]))
