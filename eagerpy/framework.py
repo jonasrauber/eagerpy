@@ -2,7 +2,7 @@ from typing import overload, Sequence, Callable, Tuple, Any
 from typing_extensions import Literal
 
 from .tensor import TensorType
-from .tensor import istensor
+from .tensor import Tensor
 
 newaxis = None
 inf = float("inf")
@@ -68,7 +68,7 @@ def minimum(x, y: TensorType) -> TensorType:
 
 
 def minimum(x, y):
-    if not istensor(x):
+    if not isinstance(x, Tensor):
         return y.minimum(x)
     return x.minimum(y)
 
@@ -84,7 +84,7 @@ def maximum(x, y: TensorType) -> TensorType:
 
 
 def maximum(x, y):
-    if not istensor(x):
+    if not isinstance(x, Tensor):
         return y.maximum(x)
     return x.maximum(y)
 
@@ -157,7 +157,7 @@ def logical_and(x, y: TensorType) -> TensorType:
 
 
 def logical_and(x, y):
-    if not istensor(x):
+    if not isinstance(x, Tensor):
         return y.logical_and(x)
     return x.logical_and(y)
 
@@ -173,7 +173,7 @@ def logical_or(x, y: TensorType) -> TensorType:
 
 
 def logical_or(x, y):
-    if not istensor(x):
+    if not isinstance(x, Tensor):
         return y.logical_or(x)
     return x.logical_or(y)
 

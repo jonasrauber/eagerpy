@@ -8,7 +8,7 @@ from ..types import Shape
 
 from .. import index
 
-from .tensor import istensor
+from .tensor import Tensor
 from .tensor import TensorType
 
 from .base import BaseTensor
@@ -37,7 +37,7 @@ def samedevice(f: F) -> F:
 def common_dtype(f: F) -> F:
     @functools.wraps(f)
     def wrapper(self, *args, **kwargs):
-        dtypes = {self.dtype} | {arg.dtype for arg in args if istensor(arg)}
+        dtypes = {self.dtype} | {arg.dtype for arg in args if isinstance(arg, Tensor)}
         if len(dtypes) == 1:
             # all dtypes are the same, nothing more to do
             return f(self, *args, **kwargs)
@@ -47,7 +47,9 @@ def common_dtype(f: F) -> F:
         if self.dtype != common:
             self = self.astype(common)
         args = [
-            arg.astype(common) if istensor(arg) and arg.dtype != common else arg
+            arg.astype(common)
+            if isinstance(arg, Tensor) and arg.dtype != common
+            else arg
             for arg in args
         ]
         return f(self, *args, **kwargs)
@@ -55,8 +57,8 @@ def common_dtype(f: F) -> F:
     return cast(F, wrapper)
 
 
-def assert_bool(x: TensorType) -> None:
-    if not istensor(x):
+def assert_bool(x: Any) -> None:
+    if not isinstance(x, Tensor):
         return
     if x.dtype != tf.bool:
         raise ValueError(f"requires dtype bool, consider t.bool().all()")
@@ -185,12 +187,12 @@ class TensorFlowTensor(BaseTensor):
 
     def _concatenate(self: TensorType, tensors, axis=0) -> TensorType:
         # concatenates only "tensors", but not "self"
-        tensors = [t.raw if istensor(t) else t for t in tensors]
+        tensors = [t.raw if isinstance(t, Tensor) else t for t in tensors]
         return type(self)(tf.concat(tensors, axis=axis))
 
     def _stack(self: TensorType, tensors, axis=0) -> TensorType:
         # stacks only "tensors", but not "self"
-        tensors = [t.raw if istensor(t) else t for t in tensors]
+        tensors = [t.raw if isinstance(t, Tensor) else t for t in tensors]
         return type(self)(tf.stack(tensors, axis=axis))
 
     def transpose(self: TensorType, axes=None) -> TensorType:
@@ -426,7 +428,7 @@ class TensorFlowTensor(BaseTensor):
 
     def __getitem__(self: TensorType, index) -> TensorType:
         if isinstance(index, tuple):
-            index = tuple(x.raw if istensor(x) else x for x in index)
+            index = tuple(x.raw if isinstance(x, Tensor) else x for x in index)
             tensors = any(
                 isinstance(x, tf.Tensor) or isinstance(x, np.ndarray) for x in index
             )
@@ -435,6 +437,6 @@ class TensorFlowTensor(BaseTensor):
                 index = tf.convert_to_tensor(index)
                 index = tf.transpose(index)
                 return type(self)(tf.gather_nd(self.raw, index))
-        elif istensor(index):
+        elif isinstance(index, Tensor):
             return type(self)(tf.gather(self.raw, index.raw))
         return type(self)(self.raw.__getitem__(index))

@@ -3,7 +3,6 @@ import sys
 
 from .tensor import Tensor
 from .tensor import TensorType
-from .tensor import istensor
 
 from .tensor import PyTorchTensor
 from .tensor import TensorFlowTensor
@@ -64,7 +63,7 @@ T = TypeVar("T")
 
 class RestoreTypeFunc(Generic[T]):
     def __init__(self, x: T):
-        self.unwrap = not istensor(x)
+        self.unwrap = not isinstance(x, Tensor)
 
     @overload  # noqa: F811
     def __call__(self, x: Tensor) -> T:

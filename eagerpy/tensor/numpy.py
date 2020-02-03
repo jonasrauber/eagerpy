@@ -3,16 +3,16 @@ import numpy as np
 
 from ..types import Shape
 
-from .tensor import istensor
 from .tensor import TensorType
+from .tensor import Tensor
 
 from .base import BaseTensor
 from .base import unwrap_
 from .base import unwrap1
 
 
-def assert_bool(x: TensorType) -> None:
-    if not istensor(x):
+def assert_bool(x: Any) -> None:
+    if not isinstance(x, Tensor):
         return
     if x.dtype != np.dtype("bool"):
         raise ValueError(f"requires dtype bool, consider t.bool().all()")
@@ -116,12 +116,12 @@ class NumPyTensor(BaseTensor):
 
     def _concatenate(self: TensorType, tensors, axis=0) -> TensorType:
         # concatenates only "tensors", but not "self"
-        tensors = [t.raw if istensor(t) else t for t in tensors]
+        tensors = [t.raw if isinstance(t, Tensor) else t for t in tensors]
         return type(self)(np.concatenate(tensors, axis=axis))
 
     def _stack(self: TensorType, tensors, axis=0) -> TensorType:
         # stacks only "tensors", but not "self"
-        tensors = [t.raw if istensor(t) else t for t in tensors]
+        tensors = [t.raw if isinstance(t, Tensor) else t for t in tensors]
         return type(self)(np.stack(tensors, axis=axis))
 
     def transpose(self: TensorType, axes=None) -> TensorType:
@@ -316,7 +316,7 @@ class NumPyTensor(BaseTensor):
 
     def __getitem__(self: TensorType, index) -> TensorType:
         if isinstance(index, tuple):
-            index = tuple(x.raw if istensor(x) else x for x in index)
-        elif istensor(index):
+            index = tuple(x.raw if isinstance(x, Tensor) else x for x in index)
+        elif isinstance(index, Tensor):
             index = index.raw
         return type(self)(self.raw[index])
