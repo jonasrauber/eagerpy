@@ -1,6 +1,5 @@
-from typing import Tuple, cast, Union, Any, TypeVar, TYPE_CHECKING
+from typing import Tuple, cast, Union, Any, TypeVar, TYPE_CHECKING, Iterable
 from importlib import import_module
-from collections.abc import Iterable
 import numpy as onp
 
 from ..types import Shape
@@ -165,15 +164,17 @@ class JAXTensor(BaseTensor):
     def from_numpy(self: TensorType, a) -> TensorType:
         return type(self)(np.asarray(a))
 
-    def _concatenate(self: TensorType, tensors, axis=0) -> TensorType:
+    def _concatenate(
+        self: TensorType, tensors: Iterable[TensorType], axis=0
+    ) -> TensorType:
         # concatenates only "tensors", but not "self"
-        tensors = [t.raw if isinstance(t, Tensor) else t for t in tensors]
-        return type(self)(np.concatenate(tensors, axis=axis))
+        tensors_ = unwrap_(*tensors)
+        return type(self)(np.concatenate(tensors_, axis=axis))
 
-    def _stack(self: TensorType, tensors, axis=0) -> TensorType:
+    def _stack(self: TensorType, tensors: Iterable[TensorType], axis=0) -> TensorType:
         # stacks only "tensors", but not "self"
-        tensors = [t.raw if isinstance(t, Tensor) else t for t in tensors]
-        return type(self)(np.stack(tensors, axis=axis))
+        tensors_ = unwrap_(*tensors)
+        return type(self)(np.stack(tensors_, axis=axis))
 
     def transpose(self: TensorType, axes=None) -> TensorType:
         if axes is None:
@@ -246,7 +247,7 @@ class JAXTensor(BaseTensor):
     def index_update(self: TensorType, indices, values) -> TensorType:
         indices, values = unwrap_(indices, values)
         if isinstance(indices, tuple):
-            indices = unwrap1(indices)
+            indices = unwrap_(*indices)
         return type(self)(jax.ops.index_update(self.raw, indices, values))
 
     def arange(self: TensorType, start, stop=None, step=None) -> TensorType:
@@ -259,7 +260,7 @@ class JAXTensor(BaseTensor):
         return type(self)(np.flip(self.raw, axis=axis))
 
     def meshgrid(self: TensorType, *tensors, indexing="xy") -> Tuple[TensorType, ...]:
-        tensors = unwrap1(tensors)
+        tensors = unwrap_(*tensors)
         outputs = np.meshgrid(self.raw, *tensors, indexing=indexing)
         return tuple(type(self)(out) for out in outputs)
 

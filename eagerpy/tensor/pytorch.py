@@ -1,6 +1,5 @@
+from typing import Tuple, cast, Union, Any, TypeVar, TYPE_CHECKING, Iterable
 import numpy as np
-from collections.abc import Iterable
-from typing import Tuple, cast, Union, Any, TypeVar, TYPE_CHECKING
 from importlib import import_module
 
 from ..types import Shape
@@ -192,15 +191,17 @@ class PyTorchTensor(BaseTensor):
     def from_numpy(self: TensorType, a) -> TensorType:
         return type(self)(torch.as_tensor(a, device=self.raw.device))
 
-    def _concatenate(self: TensorType, tensors, axis=0) -> TensorType:
+    def _concatenate(
+        self: TensorType, tensors: Iterable[TensorType], axis=0
+    ) -> TensorType:
         # concatenates only "tensors", but not "self"
-        tensors = unwrap1(tensors)
-        return type(self)(torch.cat(tensors, dim=axis))
+        tensors_ = unwrap_(*tensors)
+        return type(self)(torch.cat(tensors_, dim=axis))
 
-    def _stack(self: TensorType, tensors, axis=0) -> TensorType:
+    def _stack(self: TensorType, tensors: Iterable[TensorType], axis=0) -> TensorType:
         # stacks only "tensors", but not "self"
-        tensors = unwrap1(tensors)
-        return type(self)(torch.stack(tensors, dim=axis))
+        tensors_ = unwrap_(*tensors)
+        return type(self)(torch.stack(tensors_, dim=axis))
 
     def transpose(self: TensorType, axes=None) -> TensorType:
         if axes is None:
@@ -303,7 +304,7 @@ class PyTorchTensor(BaseTensor):
     def index_update(self: TensorType, indices, values) -> TensorType:
         indices, values = unwrap_(indices, values)
         if isinstance(indices, tuple):
-            indices = unwrap1(indices)
+            indices = unwrap_(*indices)
         x = self.raw.clone()
         x[indices] = values
         return type(self)(x)
@@ -331,7 +332,7 @@ class PyTorchTensor(BaseTensor):
         return type(self)(self.raw.flip(dims=axis))
 
     def meshgrid(self: TensorType, *tensors, indexing="xy") -> Tuple[TensorType, ...]:
-        tensors = unwrap1(tensors)
+        tensors = unwrap_(*tensors)
         if indexing == "ij" or len(tensors) == 0:
             outputs = torch.meshgrid(self.raw, *tensors)  # type: ignore
         elif indexing == "xy":

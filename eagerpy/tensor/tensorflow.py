@@ -1,7 +1,6 @@
+from typing import Tuple, cast, Union, Any, TypeVar, Callable, TYPE_CHECKING, Iterable
 import functools
-from typing import Tuple, cast, Union, Any, TypeVar, Callable, TYPE_CHECKING
 from importlib import import_module
-from collections.abc import Iterable
 import numpy as np
 
 from ..types import Shape
@@ -185,15 +184,17 @@ class TensorFlowTensor(BaseTensor):
     def from_numpy(self: TensorType, a) -> TensorType:
         return type(self)(tf.convert_to_tensor(a))
 
-    def _concatenate(self: TensorType, tensors, axis=0) -> TensorType:
+    def _concatenate(
+        self: TensorType, tensors: Iterable[TensorType], axis=0
+    ) -> TensorType:
         # concatenates only "tensors", but not "self"
-        tensors = [t.raw if isinstance(t, Tensor) else t for t in tensors]
-        return type(self)(tf.concat(tensors, axis=axis))
+        tensors_ = unwrap_(*tensors)
+        return type(self)(tf.concat(tensors_, axis=axis))
 
-    def _stack(self: TensorType, tensors, axis=0) -> TensorType:
+    def _stack(self: TensorType, tensors: Iterable[TensorType], axis=0) -> TensorType:
         # stacks only "tensors", but not "self"
-        tensors = [t.raw if isinstance(t, Tensor) else t for t in tensors]
-        return type(self)(tf.stack(tensors, axis=axis))
+        tensors_ = unwrap_(*tensors)
+        return type(self)(tf.stack(tensors_, axis=axis))
 
     def transpose(self: TensorType, axes=None) -> TensorType:
         if axes is None:
@@ -267,7 +268,7 @@ class TensorFlowTensor(BaseTensor):
     def index_update(self: TensorType, indices, values) -> TensorType:
         indices, values = unwrap_(indices, values)
         if isinstance(indices, tuple):
-            indices = unwrap1(indices)
+            indices = unwrap_(*indices)
 
         x = self.raw
         if isinstance(indices, int):
@@ -320,7 +321,7 @@ class TensorFlowTensor(BaseTensor):
         return type(self)(tf.reverse(self.raw, axis=axis))
 
     def meshgrid(self: TensorType, *tensors, indexing="xy") -> Tuple[TensorType, ...]:
-        tensors = unwrap1(tensors)
+        tensors = unwrap_(*tensors)
         outputs = tf.meshgrid(self.raw, *tensors, indexing=indexing)
         return tuple(type(self)(out) for out in outputs)
 
