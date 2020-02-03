@@ -16,9 +16,7 @@ EagerPy is a thin wrapper around **PyTorch**, **TensorFlow Eager**, **JAX** and
 **NumPy** that unifies their interface and thus allows writing code that
 works natively across all of them.
 
-Warning: this is work in progress; the tests should run through just fine,
-but lot's of features are still missing. Let me know if this project is useful
-to you and which features are needed.
+Learn more about in the `documentation <https://jonasrauber.github.io/eagerpy/>`_.
 
 **EagerPy is now in active use** to develop `Foolbox Native <https://github.com/jonasrauber/foolbox-native>`_.
 
