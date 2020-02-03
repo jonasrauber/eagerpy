@@ -9,6 +9,7 @@ from .tensor import istensor
 
 from .base import BaseTensor
 from .base import unwrap_
+from .base import unwrap1
 
 
 if TYPE_CHECKING:
@@ -107,10 +108,10 @@ class JAXTensor(BaseTensor):
         return type(self)(self.raw.max(axis=axis, keepdims=keepdims))
 
     def minimum(self: TensorType, other) -> TensorType:
-        return type(self)(np.minimum(self.raw, unwrap_(other)))
+        return type(self)(np.minimum(self.raw, unwrap1(other)))
 
     def maximum(self: TensorType, other) -> TensorType:
-        return type(self)(np.maximum(self.raw, unwrap_(other)))
+        return type(self)(np.maximum(self.raw, unwrap1(other)))
 
     def argmin(self: TensorType, axis=None) -> TensorType:
         return type(self)(self.raw.argmin(axis=axis))
@@ -193,12 +194,12 @@ class JAXTensor(BaseTensor):
     def logical_and(self: TensorType, other) -> TensorType:
         assert_bool(self)
         assert_bool(other)
-        return type(self)(np.logical_and(self.raw, unwrap_(other)))
+        return type(self)(np.logical_and(self.raw, unwrap1(other)))
 
     def logical_or(self: TensorType, other) -> TensorType:
         assert_bool(self)
         assert_bool(other)
-        return type(self)(np.logical_or(self.raw, unwrap_(other)))
+        return type(self)(np.logical_or(self.raw, unwrap1(other)))
 
     def logical_not(self: TensorType) -> TensorType:
         assert_bool(self)
@@ -220,7 +221,7 @@ class JAXTensor(BaseTensor):
         return type(self)(np.log1p(self.raw))
 
     def tile(self: TensorType, multiples) -> TensorType:
-        multiples = unwrap_(multiples)
+        multiples = unwrap1(multiples)
         if len(multiples) != self.ndim:
             raise ValueError("multiples requires one entry for each dimension")
         return type(self)(np.tile(self.raw, multiples))
@@ -245,7 +246,7 @@ class JAXTensor(BaseTensor):
     def index_update(self: TensorType, indices, values) -> TensorType:
         indices, values = unwrap_(indices, values)
         if isinstance(indices, tuple):
-            indices = unwrap_(indices)
+            indices = unwrap1(indices)
         return type(self)(jax.ops.index_update(self.raw, indices, values))
 
     def arange(self: TensorType, start, stop=None, step=None) -> TensorType:
@@ -258,7 +259,7 @@ class JAXTensor(BaseTensor):
         return type(self)(np.flip(self.raw, axis=axis))
 
     def meshgrid(self: TensorType, *tensors, indexing="xy") -> Tuple[TensorType, ...]:
-        tensors = unwrap_(tensors)
+        tensors = unwrap1(tensors)
         outputs = np.meshgrid(self.raw, *tensors, indexing=indexing)
         return tuple(type(self)(out) for out in outputs)
 
@@ -371,22 +372,22 @@ class JAXTensor(BaseTensor):
         return type(self)(np.matmul(self.raw, other.raw))
 
     def __lt__(self: TensorType, other) -> TensorType:
-        return type(self)(self.raw.__lt__(unwrap_(other)))
+        return type(self)(self.raw.__lt__(unwrap1(other)))
 
     def __le__(self: TensorType, other) -> TensorType:
-        return type(self)(self.raw.__le__(unwrap_(other)))
+        return type(self)(self.raw.__le__(unwrap1(other)))
 
     def __eq__(self: TensorType, other) -> TensorType:  # type: ignore
-        return type(self)(self.raw.__eq__(unwrap_(other)))
+        return type(self)(self.raw.__eq__(unwrap1(other)))
 
     def __ne__(self: TensorType, other) -> TensorType:  # type: ignore
-        return type(self)(self.raw.__ne__(unwrap_(other)))
+        return type(self)(self.raw.__ne__(unwrap1(other)))
 
     def __gt__(self: TensorType, other) -> TensorType:
-        return type(self)(self.raw.__gt__(unwrap_(other)))
+        return type(self)(self.raw.__gt__(unwrap1(other)))
 
     def __ge__(self: TensorType, other) -> TensorType:
-        return type(self)(self.raw.__ge__(unwrap_(other)))
+        return type(self)(self.raw.__ge__(unwrap1(other)))
 
     def __getitem__(self: TensorType, index) -> TensorType:
         if isinstance(index, tuple):

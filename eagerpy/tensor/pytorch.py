@@ -5,10 +5,11 @@ from importlib import import_module
 
 from ..types import Shape
 
-from .tensor import istensor
+from .tensor import Tensor
 
 from .base import BaseTensor
 from .base import unwrap_
+from .base import unwrap1
 
 if TYPE_CHECKING:
     import torch  # for static analyzers
@@ -21,14 +22,16 @@ else:
 TensorType = TypeVar("TensorType", bound="PyTorchTensor")
 
 
-def assert_bool(x: TensorType) -> None:
-    if not istensor(x):
+def assert_bool(x: Any) -> None:
+    if not isinstance(x, Tensor):
         return
     if x.dtype != torch.bool:
         raise ValueError(f"requires dtype bool, consider t.bool().all()")
 
 
 class PyTorchTensor(BaseTensor):
+    __slots__ = ()
+
     def __init__(self, raw: "torch.Tensor"):
         global torch
         if torch is None:
@@ -120,14 +123,14 @@ class PyTorchTensor(BaseTensor):
         return type(self)(x)
 
     def minimum(self: TensorType, other) -> TensorType:
-        if istensor(other):
+        if isinstance(other, Tensor):
             other = other.raw
         else:
             other = torch.full_like(self.raw, other)
         return type(self)(torch.min(self.raw, other))
 
     def maximum(self: TensorType, other) -> TensorType:
-        if istensor(other):
+        if isinstance(other, Tensor):
             other = other.raw
         else:
             other = torch.full_like(self.raw, other)
@@ -191,12 +194,12 @@ class PyTorchTensor(BaseTensor):
 
     def _concatenate(self: TensorType, tensors, axis=0) -> TensorType:
         # concatenates only "tensors", but not "self"
-        tensors = unwrap_(tensors)
+        tensors = unwrap1(tensors)
         return type(self)(torch.cat(tensors, dim=axis))
 
     def _stack(self: TensorType, tensors, axis=0) -> TensorType:
         # stacks only "tensors", but not "self"
-        tensors = unwrap_(tensors)
+        tensors = unwrap1(tensors)
         return type(self)(torch.stack(tensors, dim=axis))
 
     def transpose(self: TensorType, axes=None) -> TensorType:
@@ -238,12 +241,12 @@ class PyTorchTensor(BaseTensor):
     def logical_and(self: TensorType, other) -> TensorType:
         assert_bool(self)
         assert_bool(other)
-        return type(self)(self.raw & unwrap_(other))
+        return type(self)(self.raw & unwrap1(other))
 
     def logical_or(self: TensorType, other) -> TensorType:
         assert_bool(self)
         assert_bool(other)
-        return type(self)(self.raw | unwrap_(other))
+        return type(self)(self.raw | unwrap1(other))
 
     def logical_not(self: TensorType) -> TensorType:
         assert_bool(self)
@@ -265,7 +268,7 @@ class PyTorchTensor(BaseTensor):
         return type(self)(torch.log1p(self.raw))
 
     def tile(self: TensorType, multiples) -> TensorType:
-        multiples = unwrap_(multiples)
+        multiples = unwrap1(multiples)
         if len(multiples) != self.ndim:
             raise ValueError("multiples requires one entry for each dimension")
         return type(self)(self.raw.repeat(multiples))
@@ -300,7 +303,7 @@ class PyTorchTensor(BaseTensor):
     def index_update(self: TensorType, indices, values) -> TensorType:
         indices, values = unwrap_(indices, values)
         if isinstance(indices, tuple):
-            indices = unwrap_(indices)
+            indices = unwrap1(indices)
         x = self.raw.clone()
         x[indices] = values
         return type(self)(x)
@@ -328,7 +331,7 @@ class PyTorchTensor(BaseTensor):
         return type(self)(self.raw.flip(dims=axis))
 
     def meshgrid(self: TensorType, *tensors, indexing="xy") -> Tuple[TensorType, ...]:
-        tensors = unwrap_(tensors)
+        tensors = unwrap1(tensors)
         if indexing == "ij" or len(tensors) == 0:
             outputs = torch.meshgrid(self.raw, *tensors)  # type: ignore
         elif indexing == "xy":
@@ -420,11 +423,11 @@ class PyTorchTensor(BaseTensor):
         return self.astype(torch.float32)
 
     def where(self: TensorType, x, y) -> TensorType:
-        if istensor(x):
+        if isinstance(x, Tensor):
             x = x.raw
         else:
             x = torch.full_like(self.raw, x, dtype=torch.float32)
-        if istensor(y):
+        if isinstance(y, Tensor):
             y = y.raw
         else:
             y = torch.full_like(self.raw, y, dtype=torch.float32)
@@ -438,26 +441,26 @@ class PyTorchTensor(BaseTensor):
         return type(self)(torch.matmul(self.raw, other.raw))
 
     def __lt__(self: TensorType, other) -> TensorType:
-        return type(self)(self.raw.__lt__(unwrap_(other)))
+        return type(self)(self.raw.__lt__(unwrap1(other)))
 
     def __le__(self: TensorType, other) -> TensorType:
-        return type(self)(self.raw.__le__(unwrap_(other)))
+        return type(self)(self.raw.__le__(unwrap1(other)))
 
     def __eq__(self: TensorType, other) -> TensorType:  # type: ignore
-        return type(self)(self.raw.__eq__(unwrap_(other)))
+        return type(self)(self.raw.__eq__(unwrap1(other)))
 
     def __ne__(self: TensorType, other) -> TensorType:  # type: ignore
-        return type(self)(self.raw.__ne__(unwrap_(other)))
+        return type(self)(self.raw.__ne__(unwrap1(other)))
 
     def __gt__(self: TensorType, other) -> TensorType:
-        return type(self)(self.raw.__gt__(unwrap_(other)))
+        return type(self)(self.raw.__gt__(unwrap1(other)))
 
     def __ge__(self: TensorType, other) -> TensorType:
-        return type(self)(self.raw.__ge__(unwrap_(other)))
+        return type(self)(self.raw.__ge__(unwrap1(other)))
 
     def __getitem__(self: TensorType, index) -> TensorType:
         if isinstance(index, tuple):
-            index = tuple(x.raw if istensor(x) else x for x in index)
-        elif istensor(index):
+            index = tuple(x.raw if isinstance(x, Tensor) else x for x in index)
+        elif isinstance(index, Tensor):
             index = index.raw
         return type(self)(self.raw[index])

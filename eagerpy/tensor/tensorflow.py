@@ -13,6 +13,7 @@ from .tensor import TensorType
 
 from .base import BaseTensor
 from .base import unwrap_
+from .base import unwrap1
 
 if TYPE_CHECKING:
     import tensorflow as tf  # for static analyzers
@@ -112,10 +113,10 @@ class TensorFlowTensor(BaseTensor):
         return type(self)(tf.reduce_max(self.raw, axis=axis, keepdims=keepdims))
 
     def minimum(self: TensorType, other) -> TensorType:
-        return type(self)(tf.minimum(self.raw, unwrap_(other)))
+        return type(self)(tf.minimum(self.raw, unwrap1(other)))
 
     def maximum(self: TensorType, other) -> TensorType:
-        return type(self)(tf.maximum(self.raw, unwrap_(other)))
+        return type(self)(tf.maximum(self.raw, unwrap1(other)))
 
     def argmin(self: TensorType, axis=None) -> TensorType:
         return type(self)(tf.argmin(self.raw, axis=axis))
@@ -211,12 +212,12 @@ class TensorFlowTensor(BaseTensor):
     def logical_and(self: TensorType, other) -> TensorType:
         assert_bool(self)
         assert_bool(other)
-        return type(self)(tf.logical_and(self.raw, unwrap_(other)))
+        return type(self)(tf.logical_and(self.raw, unwrap1(other)))
 
     def logical_or(self: TensorType, other) -> TensorType:
         assert_bool(self)
         assert_bool(other)
-        return type(self)(tf.logical_or(self.raw, unwrap_(other)))
+        return type(self)(tf.logical_or(self.raw, unwrap1(other)))
 
     def logical_not(self: TensorType) -> TensorType:
         assert_bool(self)
@@ -238,7 +239,7 @@ class TensorFlowTensor(BaseTensor):
         return type(self)(tf.math.log1p(self.raw))
 
     def tile(self: TensorType, multiples) -> TensorType:
-        multiples = unwrap_(multiples)
+        multiples = unwrap1(multiples)
         if len(multiples) != self.ndim:
             raise ValueError("multiples requires one entry for each dimension")
         return type(self)(tf.tile(self.raw, multiples))
@@ -264,7 +265,7 @@ class TensorFlowTensor(BaseTensor):
     def index_update(self: TensorType, indices, values) -> TensorType:
         indices, values = unwrap_(indices, values)
         if isinstance(indices, tuple):
-            indices = unwrap_(indices)
+            indices = unwrap1(indices)
 
         x = self.raw
         if isinstance(indices, int):
@@ -317,7 +318,7 @@ class TensorFlowTensor(BaseTensor):
         return type(self)(tf.reverse(self.raw, axis=axis))
 
     def meshgrid(self: TensorType, *tensors, indexing="xy") -> Tuple[TensorType, ...]:
-        tensors = unwrap_(tensors)
+        tensors = unwrap1(tensors)
         outputs = tf.meshgrid(self.raw, *tensors, indexing=indexing)
         return tuple(type(self)(out) for out in outputs)
 
@@ -401,27 +402,27 @@ class TensorFlowTensor(BaseTensor):
 
     @common_dtype
     def __lt__(self: TensorType, other) -> TensorType:
-        return type(self)(self.raw.__lt__(unwrap_(other)))
+        return type(self)(self.raw.__lt__(unwrap1(other)))
 
     @common_dtype
     def __le__(self: TensorType, other) -> TensorType:
-        return type(self)(self.raw.__le__(unwrap_(other)))
+        return type(self)(self.raw.__le__(unwrap1(other)))
 
     @common_dtype
     def __eq__(self: TensorType, other) -> TensorType:  # type: ignore
-        return type(self)(self.raw.__eq__(unwrap_(other)))
+        return type(self)(self.raw.__eq__(unwrap1(other)))
 
     @common_dtype
     def __ne__(self: TensorType, other) -> TensorType:  # type: ignore
-        return type(self)(self.raw.__ne__(unwrap_(other)))
+        return type(self)(self.raw.__ne__(unwrap1(other)))
 
     @common_dtype
     def __gt__(self: TensorType, other) -> TensorType:
-        return type(self)(self.raw.__gt__(unwrap_(other)))
+        return type(self)(self.raw.__gt__(unwrap1(other)))
 
     @common_dtype
     def __ge__(self: TensorType, other) -> TensorType:
-        return type(self)(self.raw.__ge__(unwrap_(other)))
+        return type(self)(self.raw.__ge__(unwrap1(other)))
 
     def __getitem__(self: TensorType, index) -> TensorType:
         if isinstance(index, tuple):

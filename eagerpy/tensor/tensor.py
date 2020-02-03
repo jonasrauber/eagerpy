@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 from typing import TypeVar, Callable, Tuple, Any, overload, Sequence, Union
 from typing_extensions import Literal, final
 
@@ -8,8 +8,10 @@ from ..types import Shape
 TensorType = TypeVar("TensorType", bound="Tensor")
 
 
-class Tensor(ABC):
+class Tensor(metaclass=ABCMeta):
     """Base class defining the common interface of all EagerPy Tensors"""
+
+    __slots__ = ()
 
     __array_ufunc__ = None
 
