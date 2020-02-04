@@ -430,9 +430,10 @@ class TensorFlowTensor(BaseTensor):
     def __getitem__(self: TensorType, index) -> TensorType:
         if isinstance(index, tuple):
             index = tuple(x.raw if isinstance(x, Tensor) else x for x in index)
-            ints = all(isinstance(x, int) for x in index)
-            if not ints:
+            basic = all(x is None or x is Ellipsis or isinstance(x, int) for x in index)
+            if not basic:
                 # workaround for missing support for this in TensorFlow
+                # TODO: maybe convert each index individually and then stack them instead
                 index = tf.convert_to_tensor(index)
                 index = tf.transpose(index)
                 return type(self)(tf.gather_nd(self.raw, index))
@@ -441,3 +442,10 @@ class TensorFlowTensor(BaseTensor):
         elif isinstance(index, Tensor):
             return type(self)(tf.gather(self.raw, index.raw))
         return type(self)(self.raw.__getitem__(index))
+
+    def take_along_axis(self: TensorType, index: TensorType, axis: int) -> TensorType:
+        if axis % self.ndim != self.ndim - 1:
+            raise NotImplementedError(
+                f"take_along_axis is currently only supported for the last axis"
+            )
+        return type(self)(tf.gather(self.raw, index.raw, axis=axis, batch_dims=axis))

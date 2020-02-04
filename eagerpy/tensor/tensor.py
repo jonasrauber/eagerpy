@@ -285,6 +285,10 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
+    def take_along_axis(self: TensorType, index: TensorType, axis: int) -> TensorType:
+        ...
+
+    @abstractmethod
     def bool(self: TensorType) -> TensorType:
         ...
 

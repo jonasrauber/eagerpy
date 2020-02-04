@@ -405,3 +405,10 @@ class JAXTensor(BaseTensor):
         else:
             index = getitem_preprocess(index)
         return type(self)(self.raw[index])
+
+    def take_along_axis(self: TensorType, index: TensorType, axis: int) -> TensorType:
+        if axis % self.ndim != self.ndim - 1:
+            raise NotImplementedError(
+                f"take_along_axis is currently only supported for the last axis"
+            )
+        return type(self)(np.take_along_axis(self.raw, index.raw, axis=axis))

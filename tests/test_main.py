@@ -315,6 +315,13 @@ def test_matmul_raise(dummy: Tensor):
         ep.matmul(t[0], t[0])
 
 
+def test_take_along_axis_2d_first_raises(dummy: Tensor):
+    t = ep.arange(dummy, 32).float32().reshape((8, 4))
+    indices = ep.arange(t, t.shape[-1]) % t.shape[0]
+    with pytest.raises(NotImplementedError):
+        ep.take_along_axis(t, indices[ep.newaxis], axis=0)
+
+
 ###############################################################################
 # special tests
 # - decorated with compare_*
@@ -522,6 +529,18 @@ def test_getitem_tuple(dummy: Tensor):
 
 
 @compare_all
+def test_getitem_newaxis(dummy: Tensor):
+    t = ep.arange(dummy, 8).float32()
+    return t[ep.newaxis]
+
+
+@compare_all
+def test_getitem_ellipsis_newaxis(dummy: Tensor):
+    t = ep.arange(dummy, 8).float32()
+    return t[..., ep.newaxis]
+
+
+@compare_all
 def test_getitem_tensor(dummy: Tensor):
     t = ep.arange(dummy, 32).float32()
     indices = ep.arange(t, 3, 10, 2)
@@ -576,6 +595,20 @@ def test_getitem_tuple_list_tensor(dummy: Tensor):
 @compare_all
 def test_getitem_slice(t: Tensor):
     return t[1:3]
+
+
+@compare_all
+def test_take_along_axis_2d(dummy: Tensor):
+    t = ep.arange(dummy, 32).float32().reshape((8, 4))
+    indices = ep.arange(t, len(t)) % t.shape[-1]
+    return ep.take_along_axis(t, indices[..., ep.newaxis], axis=-1)
+
+
+@compare_all
+def test_take_along_axis_3d(dummy: Tensor):
+    t = ep.arange(dummy, 64).float32().reshape((2, 8, 4))
+    indices = ep.arange(t, 2 * 8).reshape((2, 8, 1)) % t.shape[-1]
+    return ep.take_along_axis(t, indices, axis=-1)
 
 
 @compare_all

@@ -322,3 +322,7 @@ def value_aux_and_grad(
 
 def reshape(t: TensorType, shape) -> TensorType:
     return t.reshape(shape)
+
+
+def take_along_axis(t: TensorType, indices: TensorType, axis: int):
+    return t.take_along_axis(indices, axis)
