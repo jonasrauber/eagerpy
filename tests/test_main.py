@@ -529,9 +529,46 @@ def test_getitem_tensor(dummy: Tensor):
 
 
 @compare_all
+def test_getitem_range(dummy: Tensor):
+    t = ep.arange(dummy, 32).float32()
+    indices = range(3, 10, 2)
+    return t[indices]
+
+
+@compare_all
+def test_getitem_list(dummy: Tensor):
+    t = ep.arange(dummy, 32).float32()
+    indices = list(range(3, 10, 2))
+    return t[indices]
+
+
+@compare_all
 def test_getitem_tuple_tensors(dummy: Tensor):
     t = ep.arange(dummy, 32).float32().reshape((8, 4))
     rows = ep.arange(t, len(t))
+    indices = ep.arange(t, len(t)) % t.shape[1]
+    return t[rows, indices]
+
+
+@compare_all
+def test_getitem_tuple_range_tensor(dummy: Tensor):
+    t = ep.arange(dummy, 32).float32().reshape((8, 4))
+    rows = range(len(t))
+    indices = ep.arange(t, len(t)) % t.shape[1]
+    return t[rows, indices]
+
+
+@compare_all
+def test_getitem_tuple_range_range(dummy: Tensor):
+    t = ep.arange(dummy, 36).float32().reshape((6, 6))
+    rows = cols = range(len(t))
+    return t[rows, cols]
+
+
+@compare_all
+def test_getitem_tuple_list_tensor(dummy: Tensor):
+    t = ep.arange(dummy, 32).float32().reshape((8, 4))
+    rows = list(range(len(t)))
     indices = ep.arange(t, len(t)) % t.shape[1]
     return t[rows, indices]
 

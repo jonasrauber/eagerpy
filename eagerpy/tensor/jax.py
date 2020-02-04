@@ -32,6 +32,15 @@ def assert_bool(x: Any) -> None:
         raise ValueError(f"requires dtype bool, consider t.bool().all()")
 
 
+def getitem_preprocess(x: Any) -> Any:
+    if isinstance(x, range):
+        return list(x)
+    elif isinstance(x, Tensor):
+        return x.raw
+    else:
+        return x
+
+
 class JAXTensor(BaseTensor):
     _registered = False
     key = None
@@ -392,7 +401,7 @@ class JAXTensor(BaseTensor):
 
     def __getitem__(self: TensorType, index) -> TensorType:
         if isinstance(index, tuple):
-            index = tuple(x.raw if isinstance(x, Tensor) else x for x in index)
-        elif isinstance(index, Tensor):
-            index = index.raw
+            index = tuple(getitem_preprocess(x) for x in index)
+        else:
+            index = getitem_preprocess(index)
         return type(self)(self.raw[index])

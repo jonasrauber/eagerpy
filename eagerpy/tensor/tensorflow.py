@@ -430,14 +430,14 @@ class TensorFlowTensor(BaseTensor):
     def __getitem__(self: TensorType, index) -> TensorType:
         if isinstance(index, tuple):
             index = tuple(x.raw if isinstance(x, Tensor) else x for x in index)
-            tensors = any(
-                isinstance(x, tf.Tensor) or isinstance(x, np.ndarray) for x in index
-            )
-            if tensors:
+            ints = all(isinstance(x, int) for x in index)
+            if not ints:
                 # workaround for missing support for this in TensorFlow
                 index = tf.convert_to_tensor(index)
                 index = tf.transpose(index)
                 return type(self)(tf.gather_nd(self.raw, index))
+        elif isinstance(index, range) or isinstance(index, list):
+            return type(self)(tf.gather(self.raw, index))
         elif isinstance(index, Tensor):
             return type(self)(tf.gather(self.raw, index.raw))
         return type(self)(self.raw.__getitem__(index))
