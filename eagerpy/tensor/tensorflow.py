@@ -444,8 +444,11 @@ class TensorFlowTensor(BaseTensor):
         return type(self)(self.raw.__getitem__(index))
 
     def take_along_axis(self: TensorType, index: TensorType, axis: int) -> TensorType:
-        if axis % self.ndim != self.ndim - 1:
+        axis = batch_dims = axis % self.ndim
+        if axis != self.ndim - 1:
             raise NotImplementedError(
                 f"take_along_axis is currently only supported for the last axis"
             )
-        return type(self)(tf.gather(self.raw, index.raw, axis=axis, batch_dims=axis))
+        return type(self)(
+            tf.gather(self.raw, index.raw, axis=axis, batch_dims=batch_dims)
+        )
