@@ -97,24 +97,24 @@ def argmax(t: TensorType, axis=None) -> TensorType:
     return t.argmax(axis=axis)
 
 
-def argsort(t: TensorType, *args, **kwargs) -> TensorType:
-    return t.argsort(*args, **kwargs)
+def argsort(t: TensorType, axis=-1) -> TensorType:
+    return t.argsort(axis=axis)
 
 
-def uniform(t: TensorType, *args, **kwargs) -> TensorType:
-    return t.uniform(*args, **kwargs)
+def uniform(t: TensorType, shape, low=0.0, high=1.0) -> TensorType:
+    return t.uniform(shape, low=low, high=high)
 
 
-def normal(t: TensorType, *args, **kwargs) -> TensorType:
-    return t.normal(*args, **kwargs)
+def normal(t: TensorType, shape, mean=0.0, stddev=1.0) -> TensorType:
+    return t.normal(shape, mean=mean, stddev=stddev)
 
 
-def ones(t: TensorType, *args, **kwargs) -> TensorType:
-    return t.ones(*args, **kwargs)
+def ones(t: TensorType, shape) -> TensorType:
+    return t.ones(shape)
 
 
-def zeros(t: TensorType, *args, **kwargs) -> TensorType:
-    return t.zeros(*args, **kwargs)
+def zeros(t: TensorType, shape) -> TensorType:
+    return t.zeros(shape)
 
 
 def ones_like(t: TensorType) -> TensorType:
@@ -125,16 +125,16 @@ def zeros_like(t: TensorType) -> TensorType:
     return t.zeros_like()
 
 
-def full_like(t: TensorType, *args, **kwargs) -> TensorType:
-    return t.full_like(*args, **kwargs)
+def full_like(t: TensorType, fill_value) -> TensorType:
+    return t.full_like(fill_value)
 
 
-def onehot_like(t: TensorType, *args, **kwargs) -> TensorType:
-    return t.onehot_like(*args, **kwargs)
+def onehot_like(t: TensorType, indices, *, value=1) -> TensorType:
+    return t.onehot_like(indices, value=value)
 
 
-def from_numpy(t: TensorType, *args, **kwargs) -> TensorType:
-    return t.from_numpy(*args, **kwargs)
+def from_numpy(t: TensorType, a) -> TensorType:
+    return t.from_numpy(a)
 
 
 def concatenate(tensors: Sequence[TensorType], axis=0) -> TensorType:
@@ -227,24 +227,24 @@ def stack(tensors: Sequence[TensorType], axis=0) -> TensorType:
     return t._stack(tensors, axis=axis)
 
 
-def squeeze(t: TensorType, *args, **kwargs) -> TensorType:
-    return t.squeeze(*args, **kwargs)
+def squeeze(t: TensorType, axis=None) -> TensorType:
+    return t.squeeze(axis=axis)
 
 
-def expand_dims(t: TensorType, *args, **kwargs) -> TensorType:
-    return t.expand_dims(*args, **kwargs)
+def expand_dims(t: TensorType, axis=None) -> TensorType:
+    return t.expand_dims(axis=axis)
 
 
 def full(t: TensorType, shape, value) -> TensorType:
     return t.full(shape, value)
 
 
-def index_update(t: TensorType, *args, **kwargs) -> TensorType:
-    return t.index_update(*args, **kwargs)
+def index_update(t: TensorType, indices, values) -> TensorType:
+    return t.index_update(indices, values)
 
 
-def arange(t: TensorType, *args, **kwargs) -> TensorType:
-    return t.arange(*args, **kwargs)
+def arange(t: TensorType, start, stop=None, step=None) -> TensorType:
+    return t.arange(start, stop, step)
 
 
 def cumsum(t: TensorType, axis=None) -> TensorType:
@@ -255,8 +255,8 @@ def flip(t: TensorType, axis=None) -> TensorType:
     return t.flip(axis=axis)
 
 
-def meshgrid(t: TensorType, *args, **kwargs) -> Tuple[TensorType, ...]:
-    return t.meshgrid(*args, **kwargs)
+def meshgrid(t: TensorType, *tensors, indexing="xy") -> Tuple[TensorType, ...]:
+    return t.meshgrid(*tensors, indexing=indexing)
 
 
 def pad(t: TensorType, paddings, mode="constant", value=0) -> TensorType:
@@ -271,12 +271,12 @@ def isinf(t: TensorType) -> TensorType:
     return t.isinf()
 
 
-def all(t: TensorType, *args, **kwargs) -> TensorType:
-    return t.all(*args, **kwargs)
+def all(t: TensorType, axis=None, keepdims=False) -> TensorType:
+    return t.all(axis=axis, keepdims=keepdims)
 
 
-def any(t: TensorType, *args, **kwargs) -> TensorType:
-    return t.any(*args, **kwargs)
+def any(t: TensorType, axis=None, keepdims=False) -> TensorType:
+    return t.any(axis=axis, keepdims=keepdims)
 
 
 def crossentropy(logits: TensorType, labels: TensorType) -> TensorType:
