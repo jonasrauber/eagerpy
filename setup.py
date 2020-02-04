@@ -14,7 +14,7 @@ except IOError:
     README = ""
 
 
-install_requires = ["numpy"]
+install_requires = ["numpy", "typing-extensions"]
 tests_require = ["pytest", "pytest-cov"]
 
 setup(
