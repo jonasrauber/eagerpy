@@ -206,6 +206,11 @@ Tensor.item(self:~TensorType) -> Union[int, float]
 Tensor.reshape(self:~TensorType, shape) -> ~TensorType
 ```
 
+## take_along_axis
+```python
+Tensor.take_along_axis(self:~TensorType, index:~TensorType, axis:int) -> ~TensorType
+```
+
 ## astype
 ```python
 Tensor.astype(self:~TensorType, dtype) -> ~TensorType

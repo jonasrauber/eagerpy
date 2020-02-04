@@ -53,6 +53,7 @@ generate:
         - eagerpy.Tensor.item
         - eagerpy.Tensor.shape
         - eagerpy.Tensor.reshape
+        - eagerpy.Tensor.take_along_axis
         - eagerpy.Tensor.astype
         - eagerpy.Tensor.clip
         - eagerpy.Tensor.square
