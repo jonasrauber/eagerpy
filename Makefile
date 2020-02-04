@@ -38,7 +38,11 @@ installvuepress:
 
 .PHONY: servedocs
 servedocs:
-	cd docs/.vuepress/dist/ && python3 -m http.server 9999
+	cd docs/.vuepress/ && python3 -m http.server 9999
+
+.PHONY: devdocs
+devdocs:
+	cd docs && vuepress dev --temp /tmp/ --port 9999
 
 .PHONY: pushdocs
 pushdocs:
