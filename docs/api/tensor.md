@@ -20,12 +20,12 @@ NumPyTensor(self, raw:'np.ndarray')
 
 # Tensor
 ```python
-Tensor(self, raw) -> None
+Tensor(self, raw:Any) -> None
 ```
 Base class defining the common interface of all EagerPy Tensors
 ## __init__
 ```python
-Tensor.__init__(self, raw) -> None
+Tensor.__init__(self, raw:Any) -> None
 ```
 
 ## raw
@@ -39,12 +39,12 @@ Tensor.__repr__(self:~TensorType) -> str
 
 ## __format__
 ```python
-Tensor.__format__(self:~TensorType, format_spec) -> str
+Tensor.__format__(self:~TensorType, format_spec:str) -> str
 ```
 
 ## __getitem__
 ```python
-Tensor.__getitem__(self:~TensorType, index) -> ~TensorType
+Tensor.__getitem__(self:~TensorType, index:Any) -> ~TensorType
 ```
 
 ## __bool__
@@ -69,92 +69,92 @@ Tensor.__neg__(self:~TensorType) -> ~TensorType
 
 ## __add__
 ```python
-Tensor.__add__(self:~TensorType, other) -> ~TensorType
+Tensor.__add__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## __radd__
 ```python
-Tensor.__radd__(self:~TensorType, other) -> ~TensorType
+Tensor.__radd__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## __sub__
 ```python
-Tensor.__sub__(self:~TensorType, other) -> ~TensorType
+Tensor.__sub__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## __rsub__
 ```python
-Tensor.__rsub__(self:~TensorType, other) -> ~TensorType
+Tensor.__rsub__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## __mul__
 ```python
-Tensor.__mul__(self:~TensorType, other) -> ~TensorType
+Tensor.__mul__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## __rmul__
 ```python
-Tensor.__rmul__(self:~TensorType, other) -> ~TensorType
+Tensor.__rmul__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## __truediv__
 ```python
-Tensor.__truediv__(self:~TensorType, other) -> ~TensorType
+Tensor.__truediv__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## __rtruediv__
 ```python
-Tensor.__rtruediv__(self:~TensorType, other) -> ~TensorType
+Tensor.__rtruediv__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## __floordiv__
 ```python
-Tensor.__floordiv__(self:~TensorType, other) -> ~TensorType
+Tensor.__floordiv__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## __rfloordiv__
 ```python
-Tensor.__rfloordiv__(self:~TensorType, other) -> ~TensorType
+Tensor.__rfloordiv__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## __mod__
 ```python
-Tensor.__mod__(self:~TensorType, other) -> ~TensorType
+Tensor.__mod__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## __lt__
 ```python
-Tensor.__lt__(self:~TensorType, other) -> ~TensorType
+Tensor.__lt__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## __le__
 ```python
-Tensor.__le__(self:~TensorType, other) -> ~TensorType
+Tensor.__le__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## __eq__
 ```python
-Tensor.__eq__(self:~TensorType, other) -> ~TensorType
+Tensor.__eq__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## __ne__
 ```python
-Tensor.__ne__(self:~TensorType, other) -> ~TensorType
+Tensor.__ne__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## __gt__
 ```python
-Tensor.__gt__(self:~TensorType, other) -> ~TensorType
+Tensor.__gt__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## __ge__
 ```python
-Tensor.__ge__(self:~TensorType, other) -> ~TensorType
+Tensor.__ge__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## __pow__
 ```python
-Tensor.__pow__(self:~TensorType, exponent) -> ~TensorType
+Tensor.__pow__(self:~TensorType, exponent:float) -> ~TensorType
 ```
 
 ## sign
@@ -179,12 +179,12 @@ Tensor.float32(self:~TensorType) -> ~TensorType
 
 ## where
 ```python
-Tensor.where(self:~TensorType, x, y) -> ~TensorType
+Tensor.where(self:~TensorType, x:Union[_ForwardRef('Tensor'), int, float], y:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## matmul
 ```python
-Tensor.matmul(self:~TensorType, other) -> ~TensorType
+Tensor.matmul(self:~TensorType, other:~TensorType) -> ~TensorType
 ```
 
 ## ndim
@@ -203,7 +203,7 @@ Tensor.item(self:~TensorType) -> Union[int, float]
 
 ## reshape
 ```python
-Tensor.reshape(self:~TensorType, shape) -> ~TensorType
+Tensor.reshape(self:~TensorType, shape:Tuple[int, ...]) -> ~TensorType
 ```
 
 ## take_along_axis
@@ -213,12 +213,12 @@ Tensor.take_along_axis(self:~TensorType, index:~TensorType, axis:int) -> ~Tensor
 
 ## astype
 ```python
-Tensor.astype(self:~TensorType, dtype) -> ~TensorType
+Tensor.astype(self:~TensorType, dtype:Any) -> ~TensorType
 ```
 
 ## clip
 ```python
-Tensor.clip(self:~TensorType, min_, max_) -> ~TensorType
+Tensor.clip(self:~TensorType, min_:float, max_:float) -> ~TensorType
 ```
 
 ## square
@@ -233,67 +233,67 @@ Tensor.arctanh(self:~TensorType) -> ~TensorType
 
 ## sum
 ```python
-Tensor.sum(self:~TensorType, axis=None, keepdims=False) -> ~TensorType
+Tensor.sum(self:~TensorType, axis:Union[int, Tuple[int, ...], NoneType]=None, keepdims:bool=False) -> ~TensorType
 ```
 
 ## mean
 ```python
-Tensor.mean(self:~TensorType, axis=None, keepdims=False) -> ~TensorType
+Tensor.mean(self:~TensorType, axis:Union[int, Tuple[int, ...], NoneType]=None, keepdims:bool=False) -> ~TensorType
 ```
 
 ## min
 ```python
-Tensor.min(self:~TensorType, axis=None, keepdims=False) -> ~TensorType
+Tensor.min(self:~TensorType, axis:Union[int, Tuple[int, ...], NoneType]=None, keepdims:bool=False) -> ~TensorType
 ```
 
 ## max
 ```python
-Tensor.max(self:~TensorType, axis=None, keepdims=False) -> ~TensorType
+Tensor.max(self:~TensorType, axis:Union[int, Tuple[int, ...], NoneType]=None, keepdims:bool=False) -> ~TensorType
 ```
 
 ## minimum
 ```python
-Tensor.minimum(self:~TensorType, other) -> ~TensorType
+Tensor.minimum(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## maximum
 ```python
-Tensor.maximum(self:~TensorType, other) -> ~TensorType
+Tensor.maximum(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## argmin
 ```python
-Tensor.argmin(self:~TensorType, axis=None) -> ~TensorType
+Tensor.argmin(self:~TensorType, axis:Union[int, NoneType]=None) -> ~TensorType
 ```
 
 ## argmax
 ```python
-Tensor.argmax(self:~TensorType, axis=None) -> ~TensorType
+Tensor.argmax(self:~TensorType, axis:Union[int, NoneType]=None) -> ~TensorType
 ```
 
 ## argsort
 ```python
-Tensor.argsort(self:~TensorType, axis=-1) -> ~TensorType
+Tensor.argsort(self:~TensorType, axis:int=-1) -> ~TensorType
 ```
 
 ## uniform
 ```python
-Tensor.uniform(self:~TensorType, shape, low=0.0, high=1.0) -> ~TensorType
+Tensor.uniform(self:~TensorType, shape:Union[Tuple[int, ...], int], low:float=0.0, high:float=1.0) -> ~TensorType
 ```
 
 ## normal
 ```python
-Tensor.normal(self:~TensorType, shape, mean=0.0, stddev=1.0) -> ~TensorType
+Tensor.normal(self:~TensorType, shape:Union[Tuple[int, ...], int], mean:float=0.0, stddev:float=1.0) -> ~TensorType
 ```
 
 ## ones
 ```python
-Tensor.ones(self:~TensorType, shape) -> ~TensorType
+Tensor.ones(self:~TensorType, shape:Union[Tuple[int, ...], int]) -> ~TensorType
 ```
 
 ## zeros
 ```python
-Tensor.zeros(self:~TensorType, shape) -> ~TensorType
+Tensor.zeros(self:~TensorType, shape:Union[Tuple[int, ...], int]) -> ~TensorType
 ```
 
 ## ones_like
@@ -308,22 +308,22 @@ Tensor.zeros_like(self:~TensorType) -> ~TensorType
 
 ## full_like
 ```python
-Tensor.full_like(self:~TensorType, fill_value) -> ~TensorType
+Tensor.full_like(self:~TensorType, fill_value:float) -> ~TensorType
 ```
 
 ## onehot_like
 ```python
-Tensor.onehot_like(self:~TensorType, indices, *, value=1) -> ~TensorType
+Tensor.onehot_like(self:~TensorType, indices:~TensorType, *, value:float=1) -> ~TensorType
 ```
 
 ## from_numpy
 ```python
-Tensor.from_numpy(self:~TensorType, a) -> ~TensorType
+Tensor.from_numpy(self:~TensorType, a:Any) -> ~TensorType
 ```
 
 ## transpose
 ```python
-Tensor.transpose(self:~TensorType, axes=None) -> ~TensorType
+Tensor.transpose(self:~TensorType, axes:Union[Tuple[int, ...], NoneType]=None) -> ~TensorType
 ```
 
 ## bool
@@ -333,22 +333,22 @@ Tensor.bool(self:~TensorType) -> ~TensorType
 
 ## all
 ```python
-Tensor.all(self:~TensorType, axis=None, keepdims=False) -> ~TensorType
+Tensor.all(self:~TensorType, axis:Union[int, Tuple[int, ...], NoneType]=None, keepdims:bool=False) -> ~TensorType
 ```
 
 ## any
 ```python
-Tensor.any(self:~TensorType, axis=None, keepdims=False) -> ~TensorType
+Tensor.any(self:~TensorType, axis:Union[int, Tuple[int, ...], NoneType]=None, keepdims:bool=False) -> ~TensorType
 ```
 
 ## logical_and
 ```python
-Tensor.logical_and(self:~TensorType, other) -> ~TensorType
+Tensor.logical_and(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## logical_or
 ```python
-Tensor.logical_or(self:~TensorType, other) -> ~TensorType
+Tensor.logical_or(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## logical_not
@@ -383,62 +383,62 @@ Tensor.log1p(self:~TensorType) -> ~TensorType
 
 ## tile
 ```python
-Tensor.tile(self:~TensorType, multiples) -> ~TensorType
+Tensor.tile(self:~TensorType, multiples:Tuple[int, ...]) -> ~TensorType
 ```
 
 ## softmax
 ```python
-Tensor.softmax(self:~TensorType, axis=-1) -> ~TensorType
+Tensor.softmax(self:~TensorType, axis:int=-1) -> ~TensorType
 ```
 
 ## log_softmax
 ```python
-Tensor.log_softmax(self:~TensorType, axis=-1) -> ~TensorType
+Tensor.log_softmax(self:~TensorType, axis:int=-1) -> ~TensorType
 ```
 
 ## squeeze
 ```python
-Tensor.squeeze(self:~TensorType, axis=None) -> ~TensorType
+Tensor.squeeze(self:~TensorType, axis:Union[int, Tuple[int, ...], NoneType]=None) -> ~TensorType
 ```
 
 ## expand_dims
 ```python
-Tensor.expand_dims(self:~TensorType, axis=None) -> ~TensorType
+Tensor.expand_dims(self:~TensorType, axis:int) -> ~TensorType
 ```
 
 ## full
 ```python
-Tensor.full(self:~TensorType, shape, value) -> ~TensorType
+Tensor.full(self:~TensorType, shape:Union[Tuple[int, ...], int], value:float) -> ~TensorType
 ```
 
 ## index_update
 ```python
-Tensor.index_update(self:~TensorType, indices, values) -> ~TensorType
+Tensor.index_update(self:~TensorType, indices:Any, values:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## arange
 ```python
-Tensor.arange(self:~TensorType, start, stop=None, step=None) -> ~TensorType
+Tensor.arange(self:~TensorType, start:int, stop:Union[int, NoneType]=None, step:Union[int, NoneType]=None) -> ~TensorType
 ```
 
 ## cumsum
 ```python
-Tensor.cumsum(self:~TensorType, axis=None) -> ~TensorType
+Tensor.cumsum(self:~TensorType, axis:Union[int, NoneType]=None) -> ~TensorType
 ```
 
 ## flip
 ```python
-Tensor.flip(self:~TensorType, axis=None) -> ~TensorType
+Tensor.flip(self:~TensorType, axis:Union[int, Tuple[int, ...], NoneType]=None) -> ~TensorType
 ```
 
 ## meshgrid
 ```python
-Tensor.meshgrid(self:~TensorType, *tensors, indexing='xy') -> Tuple[~TensorType, ...]
+Tensor.meshgrid(self:~TensorType, *tensors:~TensorType, indexing:str='xy') -> Tuple[~TensorType, ...]
 ```
 
 ## pad
 ```python
-Tensor.pad(self:~TensorType, paddings, mode='constant', value=0) -> ~TensorType
+Tensor.pad(self:~TensorType, paddings:Tuple[Tuple[int, int], ...], mode:str='constant', value:float=0) -> ~TensorType
 ```
 
 ## isnan
@@ -465,16 +465,16 @@ Tensor.abs(self:~TensorType) -> ~TensorType
 
 ## pow
 ```python
-Tensor.pow(self:~TensorType, exponent) -> ~TensorType
+Tensor.pow(self:~TensorType, exponent:float) -> ~TensorType
 ```
 
 ## value_and_grad
 ```python
-Tensor.value_and_grad(self:~TensorType, f, *args, **kwargs) -> Tuple[~TensorType, ~TensorType]
+Tensor.value_and_grad(self:~TensorType, f:Callable[..., ~TensorType], *args:Any, **kwargs:Any) -> Tuple[~TensorType, ~TensorType]
 ```
 
 ## value_aux_and_grad
 ```python
-Tensor.value_aux_and_grad(self:~TensorType, f, *args, **kwargs) -> Tuple[~TensorType, Any, ~TensorType]
+Tensor.value_aux_and_grad(self:~TensorType, f:Callable[..., Tuple[~TensorType, Any]], *args:Any, **kwargs:Any) -> Tuple[~TensorType, Any, ~TensorType]
 ```
 
