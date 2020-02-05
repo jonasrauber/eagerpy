@@ -434,7 +434,7 @@ class PyTorchTensor(BaseTensor):
             y = torch.full_like(self.raw, y, dtype=torch.float32)
         return type(self)(torch.where(self.raw, x, y))
 
-    def matmul(self: TensorType, other) -> TensorType:
+    def matmul(self: TensorType, other: TensorType) -> TensorType:
         if self.ndim != 2 or other.ndim != 2:
             raise ValueError(
                 f"matmul requires both tensors to be 2D, got {self.ndim}D and {other.ndim}D"

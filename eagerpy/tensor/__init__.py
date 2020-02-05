@@ -1,5 +1,6 @@
 from .tensor import Tensor  # noqa: F401
 from .tensor import TensorType  # noqa: F401
+from .tensor import TensorOrScalar  # noqa: F401
 from .tensor import istensor  # noqa: F401
 
 from .pytorch import PyTorchTensor  # noqa: F401

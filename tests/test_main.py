@@ -5,7 +5,6 @@ import eagerpy as ep
 from eagerpy import Tensor
 from typing import Callable
 
-
 # make sure there are no undecorated tests in the "special tests" section below
 # -> /\n\ndef test_
 # make sure the undecorated tests in the "normal tests" section all contain
@@ -428,6 +427,11 @@ def test_pow(t: Tensor):
 
 
 @compare_allclose
+def test_pow_float(t: Tensor):
+    return ep.pow(t, 2.5)
+
+
+@compare_allclose
 def test_pow_op(t: Tensor):
     return t ** 3
 
@@ -648,6 +652,12 @@ def test_sum_axis(t: Tensor):
 
 
 @compare_all
+def test_sum_axes(dummy: Tensor):
+    t = ep.ones(dummy, 30).float32().reshape((3, 5, 2))
+    return ep.sum(t, axis=(0, 1))
+
+
+@compare_all
 def test_sum_keepdims(t: Tensor):
     return ep.sum(t, axis=0, keepdims=True)
 
@@ -665,6 +675,12 @@ def test_mean(t: Tensor):
 @compare_all
 def test_mean_axis(t: Tensor):
     return ep.mean(t, axis=0)
+
+
+@compare_all
+def test_mean_axes(dummy: Tensor):
+    t = ep.ones(dummy, 30).float32().reshape((3, 5, 2))
+    return ep.mean(t, axis=(0, 1))
 
 
 @compare_all
@@ -688,6 +704,12 @@ def test_all_axis(t: Tensor):
 
 
 @compare_all
+def test_all_axes(dummy: Tensor):
+    t = ep.arange(dummy, 30).float32().reshape((3, 5, 2))
+    return ep.all(t > 3, axis=(0, 1))
+
+
+@compare_all
 def test_all_keepdims(t: Tensor):
     return ep.all(t > 3, axis=0, keepdims=True)
 
@@ -705,6 +727,12 @@ def test_any(t: Tensor):
 @compare_all
 def test_any_axis(t: Tensor):
     return ep.any(t > 3, axis=0)
+
+
+@compare_all
+def test_any_axes(dummy: Tensor):
+    t = ep.arange(dummy, 30).float32().reshape((3, 5, 2))
+    return ep.any(t > 3, axis=(0, 1))
 
 
 @compare_all
@@ -728,6 +756,12 @@ def test_min_axis(t: Tensor):
 
 
 @compare_all
+def test_min_axes(dummy: Tensor):
+    t = ep.ones(dummy, 30).float32().reshape((3, 5, 2))
+    return ep.min(t, axis=(0, 1))
+
+
+@compare_all
 def test_min_keepdims(t: Tensor):
     return ep.min(t, axis=0, keepdims=True)
 
@@ -745,6 +779,12 @@ def test_max(t: Tensor):
 @compare_all
 def test_max_axis(t: Tensor):
     return ep.max(t, axis=0)
+
+
+@compare_all
+def test_max_axes(dummy: Tensor):
+    t = ep.ones(dummy, 30).float32().reshape((3, 5, 2))
+    return ep.max(t, axis=(0, 1))
 
 
 @compare_all
@@ -1153,8 +1193,18 @@ def test_lt(t1: Tensor, t2: Tensor):
 
 
 @compare_all
+def test_lt_scalar(t1: Tensor, t2: Tensor):
+    return 3 < t2
+
+
+@compare_all
 def test_le(t1: Tensor, t2: Tensor):
     return t1 <= t2
+
+
+@compare_all
+def test_le_scalar(t1: Tensor, t2: Tensor):
+    return 3 <= t2
 
 
 @compare_all
@@ -1163,8 +1213,18 @@ def test_gt(t1: Tensor, t2: Tensor):
 
 
 @compare_all
+def test_gt_scalar(t1: Tensor, t2: Tensor):
+    return 3 > t2
+
+
+@compare_all
 def test_ge(t1: Tensor, t2: Tensor):
     return t1 >= t2
+
+
+@compare_all
+def test_ge_scalar(t1: Tensor, t2: Tensor):
+    return 3 >= t2
 
 
 @compare_all
@@ -1173,8 +1233,18 @@ def test_eq(t1: Tensor, t2: Tensor):
 
 
 @compare_all
+def test_eq_scalar(t1: Tensor, t2: Tensor):
+    return 3 == t2
+
+
+@compare_all
 def test_ne(t1: Tensor, t2: Tensor):
     return t1 != t2
+
+
+@compare_all
+def test_ne_scalar(t1: Tensor, t2: Tensor):
+    return 3 != t2
 
 
 @compare_all

@@ -1,15 +1,18 @@
-from typing import overload, Sequence, Callable, Tuple, Any
+from typing import overload, Sequence, Callable, Tuple, Any, Optional, cast
 from typing_extensions import Literal
 
-from .tensor import TensorType
+from .types import Axes, Shape, ShapeOrScalar
+
 from .tensor import Tensor
+from .tensor import TensorType
+from .tensor import TensorOrScalar
 
 newaxis = None
 inf = float("inf")
 nan = float("nan")
 
 
-def clip(t: TensorType, min_, max_) -> TensorType:
+def clip(t: TensorType, min_: float, max_: float) -> TensorType:
     return t.clip(min_, max_)
 
 
@@ -29,7 +32,7 @@ def square(t: TensorType) -> TensorType:
     return t.square()
 
 
-def pow(t: TensorType, exponent) -> TensorType:
+def pow(t: TensorType, exponent: float) -> TensorType:
     return t.pow(exponent)
 
 
@@ -41,51 +44,59 @@ def arctanh(t: TensorType) -> TensorType:
     return t.arctanh()
 
 
-def sum(t: TensorType, axis=None, keepdims=False) -> TensorType:
+def sum(
+    t: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+) -> TensorType:
     return t.sum(axis=axis, keepdims=keepdims)
 
 
-def mean(t: TensorType, axis=None, keepdims=False) -> TensorType:
+def mean(
+    t: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+) -> TensorType:
     return t.mean(axis=axis, keepdims=keepdims)
 
 
-def min(t: TensorType, axis=None, keepdims=False) -> TensorType:
+def min(
+    t: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+) -> TensorType:
     return t.min(axis=axis, keepdims=keepdims)
 
 
-def max(t: TensorType, axis=None, keepdims=False) -> TensorType:
+def max(
+    t: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+) -> TensorType:
     return t.max(axis=axis, keepdims=keepdims)
 
 
 @overload
-def minimum(x: TensorType, y) -> TensorType:
+def minimum(x: TensorType, y: TensorOrScalar) -> TensorType:
     ...
 
 
 @overload
-def minimum(x, y: TensorType) -> TensorType:
+def minimum(x: TensorOrScalar, y: TensorType) -> TensorType:
     ...
 
 
-def minimum(x, y):
+def minimum(x: TensorOrScalar, y: TensorOrScalar) -> Tensor:
     if not isinstance(x, Tensor):
-        return y.minimum(x)
+        return cast(Tensor, y).minimum(x)
     return x.minimum(y)
 
 
 @overload
-def maximum(x: TensorType, y) -> TensorType:
+def maximum(x: TensorType, y: TensorOrScalar) -> TensorType:
     ...
 
 
 @overload
-def maximum(x, y: TensorType) -> TensorType:
+def maximum(x: TensorOrScalar, y: TensorType) -> TensorType:
     ...
 
 
-def maximum(x, y):
+def maximum(x: TensorOrScalar, y: TensorOrScalar) -> Tensor:
     if not isinstance(x, Tensor):
-        return y.maximum(x)
+        return cast(Tensor, y).maximum(x)
     return x.maximum(y)
 
 
@@ -101,19 +112,23 @@ def argsort(t: TensorType, axis=-1) -> TensorType:
     return t.argsort(axis=axis)
 
 
-def uniform(t: TensorType, shape, low=0.0, high=1.0) -> TensorType:
+def uniform(
+    t: TensorType, shape: ShapeOrScalar, low: float = 0.0, high: float = 1.0
+) -> TensorType:
     return t.uniform(shape, low=low, high=high)
 
 
-def normal(t: TensorType, shape, mean=0.0, stddev=1.0) -> TensorType:
+def normal(
+    t: TensorType, shape: ShapeOrScalar, mean: float = 0.0, stddev: float = 1.0
+) -> TensorType:
     return t.normal(shape, mean=mean, stddev=stddev)
 
 
-def ones(t: TensorType, shape) -> TensorType:
+def ones(t: TensorType, shape: ShapeOrScalar) -> TensorType:
     return t.ones(shape)
 
 
-def zeros(t: TensorType, shape) -> TensorType:
+def zeros(t: TensorType, shape: ShapeOrScalar) -> TensorType:
     return t.zeros(shape)
 
 
@@ -125,7 +140,7 @@ def zeros_like(t: TensorType) -> TensorType:
     return t.zeros_like()
 
 
-def full_like(t: TensorType, fill_value) -> TensorType:
+def full_like(t: TensorType, fill_value: float) -> TensorType:
     return t.full_like(fill_value)
 
 
@@ -133,48 +148,48 @@ def onehot_like(t: TensorType, indices, *, value=1) -> TensorType:
     return t.onehot_like(indices, value=value)
 
 
-def from_numpy(t: TensorType, a) -> TensorType:
+def from_numpy(t: TensorType, a: Any) -> TensorType:
     return t.from_numpy(a)
 
 
-def concatenate(tensors: Sequence[TensorType], axis=0) -> TensorType:
+def concatenate(tensors: Sequence[TensorType], axis: int = 0) -> TensorType:
     t = tensors[0]
     return t._concatenate(tensors, axis=axis)
 
 
-def transpose(t: TensorType, axes=None) -> TensorType:
+def transpose(t: TensorType, axes: Optional[Axes] = None) -> TensorType:
     return t.transpose(axes=axes)
 
 
 @overload
-def logical_and(x: TensorType, y) -> TensorType:
+def logical_and(x: TensorType, y: TensorOrScalar) -> TensorType:
     ...
 
 
 @overload
-def logical_and(x, y: TensorType) -> TensorType:
+def logical_and(x: TensorOrScalar, y: TensorType) -> TensorType:
     ...
 
 
-def logical_and(x, y):
+def logical_and(x: TensorOrScalar, y: TensorOrScalar) -> Tensor:
     if not isinstance(x, Tensor):
-        return y.logical_and(x)
+        return cast(Tensor, y).logical_and(x)
     return x.logical_and(y)
 
 
 @overload
-def logical_or(x: TensorType, y) -> TensorType:
+def logical_or(x: TensorType, y: TensorOrScalar) -> TensorType:
     ...
 
 
 @overload
-def logical_or(x, y: TensorType) -> TensorType:
+def logical_or(x: TensorOrScalar, y: TensorType) -> TensorType:
     ...
 
 
-def logical_or(x, y):
+def logical_or(x: TensorOrScalar, y: TensorOrScalar):
     if not isinstance(x, Tensor):
-        return y.logical_or(x)
+        return cast(Tensor, y).logical_or(x)
     return x.logical_or(y)
 
 
@@ -202,7 +217,7 @@ def log1p(t: TensorType) -> TensorType:
     return t.log1p()
 
 
-def where(condition: TensorType, x, y) -> TensorType:
+def where(condition: TensorType, x: TensorOrScalar, y: TensorOrScalar) -> TensorType:
     return condition.where(x, y)
 
 
@@ -214,28 +229,28 @@ def matmul(x: TensorType, y: TensorType) -> TensorType:
     return x.matmul(y)
 
 
-def softmax(t: TensorType, axis=-1) -> TensorType:
+def softmax(t: TensorType, axis: int = -1) -> TensorType:
     return t.softmax(axis=axis)
 
 
-def log_softmax(t: TensorType, axis=-1) -> TensorType:
+def log_softmax(t: TensorType, axis: int = -1) -> TensorType:
     return t.log_softmax(axis=axis)
 
 
-def stack(tensors: Sequence[TensorType], axis=0) -> TensorType:
+def stack(tensors: Sequence[TensorType], axis: int = 0) -> TensorType:
     t = tensors[0]
     return t._stack(tensors, axis=axis)
 
 
-def squeeze(t: TensorType, axis=None) -> TensorType:
+def squeeze(t: TensorType, axis: Optional[Axes] = None) -> TensorType:
     return t.squeeze(axis=axis)
 
 
-def expand_dims(t: TensorType, axis=None) -> TensorType:
+def expand_dims(t: TensorType, axis: int = None) -> TensorType:
     return t.expand_dims(axis=axis)
 
 
-def full(t: TensorType, shape, value) -> TensorType:
+def full(t: TensorType, shape: ShapeOrScalar, value: float) -> TensorType:
     return t.full(shape, value)
 
 
@@ -243,7 +258,7 @@ def index_update(t: TensorType, indices, values) -> TensorType:
     return t.index_update(indices, values)
 
 
-def arange(t: TensorType, start, stop=None, step=None) -> TensorType:
+def arange(t: TensorType, start: int, stop: int = None, step: int = None) -> TensorType:
     return t.arange(start, stop, step)
 
 
@@ -251,7 +266,7 @@ def cumsum(t: TensorType, axis=None) -> TensorType:
     return t.cumsum(axis=axis)
 
 
-def flip(t: TensorType, axis=None) -> TensorType:
+def flip(t: TensorType, axis: Optional[Axes] = None) -> TensorType:
     return t.flip(axis=axis)
 
 
@@ -271,11 +286,15 @@ def isinf(t: TensorType) -> TensorType:
     return t.isinf()
 
 
-def all(t: TensorType, axis=None, keepdims=False) -> TensorType:
+def all(
+    t: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+) -> TensorType:
     return t.all(axis=axis, keepdims=keepdims)
 
 
-def any(t: TensorType, axis=None, keepdims=False) -> TensorType:
+def any(
+    t: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+) -> TensorType:
     return t.any(axis=axis, keepdims=keepdims)
 
 
@@ -320,9 +339,9 @@ def value_aux_and_grad(
     return t.value_aux_and_grad(f, *args, **kwargs)
 
 
-def reshape(t: TensorType, shape) -> TensorType:
+def reshape(t: TensorType, shape: Shape) -> TensorType:
     return t.reshape(shape)
 
 
-def take_along_axis(t: TensorType, indices: TensorType, axis: int):
+def take_along_axis(t: TensorType, indices: TensorType, axis: int) -> TensorType:
     return t.take_along_axis(indices, axis)

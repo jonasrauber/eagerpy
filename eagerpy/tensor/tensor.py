@@ -1,11 +1,15 @@
 from abc import ABCMeta, abstractmethod
-from typing import TypeVar, Callable, Tuple, Any, overload, Sequence, Union
+from typing import TypeVar, Callable, Tuple, Any, overload, Sequence, Union, Optional
 from typing_extensions import Literal, final
 
-from ..types import Shape
+from ..types import Axes, Shape, ShapeOrScalar
 
 
 TensorType = TypeVar("TensorType", bound="Tensor")
+
+# using Tensor instead of TensorType because of a MyPy bug
+# https://github.com/python/mypy/issues/3644
+TensorOrScalar = Union["Tensor", int, float]
 
 
 class Tensor(metaclass=ABCMeta):
@@ -19,7 +23,7 @@ class Tensor(metaclass=ABCMeta):
     __module__ = "eagerpy"
 
     @abstractmethod
-    def __init__(self, raw) -> None:
+    def __init__(self, raw: Any) -> None:
         ...
 
     @property
@@ -37,11 +41,11 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def __format__(self: TensorType, format_spec) -> str:
+    def __format__(self: TensorType, format_spec: str) -> str:
         ...
 
     @abstractmethod
-    def __getitem__(self: TensorType, index) -> TensorType:
+    def __getitem__(self: TensorType, index: Any) -> TensorType:
         ...
 
     @abstractmethod
@@ -61,79 +65,79 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def __add__(self: TensorType, other) -> TensorType:
+    def __add__(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def __radd__(self: TensorType, other) -> TensorType:
+    def __radd__(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def __sub__(self: TensorType, other) -> TensorType:
+    def __sub__(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def __rsub__(self: TensorType, other) -> TensorType:
+    def __rsub__(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def __mul__(self: TensorType, other) -> TensorType:
+    def __mul__(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def __rmul__(self: TensorType, other) -> TensorType:
+    def __rmul__(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def __truediv__(self: TensorType, other) -> TensorType:
+    def __truediv__(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def __rtruediv__(self: TensorType, other) -> TensorType:
+    def __rtruediv__(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def __floordiv__(self: TensorType, other) -> TensorType:
+    def __floordiv__(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def __rfloordiv__(self: TensorType, other) -> TensorType:
+    def __rfloordiv__(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def __mod__(self: TensorType, other) -> TensorType:
+    def __mod__(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def __lt__(self: TensorType, other) -> TensorType:
+    def __lt__(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def __le__(self: TensorType, other) -> TensorType:
+    def __le__(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def __eq__(self: TensorType, other) -> TensorType:  # type: ignore
+    def __eq__(self: TensorType, other: TensorOrScalar) -> TensorType:  # type: ignore
         # we ignore the type errors caused by wrong type annotations for object
         # https://github.com/python/typeshed/issues/3685
         ...
 
     @abstractmethod
-    def __ne__(self: TensorType, other) -> TensorType:  # type: ignore
+    def __ne__(self: TensorType, other: TensorOrScalar) -> TensorType:  # type: ignore
         # we ignore the type errors caused by wrong type annotations for object
         # https://github.com/python/typeshed/issues/3685
         ...
 
     @abstractmethod
-    def __gt__(self: TensorType, other) -> TensorType:
+    def __gt__(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def __ge__(self: TensorType, other) -> TensorType:
+    def __ge__(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def __pow__(self: TensorType, exponent) -> TensorType:
+    def __pow__(self: TensorType, exponent: float) -> TensorType:
         ...
 
     @abstractmethod
@@ -153,11 +157,11 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def where(self: TensorType, x, y) -> TensorType:
+    def where(self: TensorType, x: TensorOrScalar, y: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def matmul(self: TensorType, other) -> TensorType:
+    def matmul(self: TensorType, other: TensorType) -> TensorType:
         ...
 
     @property
@@ -179,15 +183,15 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def reshape(self: TensorType, shape) -> TensorType:
+    def reshape(self: TensorType, shape: Shape) -> TensorType:
         ...
 
     @abstractmethod
-    def astype(self: TensorType, dtype) -> TensorType:
+    def astype(self: TensorType, dtype: Any) -> TensorType:
         ...
 
     @abstractmethod
-    def clip(self: TensorType, min_, max_) -> TensorType:
+    def clip(self: TensorType, min_: float, max_: float) -> TensorType:
         ...
 
     @abstractmethod
@@ -199,27 +203,35 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def sum(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def sum(
+        self: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+    ) -> TensorType:
         ...
 
     @abstractmethod
-    def mean(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def mean(
+        self: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+    ) -> TensorType:
         ...
 
     @abstractmethod
-    def min(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def min(
+        self: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+    ) -> TensorType:
         ...
 
     @abstractmethod
-    def max(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def max(
+        self: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+    ) -> TensorType:
         ...
 
     @abstractmethod
-    def minimum(self: TensorType, other) -> TensorType:
+    def minimum(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def maximum(self: TensorType, other) -> TensorType:
+    def maximum(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
@@ -235,19 +247,23 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def uniform(self: TensorType, shape, low=0.0, high=1.0) -> TensorType:
+    def uniform(
+        self: TensorType, shape: ShapeOrScalar, low: float = 0.0, high: float = 1.0
+    ) -> TensorType:
         ...
 
     @abstractmethod
-    def normal(self: TensorType, shape, mean=0.0, stddev=1.0) -> TensorType:
+    def normal(
+        self: TensorType, shape: ShapeOrScalar, mean: float = 0.0, stddev: float = 1.0
+    ) -> TensorType:
         ...
 
     @abstractmethod
-    def ones(self: TensorType, shape) -> TensorType:
+    def ones(self: TensorType, shape: ShapeOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def zeros(self: TensorType, shape) -> TensorType:
+    def zeros(self: TensorType, shape: ShapeOrScalar) -> TensorType:
         ...
 
     @abstractmethod
@@ -259,7 +275,7 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def full_like(self: TensorType, fill_value) -> TensorType:
+    def full_like(self: TensorType, fill_value: float) -> TensorType:
         ...
 
     @abstractmethod
@@ -267,21 +283,23 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def from_numpy(self: TensorType, a) -> TensorType:
+    def from_numpy(self: TensorType, a: Any) -> TensorType:
         ...
 
     @abstractmethod
     def _concatenate(
-        self: TensorType, tensors: Sequence[TensorType], axis=0
+        self: TensorType, tensors: Sequence[TensorType], axis: int = 0
     ) -> TensorType:
         ...
 
     @abstractmethod
-    def _stack(self: TensorType, tensors: Sequence[TensorType], axis=0) -> TensorType:
+    def _stack(
+        self: TensorType, tensors: Sequence[TensorType], axis: int = 0
+    ) -> TensorType:
         ...
 
     @abstractmethod
-    def transpose(self: TensorType, axes=None) -> TensorType:
+    def transpose(self: TensorType, axes: Optional[Axes] = None) -> TensorType:
         ...
 
     @abstractmethod
@@ -289,23 +307,23 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def bool(self: TensorType) -> TensorType:
+    def all(
+        self: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+    ) -> TensorType:
         ...
 
     @abstractmethod
-    def all(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def any(
+        self: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+    ) -> TensorType:
         ...
 
     @abstractmethod
-    def any(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def logical_and(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
-    def logical_and(self: TensorType, other) -> TensorType:
-        ...
-
-    @abstractmethod
-    def logical_or(self: TensorType, other) -> TensorType:
+    def logical_or(self: TensorType, other: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
@@ -337,23 +355,23 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def softmax(self: TensorType, axis=-1) -> TensorType:
+    def softmax(self: TensorType, axis: int = -1) -> TensorType:
         ...
 
     @abstractmethod
-    def log_softmax(self: TensorType, axis=-1) -> TensorType:
+    def log_softmax(self: TensorType, axis: int = -1) -> TensorType:
         ...
 
     @abstractmethod
-    def squeeze(self: TensorType, axis=None) -> TensorType:
+    def squeeze(self: TensorType, axis: Optional[Axes] = None) -> TensorType:
         ...
 
     @abstractmethod
-    def expand_dims(self: TensorType, axis=None) -> TensorType:
+    def expand_dims(self: TensorType, axis: int = None) -> TensorType:
         ...
 
     @abstractmethod
-    def full(self: TensorType, shape, value) -> TensorType:
+    def full(self: TensorType, shape: ShapeOrScalar, value: float) -> TensorType:
         ...
 
     @abstractmethod
@@ -361,7 +379,9 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def arange(self: TensorType, start, stop=None, step=None) -> TensorType:
+    def arange(
+        self: TensorType, start: int, stop: int = None, step: int = None
+    ) -> TensorType:
         ...
 
     @abstractmethod
@@ -369,7 +389,7 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def flip(self: TensorType, axis=None) -> TensorType:
+    def flip(self: TensorType, axis: Optional[Axes] = None) -> TensorType:
         ...
 
     @abstractmethod
@@ -414,6 +434,10 @@ class Tensor(metaclass=ABCMeta):
     def _value_and_grad_fn(self, f, has_aux=False):
         ...
 
+    @abstractmethod
+    def bool(self: TensorType) -> TensorType:
+        ...
+
     # #########################################################################
     # aliases
     # #########################################################################
@@ -428,7 +452,7 @@ class Tensor(metaclass=ABCMeta):
         return self.__abs__()
 
     @final
-    def pow(self: TensorType, exponent) -> TensorType:
+    def pow(self: TensorType, exponent: float) -> TensorType:
         return self.__pow__(exponent)
 
     @final

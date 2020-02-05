@@ -1,3 +1,5 @@
+# mypy: disallow_untyped_defs
+
 from typing import Union, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -9,6 +11,7 @@ if TYPE_CHECKING:
 
 Axes = Union[int, Tuple[int, ...]]
 Shape = Tuple[int, ...]
+ShapeOrScalar = Union[Shape, int]
 
 # tensorflow.Tensor, jax.numpy.ndarray and numpy.ndarray currently evaluate to Any
 # we can therefore only provide additional type information for torch.Tensor

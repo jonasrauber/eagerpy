@@ -1,3 +1,5 @@
+# mypy: disallow_untyped_defs
+
 from typing import TYPE_CHECKING, Union, overload, Tuple, TypeVar, Generic, Any
 import sys
 
@@ -16,7 +18,7 @@ if TYPE_CHECKING:
     import torch
 
 
-def _get_module_name(x) -> str:
+def _get_module_name(x: Any) -> str:
     # splitting is necessary for TensorFlow tensors
     return type(x).__module__.split(".")[0]
 
@@ -65,7 +67,7 @@ class RestoreTypeFunc(Generic[T]):
     def __init__(self, x: T):
         self.unwrap = not isinstance(x, Tensor)
 
-    @overload  # noqa: F811
+    @overload
     def __call__(self, x: Tensor) -> T:
         ...
 
@@ -82,7 +84,7 @@ class RestoreTypeFunc(Generic[T]):
         # catch other types, otherwise we would return type T for input type Any
         ...
 
-    def __call__(self, *args):  # noqa: F811
+    def __call__(self, *args):  # type: ignore  # noqa: F811
         result = tuple(x.raw for x in args) if self.unwrap else args
         if len(result) == 1:
             (result,) = result

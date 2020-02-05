@@ -1,22 +1,25 @@
+# mypy: disallow_untyped_defs
+
 from typing_extensions import final
 from typing import Any, cast
 
 from .tensor import Tensor
 from .tensor import TensorType
+from .tensor import TensorOrScalar
 
 
-def unwrap_(*args) -> Any:
+def unwrap_(*args: Any) -> Any:
     return tuple(t.raw if isinstance(t, Tensor) else t for t in args)
 
 
-def unwrap1(t) -> Any:
+def unwrap1(t: Any) -> Any:
     return t.raw if isinstance(t, Tensor) else t
 
 
 class BaseTensor(Tensor):
     __slots__ = "_raw"
 
-    def __init__(self: TensorType, raw) -> None:
+    def __init__(self: TensorType, raw: Any) -> None:
         self._raw = raw
 
     @property
@@ -35,7 +38,7 @@ class BaseTensor(Tensor):
         return "\n".join(lines)
 
     @final
-    def __format__(self: TensorType, format_spec) -> str:
+    def __format__(self: TensorType, format_spec: str) -> str:
         return format(self.raw, format_spec)
 
     @final
@@ -60,51 +63,51 @@ class BaseTensor(Tensor):
         return type(self)(-self.raw)
 
     @final
-    def __add__(self: TensorType, other) -> TensorType:
+    def __add__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__add__(unwrap1(other)))
 
     @final
-    def __radd__(self: TensorType, other) -> TensorType:
+    def __radd__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__radd__(unwrap1(other)))
 
     @final
-    def __sub__(self: TensorType, other) -> TensorType:
+    def __sub__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__sub__(unwrap1(other)))
 
     @final
-    def __rsub__(self: TensorType, other) -> TensorType:
+    def __rsub__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__rsub__(unwrap1(other)))
 
     @final
-    def __mul__(self: TensorType, other) -> TensorType:
+    def __mul__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__mul__(unwrap1(other)))
 
     @final
-    def __rmul__(self: TensorType, other) -> TensorType:
+    def __rmul__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__rmul__(unwrap1(other)))
 
     @final
-    def __truediv__(self: TensorType, other) -> TensorType:
+    def __truediv__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__truediv__(unwrap1(other)))
 
     @final
-    def __rtruediv__(self: TensorType, other) -> TensorType:
+    def __rtruediv__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__rtruediv__(unwrap1(other)))
 
     @final
-    def __floordiv__(self: TensorType, other) -> TensorType:
+    def __floordiv__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__floordiv__(unwrap1(other)))
 
     @final
-    def __rfloordiv__(self: TensorType, other) -> TensorType:
+    def __rfloordiv__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__rfloordiv__(unwrap1(other)))
 
     @final
-    def __mod__(self: TensorType, other) -> TensorType:
+    def __mod__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__mod__(unwrap1(other)))
 
     @final
-    def __pow__(self: TensorType, exponent) -> TensorType:
+    def __pow__(self: TensorType, exponent: float) -> TensorType:
         return type(self)(self.raw.__pow__(exponent))
 
     @final

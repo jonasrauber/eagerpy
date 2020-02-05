@@ -1,7 +1,9 @@
+# mypy: disallow_untyped_defs
+
 from importlib import import_module
 import inspect
 from types import ModuleType
-from typing import Any, Callable
+from typing import Any, Callable, Iterable
 import functools
 
 from .astensor import astensor
@@ -9,7 +11,7 @@ from .astensor import astensor
 
 def wrap(f: Callable) -> Callable:
     @functools.wraps(f)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         result = f(*args, **kwargs)
         try:
             result = astensor(result)
@@ -24,12 +26,12 @@ class ModuleWrapper(ModuleType):
     """A wrapper for modules that delays the import until it is needed
     and wraps the output of functions as EagerPy tensors"""
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         if self.__doc__ is None:
             self.__doc__ = f"EagerPy wrapper of the '{self.__name__}' module"
 
-    def __dir__(self):
+    def __dir__(self) -> Iterable[str]:
         # makes sure tab completion works
         return import_module(self.__name__).__dir__()
 

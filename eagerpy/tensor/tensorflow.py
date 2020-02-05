@@ -396,7 +396,7 @@ class TensorFlowTensor(BaseTensor):
         x, y = unwrap_(x, y)
         return type(self)(tf.where(self.raw, x, y))
 
-    def matmul(self: TensorType, other) -> TensorType:
+    def matmul(self: TensorType, other: TensorType) -> TensorType:
         if self.ndim != 2 or other.ndim != 2:
             raise ValueError(
                 f"matmul requires both tensors to be 2D, got {self.ndim}D and {other.ndim}D"

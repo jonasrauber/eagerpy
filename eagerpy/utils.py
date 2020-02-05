@@ -1,3 +1,5 @@
+# mypy: disallow_untyped_defs
+
 from typing import overload
 from typing_extensions import Literal
 

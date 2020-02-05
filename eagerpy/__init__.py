@@ -1,14 +1,19 @@
+# mypy: disallow_untyped_defs
+
+from typing import TypeVar
 from os.path import join as _join
 from os.path import dirname as _dirname
 
 with open(_join(_dirname(__file__), "VERSION")) as _f:
     __version__ = _f.read().strip()
 
+_T = TypeVar("_T")
+
 
 class _Indexable:
     __slots__ = ()
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: _T) -> _T:
         return index
 
 
