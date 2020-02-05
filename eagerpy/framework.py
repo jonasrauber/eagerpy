@@ -1,4 +1,6 @@
-from typing import overload, Sequence, Callable, Tuple, Any, Optional, cast
+# mypy: disallow_untyped_defs
+
+from typing import overload, Sequence, Callable, Tuple, Any, Optional, cast, Union
 from typing_extensions import Literal
 
 from .types import Axes, Shape, ShapeOrScalar
@@ -100,15 +102,15 @@ def maximum(x: TensorOrScalar, y: TensorOrScalar) -> Tensor:
     return x.maximum(y)
 
 
-def argmin(t: TensorType, axis=None) -> TensorType:
+def argmin(t: TensorType, axis: Optional[int] = None) -> TensorType:
     return t.argmin(axis=axis)
 
 
-def argmax(t: TensorType, axis=None) -> TensorType:
+def argmax(t: TensorType, axis: Optional[int] = None) -> TensorType:
     return t.argmax(axis=axis)
 
 
-def argsort(t: TensorType, axis=-1) -> TensorType:
+def argsort(t: TensorType, axis: Optional[int] = -1) -> TensorType:
     return t.argsort(axis=axis)
 
 
@@ -144,7 +146,7 @@ def full_like(t: TensorType, fill_value: float) -> TensorType:
     return t.full_like(fill_value)
 
 
-def onehot_like(t: TensorType, indices, *, value=1) -> TensorType:
+def onehot_like(t: TensorType, indices: TensorType, *, value: float = 1) -> TensorType:
     return t.onehot_like(indices, value=value)
 
 
@@ -187,7 +189,7 @@ def logical_or(x: TensorOrScalar, y: TensorType) -> TensorType:
     ...
 
 
-def logical_or(x: TensorOrScalar, y: TensorOrScalar):
+def logical_or(x: TensorOrScalar, y: TensorOrScalar) -> Tensor:
     if not isinstance(x, Tensor):
         return cast(Tensor, y).logical_or(x)
     return x.logical_or(y)
@@ -221,7 +223,7 @@ def where(condition: TensorType, x: TensorOrScalar, y: TensorOrScalar) -> Tensor
     return condition.where(x, y)
 
 
-def tile(t: TensorType, multiples) -> TensorType:
+def tile(t: TensorType, multiples: Union[Tuple[int, ...], Tensor]) -> TensorType:
     return t.tile(multiples)
 
 
@@ -246,7 +248,7 @@ def squeeze(t: TensorType, axis: Optional[Axes] = None) -> TensorType:
     return t.squeeze(axis=axis)
 
 
-def expand_dims(t: TensorType, axis: int = None) -> TensorType:
+def expand_dims(t: TensorType, axis: int) -> TensorType:
     return t.expand_dims(axis=axis)
 
 
@@ -254,15 +256,17 @@ def full(t: TensorType, shape: ShapeOrScalar, value: float) -> TensorType:
     return t.full(shape, value)
 
 
-def index_update(t: TensorType, indices, values) -> TensorType:
+def index_update(t: TensorType, indices: Any, values: TensorOrScalar) -> TensorType:
     return t.index_update(indices, values)
 
 
-def arange(t: TensorType, start: int, stop: int = None, step: int = None) -> TensorType:
+def arange(
+    t: TensorType, start: int, stop: Optional[int] = None, step: Optional[int] = None
+) -> TensorType:
     return t.arange(start, stop, step)
 
 
-def cumsum(t: TensorType, axis=None) -> TensorType:
+def cumsum(t: TensorType, axis: Optional[int] = None) -> TensorType:
     return t.cumsum(axis=axis)
 
 
@@ -270,11 +274,18 @@ def flip(t: TensorType, axis: Optional[Axes] = None) -> TensorType:
     return t.flip(axis=axis)
 
 
-def meshgrid(t: TensorType, *tensors, indexing="xy") -> Tuple[TensorType, ...]:
+def meshgrid(
+    t: TensorType, *tensors: TensorType, indexing: str = "xy"
+) -> Tuple[TensorType, ...]:
     return t.meshgrid(*tensors, indexing=indexing)
 
 
-def pad(t: TensorType, paddings, mode="constant", value=0) -> TensorType:
+def pad(
+    t: TensorType,
+    paddings: Tuple[Tuple[int, int], ...],
+    mode: str = "constant",
+    value: float = 0,
+) -> TensorType:
     return t.pad(paddings, mode=mode, value=value)
 
 
@@ -304,37 +315,37 @@ def crossentropy(logits: TensorType, labels: TensorType) -> TensorType:
 
 @overload
 def value_and_grad_fn(
-    t: TensorType, f: Callable
+    t: TensorType, f: Callable[..., TensorType]
 ) -> Callable[..., Tuple[TensorType, TensorType]]:
     ...
 
 
 @overload
 def value_and_grad_fn(
-    t: TensorType, f: Callable, has_aux: Literal[False]
+    t: TensorType, f: Callable[..., TensorType], has_aux: Literal[False]
 ) -> Callable[..., Tuple[TensorType, TensorType]]:
     ...
 
 
 @overload
 def value_and_grad_fn(
-    t: TensorType, f: Callable, has_aux: Literal[True]
+    t: TensorType, f: Callable[..., Tuple[TensorType, Any]], has_aux: Literal[True]
 ) -> Callable[..., Tuple[TensorType, Any, TensorType]]:
     ...
 
 
-def value_and_grad_fn(t, f, has_aux=False):
+def value_and_grad_fn(t: Any, f: Any, has_aux: bool = False) -> Any:
     return t._value_and_grad_fn(f, has_aux=has_aux)
 
 
 def value_and_grad(
-    f: Callable, t: TensorType, *args, **kwargs
+    f: Callable[..., TensorType], t: TensorType, *args: Any, **kwargs: Any
 ) -> Tuple[TensorType, TensorType]:
     return t.value_and_grad(f, *args, **kwargs)
 
 
 def value_aux_and_grad(
-    f: Callable, t: TensorType, *args, **kwargs
+    f: Callable[..., Tuple[TensorType, Any]], t: TensorType, *args: Any, **kwargs: Any
 ) -> Tuple[TensorType, Any, TensorType]:
     return t.value_aux_and_grad(f, *args, **kwargs)
 

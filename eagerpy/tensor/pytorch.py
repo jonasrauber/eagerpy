@@ -1,4 +1,4 @@
-from typing import Tuple, cast, Union, Any, TypeVar, TYPE_CHECKING, Iterable
+from typing import Tuple, cast, Union, Any, TypeVar, TYPE_CHECKING, Iterable, Optional
 import numpy as np
 from importlib import import_module
 
@@ -135,13 +135,13 @@ class PyTorchTensor(BaseTensor):
             other = torch.full_like(self.raw, other)
         return type(self)(torch.max(self.raw, other))
 
-    def argmin(self: TensorType, axis=None) -> TensorType:
+    def argmin(self: TensorType, axis: Optional[int] = None) -> TensorType:
         return type(self)(self.raw.argmin(dim=axis))
 
-    def argmax(self: TensorType, axis=None) -> TensorType:
+    def argmax(self: TensorType, axis: Optional[int] = None) -> TensorType:
         return type(self)(self.raw.argmax(dim=axis))
 
-    def argsort(self: TensorType, axis=-1) -> TensorType:
+    def argsort(self: TensorType, axis: Optional[int] = -1) -> TensorType:
         return type(self)(self.raw.argsort(dim=axis))
 
     def uniform(self: TensorType, shape, low=0.0, high=1.0) -> TensorType:
@@ -176,7 +176,9 @@ class PyTorchTensor(BaseTensor):
     def full_like(self: TensorType, fill_value) -> TensorType:
         return type(self)(torch.full_like(self.raw, fill_value))
 
-    def onehot_like(self: TensorType, indices: TensorType, *, value=1) -> TensorType:
+    def onehot_like(
+        self: TensorType, indices: TensorType, *, value: float = 1
+    ) -> TensorType:
         if self.ndim != 2:
             raise ValueError("onehot_like only supported for 2D tensors")
         if indices.ndim != 1:

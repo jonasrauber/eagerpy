@@ -1,3 +1,5 @@
+# mypy: disallow_untyped_defs
+
 from abc import ABCMeta, abstractmethod
 from typing import TypeVar, Callable, Tuple, Any, overload, Sequence, Union, Optional
 from typing_extensions import Literal, final
@@ -235,15 +237,15 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def argmin(self: TensorType, axis=None) -> TensorType:
+    def argmin(self: TensorType, axis: Optional[int] = None) -> TensorType:
         ...
 
     @abstractmethod
-    def argmax(self: TensorType, axis=None) -> TensorType:
+    def argmax(self: TensorType, axis: Optional[int] = None) -> TensorType:
         ...
 
     @abstractmethod
-    def argsort(self: TensorType, axis=-1) -> TensorType:
+    def argsort(self: TensorType, axis: Optional[int] = -1) -> TensorType:
         ...
 
     @abstractmethod
@@ -279,7 +281,9 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def onehot_like(self: TensorType, indices, *, value=1) -> TensorType:
+    def onehot_like(
+        self: TensorType, indices: TensorType, *, value: float = 1
+    ) -> TensorType:
         ...
 
     @abstractmethod
@@ -351,7 +355,9 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def tile(self: TensorType, multiples) -> TensorType:
+    def tile(
+        self: TensorType, multiples: Union[Tuple[int, ...], "Tensor"]
+    ) -> TensorType:
         ...
 
     @abstractmethod
@@ -367,7 +373,7 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def expand_dims(self: TensorType, axis: int = None) -> TensorType:
+    def expand_dims(self: TensorType, axis: int) -> TensorType:
         ...
 
     @abstractmethod
@@ -375,17 +381,22 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def index_update(self: TensorType, indices, values) -> TensorType:
-        ...
-
-    @abstractmethod
-    def arange(
-        self: TensorType, start: int, stop: int = None, step: int = None
+    def index_update(
+        self: TensorType, indices: Any, values: TensorOrScalar
     ) -> TensorType:
         ...
 
     @abstractmethod
-    def cumsum(self: TensorType, axis=None) -> TensorType:
+    def arange(
+        self: TensorType,
+        start: int,
+        stop: Optional[int] = None,
+        step: Optional[int] = None,
+    ) -> TensorType:
+        ...
+
+    @abstractmethod
+    def cumsum(self: TensorType, axis: Optional[int] = None) -> TensorType:
         ...
 
     @abstractmethod
@@ -393,11 +404,18 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def meshgrid(self: TensorType, *tensors, indexing="xy") -> Tuple[TensorType, ...]:
+    def meshgrid(
+        self: TensorType, *tensors: TensorType, indexing: str = "xy"
+    ) -> Tuple[TensorType, ...]:
         ...
 
     @abstractmethod
-    def pad(self: TensorType, paddings, mode="constant", value=0) -> TensorType:
+    def pad(
+        self: TensorType,
+        paddings: Tuple[Tuple[int, int], ...],
+        mode: str = "constant",
+        value: float = 0,
+    ) -> TensorType:
         ...
 
     @abstractmethod
@@ -414,24 +432,33 @@ class Tensor(metaclass=ABCMeta):
 
     @overload
     def _value_and_grad_fn(
-        self: TensorType, f: Callable
+        self: TensorType, f: Callable[..., TensorType]
     ) -> Callable[..., Tuple[TensorType, TensorType]]:
         ...
 
     @overload  # noqa: F811 (waiting for pyflakes > 2.1.1)
     def _value_and_grad_fn(
-        self: TensorType, f: Callable, has_aux: Literal[False]
+        self: TensorType, f: Callable[..., TensorType], has_aux: Literal[False]
     ) -> Callable[..., Tuple[TensorType, TensorType]]:
         ...
 
     @overload  # noqa: F811 (waiting for pyflakes > 2.1.1)
     def _value_and_grad_fn(
-        self: TensorType, f: Callable, has_aux: Literal[True]
+        self: TensorType,
+        f: Callable[..., Tuple[TensorType, Any]],
+        has_aux: Literal[True],
     ) -> Callable[..., Tuple[TensorType, Any, TensorType]]:
         ...
 
     @abstractmethod  # noqa: F811 (waiting for pyflakes > 2.1.1)
-    def _value_and_grad_fn(self, f, has_aux=False):
+    def _value_and_grad_fn(
+        self: TensorType,
+        f: Union[Callable[..., TensorType], Callable[..., Tuple[TensorType, Any]]],
+        has_aux: bool = False,
+    ) -> Union[
+        Callable[..., Tuple[TensorType, TensorType]],
+        Callable[..., Tuple[TensorType, Any, TensorType]],
+    ]:
         ...
 
     @abstractmethod
@@ -457,13 +484,16 @@ class Tensor(metaclass=ABCMeta):
 
     @final
     def value_and_grad(
-        self: TensorType, f, *args, **kwargs
+        self: TensorType, f: Callable[..., TensorType], *args: Any, **kwargs: Any
     ) -> Tuple[TensorType, TensorType]:
         return self._value_and_grad_fn(f, has_aux=False)(self, *args, **kwargs)
 
     @final
     def value_aux_and_grad(
-        self: TensorType, f, *args, **kwargs
+        self: TensorType,
+        f: Callable[..., Tuple[TensorType, Any]],
+        *args: Any,
+        **kwargs: Any,
     ) -> Tuple[TensorType, Any, TensorType]:
         return self._value_and_grad_fn(f, has_aux=True)(self, *args, **kwargs)
 

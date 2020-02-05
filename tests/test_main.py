@@ -145,7 +145,7 @@ def test_value_and_grad_fn(dummy: Tensor):
     if isinstance(dummy, ep.NumPyTensor):
         pytest.skip()
 
-    def f(x):
+    def f(x: ep.Tensor) -> ep.Tensor:
         return x.square().sum()
 
     vgf = ep.value_and_grad_fn(dummy, f)
@@ -270,7 +270,9 @@ def test_pad_raises(dummy: Tensor):
     with pytest.raises(ValueError):
         ep.pad(t, ((0, 0), (2, 3), (1, 2)), mode="constant")
     with pytest.raises(ValueError):
-        ep.pad(t, ((0, 0), (0, 0, 1, 2), (2, 3), (1, 2)), mode="constant")
+        ep.pad(
+            t, ((0, 0), (0, 0, 1, 2), (2, 3), (1, 2)), mode="constant"
+        )  # type: ignore
     with pytest.raises(ValueError):
         ep.pad(t, ((0, 0), (0, 0), (2, 3), (1, 2)), mode="foo")
 
@@ -1016,8 +1018,15 @@ def test_normal_tuple(t: Tensor):
 
 
 @compare_all
-def test_argsort(t: Tensor):
+def test_argsort(dummy: Tensor):
+    t = ep.arange(dummy, 6).float32().reshape((2, 3))
     return ep.argsort(t)
+
+
+@compare_all
+def test_argsort_none(dummy: Tensor):
+    t = ep.arange(dummy, 6).float32().reshape((2, 3))
+    return ep.argsort(t, axis=None)
 
 
 @compare_all
@@ -1055,6 +1064,12 @@ def test_where_both_scalars(t: Tensor):
 @compare_all
 def test_tile(t: Tensor):
     return ep.tile(t, (3,) * t.ndim)
+
+
+@compare_all
+def test_tile_tensor(t: Tensor):
+    multiples = ep.from_numpy(t, (3,) * t.ndim)
+    return ep.tile(t, multiples)
 
 
 @compare_all
@@ -1175,9 +1190,21 @@ def test_index_update_row(dummy: Tensor):
 
 
 @compare_all
+def test_index_update_row_scalar(dummy: Tensor):
+    x = ep.ones(dummy, (3, 4))
+    return ep.index_update(x, ep.index[1], 66.0)
+
+
+@compare_all
 def test_index_update_column(dummy: Tensor):
     x = ep.ones(dummy, (3, 4))
     return ep.index_update(x, ep.index[:, 1], ep.ones(x, 3) * 66.0)
+
+
+@compare_all
+def test_index_update_column_scalar(dummy: Tensor):
+    x = ep.ones(dummy, (3, 4))
+    return ep.index_update(x, ep.index[:, 1], 66.0)
 
 
 @compare_all
@@ -1185,6 +1212,13 @@ def test_index_update_indices(dummy: Tensor):
     x = ep.ones(dummy, (3, 4))
     ind = ep.from_numpy(dummy, np.array([0, 1, 2, 1]))
     return ep.index_update(x, ep.index[ind, ep.arange(x, 4)], ep.ones(x, 4) * 33.0)
+
+
+@compare_all
+def test_index_update_indices_scalar(dummy: Tensor):
+    x = ep.ones(dummy, (3, 4))
+    ind = ep.from_numpy(dummy, np.array([0, 1, 2, 1]))
+    return ep.index_update(x, ep.index[ind, ep.arange(x, 4)], 33.0)
 
 
 @compare_all
