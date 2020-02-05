@@ -146,7 +146,9 @@ class PyTorchTensor(BaseTensor):
         elif isinstance(other, int) or isinstance(other, float):
             other_ = torch.full_like(self.raw, other)
         else:
-            raise TypeError("expected x to be a Tensor, int or float")
+            raise TypeError(
+                "expected x to be a Tensor, int or float"
+            )  # pragma: no cover
         return type(self)(torch.min(self.raw, other_))
 
     def maximum(self: TensorType, other: TensorOrScalar) -> TensorType:
@@ -155,7 +157,9 @@ class PyTorchTensor(BaseTensor):
         elif isinstance(other, int) or isinstance(other, float):
             other_ = torch.full_like(self.raw, other)
         else:
-            raise TypeError("expected x to be a Tensor, int or float")
+            raise TypeError(
+                "expected x to be a Tensor, int or float"
+            )  # pragma: no cover
         return type(self)(torch.max(self.raw, other_))
 
     def argmin(self: TensorType, axis: Optional[int] = None) -> TensorType:
@@ -491,7 +495,9 @@ class PyTorchTensor(BaseTensor):
         elif isinstance(x, int) or isinstance(x, float):
             x_ = torch.full_like(self.raw, x, dtype=torch.float32)
         else:
-            raise TypeError("expected x to be a Tensor, int or float")
+            raise TypeError(
+                "expected x to be a Tensor, int or float"
+            )  # pragma: no cover
         if isinstance(y, Tensor):
             y_ = y.raw
         elif isinstance(y, int) or isinstance(y, float):
