@@ -1,10 +1,8 @@
-# mypy: disallow_untyped_defs
-
 from abc import ABCMeta, abstractmethod
-from typing import TypeVar, Callable, Tuple, Any, overload, Sequence, Union, Optional
+from typing import TypeVar, Callable, Tuple, Any, overload, Iterable, Union, Optional
 from typing_extensions import Literal, final
 
-from ..types import Axes, Shape, ShapeOrScalar
+from ..types import Axes, AxisAxes, Shape, ShapeOrScalar
 
 
 TensorType = TypeVar("TensorType", bound="Tensor")
@@ -206,25 +204,25 @@ class Tensor(metaclass=ABCMeta):
 
     @abstractmethod
     def sum(
-        self: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:
         ...
 
     @abstractmethod
     def mean(
-        self: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:
         ...
 
     @abstractmethod
     def min(
-        self: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:
         ...
 
     @abstractmethod
     def max(
-        self: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:
         ...
 
@@ -245,7 +243,7 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def argsort(self: TensorType, axis: Optional[int] = -1) -> TensorType:
+    def argsort(self: TensorType, axis: int = -1) -> TensorType:
         ...
 
     @abstractmethod
@@ -292,13 +290,13 @@ class Tensor(metaclass=ABCMeta):
 
     @abstractmethod
     def _concatenate(
-        self: TensorType, tensors: Sequence[TensorType], axis: int = 0
+        self: TensorType, tensors: Iterable[TensorType], axis: int = 0
     ) -> TensorType:
         ...
 
     @abstractmethod
     def _stack(
-        self: TensorType, tensors: Sequence[TensorType], axis: int = 0
+        self: TensorType, tensors: Iterable[TensorType], axis: int = 0
     ) -> TensorType:
         ...
 
@@ -312,13 +310,13 @@ class Tensor(metaclass=ABCMeta):
 
     @abstractmethod
     def all(
-        self: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:
         ...
 
     @abstractmethod
     def any(
-        self: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:
         ...
 
@@ -355,9 +353,7 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def tile(
-        self: TensorType, multiples: Union[Tuple[int, ...], "Tensor"]
-    ) -> TensorType:
+    def tile(self: TensorType, multiples: Axes) -> TensorType:
         ...
 
     @abstractmethod
@@ -369,7 +365,7 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def squeeze(self: TensorType, axis: Optional[Axes] = None) -> TensorType:
+    def squeeze(self: TensorType, axis: Optional[AxisAxes] = None) -> TensorType:
         ...
 
     @abstractmethod
@@ -400,7 +396,7 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def flip(self: TensorType, axis: Optional[Axes] = None) -> TensorType:
+    def flip(self: TensorType, axis: Optional[AxisAxes] = None) -> TensorType:
         ...
 
     @abstractmethod
@@ -452,13 +448,8 @@ class Tensor(metaclass=ABCMeta):
 
     @abstractmethod  # noqa: F811 (waiting for pyflakes > 2.1.1)
     def _value_and_grad_fn(
-        self: TensorType,
-        f: Union[Callable[..., TensorType], Callable[..., Tuple[TensorType, Any]]],
-        has_aux: bool = False,
-    ) -> Union[
-        Callable[..., Tuple[TensorType, TensorType]],
-        Callable[..., Tuple[TensorType, Any, TensorType]],
-    ]:
+        self: TensorType, f: Callable, has_aux: bool = False
+    ) -> Callable[..., Tuple]:
         ...
 
     @abstractmethod

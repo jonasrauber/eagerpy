@@ -1,5 +1,3 @@
-# mypy: disallow_untyped_defs
-
 from importlib import import_module
 import inspect
 from types import ModuleType

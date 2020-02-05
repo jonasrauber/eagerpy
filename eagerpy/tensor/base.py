@@ -1,5 +1,3 @@
-# mypy: disallow_untyped_defs
-
 from typing_extensions import final
 from typing import Any, cast
 

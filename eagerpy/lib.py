@@ -1,5 +1,3 @@
-# mypy: disallow_untyped_defs
-
 from .tensor import TensorType
 
 

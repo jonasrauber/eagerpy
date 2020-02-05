@@ -1,5 +1,3 @@
-# mypy: disallow_untyped_defs
-
 from typing import Union, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -9,7 +7,8 @@ if TYPE_CHECKING:
     import jax  # noqa: F401
     import numpy  # noqa: F401
 
-Axes = Union[int, Tuple[int, ...]]
+Axes = Tuple[int, ...]
+AxisAxes = Union[int, Axes]
 Shape = Tuple[int, ...]
 ShapeOrScalar = Union[Shape, int]
 

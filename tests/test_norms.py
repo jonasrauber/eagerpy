@@ -1,3 +1,4 @@
+from typing import Optional
 import pytest
 from numpy.testing import assert_allclose
 from numpy.linalg import norm
@@ -10,22 +11,22 @@ norms = {0: l0, 1: l1, 2: l2, ep.inf: linf}
 
 
 @pytest.fixture
-def x1d(dummy: Tensor):
+def x1d(dummy: Tensor) -> Tensor:
     return ep.arange(dummy, 10).float32() / 7.0
 
 
 @pytest.fixture
-def x2d(dummy: Tensor):
+def x2d(dummy: Tensor) -> Tensor:
     return ep.arange(dummy, 12).float32().reshape((3, 4)) / 7.0
 
 
 @pytest.fixture
-def x4d(dummy: Tensor):
+def x4d(dummy: Tensor) -> Tensor:
     return ep.arange(dummy, 2 * 3 * 4 * 5).float32().reshape((2, 3, 4, 5)) / 7.0
 
 
 @pytest.mark.parametrize("p", [0, 1, 2, ep.inf])
-def test_1d(x1d: Tensor, p):
+def test_1d(x1d: Tensor, p: float) -> None:
     assert_allclose(lp(x1d, p).numpy(), norm(x1d.numpy(), ord=p))
     assert_allclose(norms[p](x1d).numpy(), norm(x1d.numpy(), ord=p))
 
@@ -33,7 +34,7 @@ def test_1d(x1d: Tensor, p):
 @pytest.mark.parametrize("p", [0, 1, 2, 3, 4, ep.inf])
 @pytest.mark.parametrize("axis", [0, 1, -1])
 @pytest.mark.parametrize("keepdims", [False, True])
-def test_2d(x2d: Tensor, p, axis, keepdims):
+def test_2d(x2d: Tensor, p: float, axis: int, keepdims: bool) -> None:
     assert isinstance(axis, int)  # see test4d for the more general test
     assert_allclose(
         lp(x2d, p, axis=axis, keepdims=keepdims).numpy(),
@@ -71,22 +72,27 @@ def test_2d(x2d: Tensor, p, axis, keepdims):
     ],
 )
 @pytest.mark.parametrize("keepdims", [False, True])
-def test_4d(x4d: Tensor, p, axis, keepdims):
+def test_4d(
+    x4d: Tensor, p: float, axis: Optional[ep.types.AxisAxes], keepdims: bool
+) -> None:
     actual = lp(x4d, p, axis=axis, keepdims=keepdims).numpy()
 
     # numpy does not support arbitrary axes (limited to vector and matrix norms)
     if axis is None:
-        axis = tuple(range(x4d.ndim))
-    if not isinstance(axis, tuple):
-        axis = (axis,)
-    axis = tuple(i % x4d.ndim for i in axis)
+        axes = tuple(range(x4d.ndim))
+    elif not isinstance(axis, tuple):
+        axes = (axis,)
+    else:
+        axes = axis
+    del axis
+    axes = tuple(i % x4d.ndim for i in axes)
     x = x4d.numpy()
-    other = tuple(i for i in range(x.ndim) if i not in axis)
-    x = np.transpose(x, other + axis)
+    other = tuple(i for i in range(x.ndim) if i not in axes)
+    x = np.transpose(x, other + axes)
     x = x.reshape(x.shape[: len(other)] + (-1,))
     desired = norm(x, ord=p, axis=-1)
     if keepdims:
-        shape = tuple(1 if i in axis else x4d.shape[i] for i in range(x4d.ndim))
+        shape = tuple(1 if i in axes else x4d.shape[i] for i in range(x4d.ndim))
         desired = desired.reshape(shape)
 
     assert_allclose(actual, desired, rtol=1e-6)

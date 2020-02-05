@@ -1,9 +1,7 @@
-# mypy: disallow_untyped_defs
-
-from typing import overload, Sequence, Callable, Tuple, Any, Optional, cast, Union
+from typing import overload, Sequence, Callable, Tuple, Any, Optional, cast
 from typing_extensions import Literal
 
-from .types import Axes, Shape, ShapeOrScalar
+from .types import Axes, AxisAxes, Shape, ShapeOrScalar
 
 from .tensor import Tensor
 from .tensor import TensorType
@@ -47,25 +45,25 @@ def arctanh(t: TensorType) -> TensorType:
 
 
 def sum(
-    t: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+    t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
     return t.sum(axis=axis, keepdims=keepdims)
 
 
 def mean(
-    t: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+    t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
     return t.mean(axis=axis, keepdims=keepdims)
 
 
 def min(
-    t: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+    t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
     return t.min(axis=axis, keepdims=keepdims)
 
 
 def max(
-    t: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+    t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
     return t.max(axis=axis, keepdims=keepdims)
 
@@ -110,7 +108,7 @@ def argmax(t: TensorType, axis: Optional[int] = None) -> TensorType:
     return t.argmax(axis=axis)
 
 
-def argsort(t: TensorType, axis: Optional[int] = -1) -> TensorType:
+def argsort(t: TensorType, axis: int = -1) -> TensorType:
     return t.argsort(axis=axis)
 
 
@@ -223,7 +221,7 @@ def where(condition: TensorType, x: TensorOrScalar, y: TensorOrScalar) -> Tensor
     return condition.where(x, y)
 
 
-def tile(t: TensorType, multiples: Union[Tuple[int, ...], Tensor]) -> TensorType:
+def tile(t: TensorType, multiples: Axes) -> TensorType:
     return t.tile(multiples)
 
 
@@ -244,7 +242,7 @@ def stack(tensors: Sequence[TensorType], axis: int = 0) -> TensorType:
     return t._stack(tensors, axis=axis)
 
 
-def squeeze(t: TensorType, axis: Optional[Axes] = None) -> TensorType:
+def squeeze(t: TensorType, axis: Optional[AxisAxes] = None) -> TensorType:
     return t.squeeze(axis=axis)
 
 
@@ -270,7 +268,7 @@ def cumsum(t: TensorType, axis: Optional[int] = None) -> TensorType:
     return t.cumsum(axis=axis)
 
 
-def flip(t: TensorType, axis: Optional[Axes] = None) -> TensorType:
+def flip(t: TensorType, axis: Optional[AxisAxes] = None) -> TensorType:
     return t.flip(axis=axis)
 
 
@@ -298,13 +296,13 @@ def isinf(t: TensorType) -> TensorType:
 
 
 def all(
-    t: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+    t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
     return t.all(axis=axis, keepdims=keepdims)
 
 
 def any(
-    t: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+    t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
     return t.any(axis=axis, keepdims=keepdims)
 

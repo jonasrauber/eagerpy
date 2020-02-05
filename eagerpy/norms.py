@@ -1,32 +1,30 @@
-# mypy: disallow_untyped_defs
-
 from typing import Union, Optional
 
 from .tensor import TensorType
-from .types import Axes
+from .types import AxisAxes
 from .framework import inf
 
 
 def l0(
-    x: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+    x: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
     return (x != 0).sum(axis=axis, keepdims=keepdims)
 
 
 def l1(
-    x: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+    x: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
     return x.abs().sum(axis=axis, keepdims=keepdims)
 
 
 def l2(
-    x: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+    x: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
     return x.square().sum(axis=axis, keepdims=keepdims).sqrt()
 
 
 def linf(
-    x: TensorType, axis: Optional[Axes] = None, keepdims: bool = False
+    x: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
     return x.abs().max(axis=axis, keepdims=keepdims)
 
@@ -34,7 +32,7 @@ def linf(
 def lp(
     x: TensorType,
     p: Union[int, float],
-    axis: Optional[Axes] = None,
+    axis: Optional[AxisAxes] = None,
     keepdims: bool = False,
 ) -> TensorType:
     if p == 0:

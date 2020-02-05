@@ -1,10 +1,12 @@
-from typing import Tuple, cast, Union, Any, Iterable
+from typing import Tuple, cast, Union, Any, Iterable, Optional, overload, Callable
+from typing_extensions import Literal
 import numpy as np
 
-from ..types import Shape
+from ..types import Axes, AxisAxes, Shape, ShapeOrScalar
 
 from .tensor import TensorType
 from .tensor import Tensor
+from .tensor import TensorOrScalar
 
 from .base import BaseTensor
 from .base import unwrap_
@@ -36,13 +38,13 @@ class NumPyTensor(BaseTensor):
     def shape(self: TensorType) -> Shape:
         return cast(Tuple, self.raw.shape)
 
-    def reshape(self: TensorType, shape) -> TensorType:
+    def reshape(self: TensorType, shape: Shape) -> TensorType:
         return type(self)(self.raw.reshape(shape))
 
-    def astype(self: TensorType, dtype) -> TensorType:
+    def astype(self: TensorType, dtype: Any) -> TensorType:
         return type(self)(self.raw.astype(dtype))
 
-    def clip(self: TensorType, min_, max_) -> TensorType:
+    def clip(self: TensorType, min_: float, max_: float) -> TensorType:
         return type(self)(np.clip(self.raw, min_, max_))
 
     def square(self: TensorType) -> TensorType:
@@ -51,43 +53,55 @@ class NumPyTensor(BaseTensor):
     def arctanh(self: TensorType) -> TensorType:
         return type(self)(np.arctanh(self.raw))
 
-    def sum(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def sum(
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+    ) -> TensorType:
         return type(self)(self.raw.sum(axis=axis, keepdims=keepdims))
 
-    def mean(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def mean(
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+    ) -> TensorType:
         return type(self)(self.raw.mean(axis=axis, keepdims=keepdims))
 
-    def min(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def min(
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+    ) -> TensorType:
         return type(self)(self.raw.min(axis=axis, keepdims=keepdims))
 
-    def max(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def max(
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+    ) -> TensorType:
         return type(self)(self.raw.max(axis=axis, keepdims=keepdims))
 
-    def minimum(self: TensorType, other) -> TensorType:
+    def minimum(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(np.minimum(self.raw, unwrap1(other)))
 
-    def maximum(self: TensorType, other) -> TensorType:
+    def maximum(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(np.maximum(self.raw, unwrap1(other)))
 
-    def argmin(self: TensorType, axis=None) -> TensorType:
+    def argmin(self: TensorType, axis: Optional[int] = None) -> TensorType:
         return type(self)(self.raw.argmin(axis=axis))
 
-    def argmax(self: TensorType, axis=None) -> TensorType:
+    def argmax(self: TensorType, axis: Optional[int] = None) -> TensorType:
         return type(self)(self.raw.argmax(axis=axis))
 
-    def argsort(self: TensorType, axis=-1) -> TensorType:
+    def argsort(self: TensorType, axis: int = -1) -> TensorType:
         return type(self)(self.raw.argsort(axis=axis))
 
-    def uniform(self: TensorType, shape, low=0.0, high=1.0) -> TensorType:
+    def uniform(
+        self: TensorType, shape: ShapeOrScalar, low: float = 0.0, high: float = 1.0
+    ) -> TensorType:
         return type(self)(np.random.uniform(low, high, size=shape))
 
-    def normal(self: TensorType, shape, mean=0.0, stddev=1.0) -> TensorType:
+    def normal(
+        self: TensorType, shape: ShapeOrScalar, mean: float = 0.0, stddev: float = 1.0
+    ) -> TensorType:
         return type(self)(np.random.normal(mean, stddev, size=shape))
 
-    def ones(self: TensorType, shape) -> TensorType:
+    def ones(self: TensorType, shape: ShapeOrScalar) -> TensorType:
         return type(self)(np.ones(shape, dtype=self.raw.dtype))
 
-    def zeros(self: TensorType, shape) -> TensorType:
+    def zeros(self: TensorType, shape: ShapeOrScalar) -> TensorType:
         return type(self)(np.zeros(shape, dtype=self.raw.dtype))
 
     def ones_like(self: TensorType) -> TensorType:
@@ -96,10 +110,12 @@ class NumPyTensor(BaseTensor):
     def zeros_like(self: TensorType) -> TensorType:
         return type(self)(np.zeros_like(self.raw))
 
-    def full_like(self: TensorType, fill_value) -> TensorType:
+    def full_like(self: TensorType, fill_value: float) -> TensorType:
         return type(self)(np.full_like(self.raw, fill_value))
 
-    def onehot_like(self: TensorType, indices: TensorType, *, value=1) -> TensorType:
+    def onehot_like(
+        self: TensorType, indices: TensorType, *, value: float = 1
+    ) -> TensorType:
         if self.ndim != 2:
             raise ValueError("onehot_like only supported for 2D tensors")
         if indices.ndim != 1:
@@ -111,43 +127,46 @@ class NumPyTensor(BaseTensor):
         x[rows, indices.raw] = value
         return type(self)(x)
 
-    def from_numpy(self: TensorType, a) -> TensorType:
+    def from_numpy(self: TensorType, a: Any) -> TensorType:
         return type(self)(np.asarray(a))
 
     def _concatenate(
-        self: TensorType, tensors: Iterable[TensorType], axis=0
+        self: TensorType, tensors: Iterable[TensorType], axis: int = 0
     ) -> TensorType:
         # concatenates only "tensors", but not "self"
         tensors_ = unwrap_(*tensors)
         return type(self)(np.concatenate(tensors_, axis=axis))
 
-    def _stack(self: TensorType, tensors: Iterable[TensorType], axis=0) -> TensorType:
+    def _stack(
+        self: TensorType, tensors: Iterable[TensorType], axis: int = 0
+    ) -> TensorType:
         # stacks only "tensors", but not "self"
         tensors_ = unwrap_(*tensors)
         return type(self)(np.stack(tensors_, axis=axis))
 
-    def transpose(self: TensorType, axes=None) -> TensorType:
+    def transpose(self: TensorType, axes: Optional[Axes] = None) -> TensorType:
         if axes is None:
             axes = tuple(range(self.ndim - 1, -1, -1))
         return type(self)(np.transpose(self.raw, axes=axes))
 
-    def bool(self: TensorType) -> TensorType:
-        return self.astype(np.dtype("bool"))
-
-    def all(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def all(
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+    ) -> TensorType:
         assert_bool(self)
         return type(self)(self.raw.all(axis=axis, keepdims=keepdims))
 
-    def any(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def any(
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+    ) -> TensorType:
         assert_bool(self)
         return type(self)(self.raw.any(axis=axis, keepdims=keepdims))
 
-    def logical_and(self: TensorType, other) -> TensorType:
+    def logical_and(self: TensorType, other: TensorOrScalar) -> TensorType:
         assert_bool(self)
         assert_bool(other)
         return type(self)(np.logical_and(self.raw, unwrap1(other)))
 
-    def logical_or(self: TensorType, other) -> TensorType:
+    def logical_or(self: TensorType, other: TensorOrScalar) -> TensorType:
         assert_bool(self)
         assert_bool(other)
         return type(self)(np.logical_or(self.raw, unwrap1(other)))
@@ -171,13 +190,13 @@ class NumPyTensor(BaseTensor):
     def log1p(self: TensorType) -> TensorType:
         return type(self)(np.log1p(self.raw))
 
-    def tile(self: TensorType, multiples) -> TensorType:
+    def tile(self: TensorType, multiples: Axes) -> TensorType:
         multiples = unwrap1(multiples)
         if len(multiples) != self.ndim:
             raise ValueError("multiples requires one entry for each dimension")
         return type(self)(np.tile(self.raw, multiples))
 
-    def softmax(self: TensorType, axis=-1) -> TensorType:
+    def softmax(self: TensorType, axis: int = -1) -> TensorType:
         # for numerical reasons we subtract the max logit
         # (mathematically it doesn't matter!)
         # otherwise exp(logits) might become too large or too small
@@ -186,7 +205,7 @@ class NumPyTensor(BaseTensor):
         e = np.exp(logits)
         return type(self)(e / e.sum(axis=axis, keepdims=True))
 
-    def log_softmax(self: TensorType, axis=-1) -> TensorType:
+    def log_softmax(self: TensorType, axis: int = -1) -> TensorType:
         # for numerical reasons we subtract the max logit
         # (mathematically it doesn't matter!)
         # otherwise exp(logits) might become too large or too small
@@ -195,16 +214,18 @@ class NumPyTensor(BaseTensor):
         log_sum_exp = np.log(np.exp(logits).sum(axis=axis, keepdims=True))
         return type(self)(logits - log_sum_exp)
 
-    def squeeze(self: TensorType, axis=None) -> TensorType:
+    def squeeze(self: TensorType, axis: Optional[AxisAxes] = None) -> TensorType:
         return type(self)(self.raw.squeeze(axis=axis))
 
-    def expand_dims(self: TensorType, axis=None) -> TensorType:
+    def expand_dims(self: TensorType, axis: int) -> TensorType:
         return type(self)(np.expand_dims(self.raw, axis=axis))
 
-    def full(self: TensorType, shape, value) -> TensorType:
+    def full(self: TensorType, shape: ShapeOrScalar, value: float) -> TensorType:
         return type(self)(np.full(shape, value, dtype=self.raw.dtype))
 
-    def index_update(self: TensorType, indices, values) -> TensorType:
+    def index_update(
+        self: TensorType, indices: Any, values: TensorOrScalar
+    ) -> TensorType:
         indices, values = unwrap_(indices, values)
         if isinstance(indices, tuple):
             indices = unwrap_(*indices)
@@ -212,21 +233,33 @@ class NumPyTensor(BaseTensor):
         x[indices] = values
         return type(self)(x)
 
-    def arange(self: TensorType, start, stop=None, step=None) -> TensorType:
+    def arange(
+        self: TensorType,
+        start: int,
+        stop: Optional[int] = None,
+        step: Optional[int] = None,
+    ) -> TensorType:
         return type(self)(np.arange(start, stop, step))
 
-    def cumsum(self: TensorType, axis=None) -> TensorType:
+    def cumsum(self: TensorType, axis: Optional[int] = None) -> TensorType:
         return type(self)(self.raw.cumsum(axis=axis))
 
-    def flip(self: TensorType, axis=None) -> TensorType:
+    def flip(self: TensorType, axis: Optional[AxisAxes] = None) -> TensorType:
         return type(self)(np.flip(self.raw, axis=axis))
 
-    def meshgrid(self: TensorType, *tensors, indexing="xy") -> Tuple[TensorType, ...]:
+    def meshgrid(
+        self: TensorType, *tensors: TensorType, indexing: str = "xy"
+    ) -> Tuple[TensorType, ...]:
         tensors = unwrap_(*tensors)
         outputs = np.meshgrid(self.raw, *tensors, indexing=indexing)
         return tuple(type(self)(out) for out in outputs)
 
-    def pad(self: TensorType, paddings, mode="constant", value=0) -> TensorType:
+    def pad(
+        self: TensorType,
+        paddings: Tuple[Tuple[int, int], ...],
+        mode: str = "constant",
+        value: float = 0,
+    ) -> TensorType:
         if len(paddings) != self.ndim:
             raise ValueError("pad requires a tuple for each dimension")
         for p in paddings:
@@ -271,7 +304,29 @@ class NumPyTensor(BaseTensor):
         ).squeeze(axis=1)
         return type(self)(ces)
 
-    def _value_and_grad_fn(self, f, has_aux=False) -> Any:
+    @overload
+    def _value_and_grad_fn(
+        self: TensorType, f: Callable[..., TensorType]
+    ) -> Callable[..., Tuple[TensorType, TensorType]]:
+        ...
+
+    @overload  # noqa: F811 (waiting for pyflakes > 2.1.1)
+    def _value_and_grad_fn(
+        self: TensorType, f: Callable[..., TensorType], has_aux: Literal[False]
+    ) -> Callable[..., Tuple[TensorType, TensorType]]:
+        ...
+
+    @overload  # noqa: F811 (waiting for pyflakes > 2.1.1)
+    def _value_and_grad_fn(
+        self: TensorType,
+        f: Callable[..., Tuple[TensorType, Any]],
+        has_aux: Literal[True],
+    ) -> Callable[..., Tuple[TensorType, Any, TensorType]]:
+        ...
+
+    def _value_and_grad_fn(  # noqa: F811 (waiting for pyflakes > 2.1.1)
+        self: TensorType, f: Callable, has_aux: bool = False
+    ) -> Callable[..., Tuple]:
         # TODO: maybe implement this using https://github.com/HIPS/autograd
         raise NotImplementedError  # pragma: no cover
 
@@ -287,7 +342,7 @@ class NumPyTensor(BaseTensor):
     def float32(self: TensorType) -> TensorType:
         return self.astype(np.float32)
 
-    def where(self: TensorType, x, y) -> TensorType:
+    def where(self: TensorType, x: TensorOrScalar, y: TensorOrScalar) -> TensorType:
         x, y = unwrap_(x, y)
         return type(self)(np.where(self.raw, x, y))
 
@@ -298,25 +353,25 @@ class NumPyTensor(BaseTensor):
             )
         return type(self)(np.matmul(self.raw, other.raw))
 
-    def __lt__(self: TensorType, other) -> TensorType:
+    def __lt__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__lt__(unwrap1(other)))
 
-    def __le__(self: TensorType, other) -> TensorType:
+    def __le__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__le__(unwrap1(other)))
 
-    def __eq__(self: TensorType, other) -> TensorType:  # type: ignore
+    def __eq__(self: TensorType, other: TensorOrScalar) -> TensorType:  # type: ignore
         return type(self)(self.raw.__eq__(unwrap1(other)))
 
-    def __ne__(self: TensorType, other) -> TensorType:  # type: ignore
+    def __ne__(self: TensorType, other: TensorOrScalar) -> TensorType:  # type: ignore
         return type(self)(self.raw.__ne__(unwrap1(other)))
 
-    def __gt__(self: TensorType, other) -> TensorType:
+    def __gt__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__gt__(unwrap1(other)))
 
-    def __ge__(self: TensorType, other) -> TensorType:
+    def __ge__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__ge__(unwrap1(other)))
 
-    def __getitem__(self: TensorType, index) -> TensorType:
+    def __getitem__(self: TensorType, index: Any) -> TensorType:
         if isinstance(index, tuple):
             index = tuple(x.raw if isinstance(x, Tensor) else x for x in index)
         elif isinstance(index, Tensor):
@@ -329,3 +384,6 @@ class NumPyTensor(BaseTensor):
                 f"take_along_axis is currently only supported for the last axis"
             )
         return type(self)(np.take_along_axis(self.raw, index.raw, axis=axis))
+
+    def bool(self: TensorType) -> TensorType:
+        return self.astype(np.dtype("bool"))

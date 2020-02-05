@@ -1,5 +1,3 @@
-# mypy: disallow_untyped_defs
-
 from typing import TypeVar
 from os.path import join as _join
 from os.path import dirname as _dirname

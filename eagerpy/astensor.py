@@ -1,5 +1,3 @@
-# mypy: disallow_untyped_defs
-
 from typing import TYPE_CHECKING, Union, overload, Tuple, TypeVar, Generic, Any
 import sys
 

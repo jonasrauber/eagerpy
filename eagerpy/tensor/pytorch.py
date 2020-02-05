@@ -1,10 +1,23 @@
-from typing import Tuple, cast, Union, Any, TypeVar, TYPE_CHECKING, Iterable, Optional
+from typing import (
+    Tuple,
+    cast,
+    Union,
+    Any,
+    TypeVar,
+    TYPE_CHECKING,
+    Iterable,
+    Optional,
+    overload,
+    Callable,
+)
+from typing_extensions import Literal
 import numpy as np
 from importlib import import_module
 
-from ..types import Shape
+from ..types import Axes, AxisAxes, Shape, ShapeOrScalar
 
 from .tensor import Tensor
+from .tensor import TensorOrScalar
 
 from .base import BaseTensor
 from .base import unwrap_
@@ -54,13 +67,13 @@ class PyTorchTensor(BaseTensor):
     def shape(self) -> Shape:
         return self.raw.shape
 
-    def reshape(self: TensorType, shape) -> TensorType:
+    def reshape(self: TensorType, shape: Shape) -> TensorType:
         return type(self)(self.raw.reshape(shape))
 
-    def astype(self: TensorType, dtype) -> TensorType:
+    def astype(self: TensorType, dtype: Any) -> TensorType:
         return type(self)(self.raw.to(dtype))
 
-    def clip(self: TensorType, min_, max_) -> TensorType:
+    def clip(self: TensorType, min_: float, max_: float) -> TensorType:
         return type(self)(self.raw.clamp(min_, max_))
 
     def square(self: TensorType) -> TensorType:
@@ -73,21 +86,27 @@ class PyTorchTensor(BaseTensor):
         """
         return type(self)(0.5 * (torch.log1p(self.raw) - torch.log1p(-self.raw)))
 
-    def sum(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def sum(
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+    ) -> TensorType:
         if axis is None and not keepdims:
             return type(self)(self.raw.sum())
         if axis is None:
             axis = tuple(range(self.ndim))
         return type(self)(self.raw.sum(dim=axis, keepdim=keepdims))
 
-    def mean(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def mean(
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+    ) -> TensorType:
         if axis is None and not keepdims:
             return type(self)(self.raw.mean())
         if axis is None:
             axis = tuple(range(self.ndim))
         return type(self)(self.raw.mean(dim=axis, keepdim=keepdims))
 
-    def min(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def min(
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+    ) -> TensorType:
         """
         simplify once this issue has been fixed:
         https://github.com/pytorch/pytorch/issues/28213
@@ -98,13 +117,14 @@ class PyTorchTensor(BaseTensor):
             axis = tuple(range(self.ndim))
         elif not isinstance(axis, Iterable):
             axis = (axis,)
-        axis = reversed(sorted(axis))
         x = self.raw
-        for i in axis:
+        for i in sorted(axis, reverse=True):
             x, _ = x.min(i, keepdim=keepdims)
         return type(self)(x)
 
-    def max(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def max(
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+    ) -> TensorType:
         """
         simplify once this issue has been fixed:
         https://github.com/pytorch/pytorch/issues/28213
@@ -115,25 +135,28 @@ class PyTorchTensor(BaseTensor):
             axis = tuple(range(self.ndim))
         elif not isinstance(axis, Iterable):
             axis = (axis,)
-        axis = reversed(sorted(axis))
         x = self.raw
-        for i in axis:
+        for i in sorted(axis, reverse=True):
             x, _ = x.max(i, keepdim=keepdims)
         return type(self)(x)
 
-    def minimum(self: TensorType, other) -> TensorType:
+    def minimum(self: TensorType, other: TensorOrScalar) -> TensorType:
         if isinstance(other, Tensor):
-            other = other.raw
+            other_ = other.raw
+        elif isinstance(other, int) or isinstance(other, float):
+            other_ = torch.full_like(self.raw, other)
         else:
-            other = torch.full_like(self.raw, other)
-        return type(self)(torch.min(self.raw, other))
+            raise TypeError("expected x to be a Tensor, int or float")
+        return type(self)(torch.min(self.raw, other_))
 
-    def maximum(self: TensorType, other) -> TensorType:
+    def maximum(self: TensorType, other: TensorOrScalar) -> TensorType:
         if isinstance(other, Tensor):
-            other = other.raw
+            other_ = other.raw
+        elif isinstance(other, int) or isinstance(other, float):
+            other_ = torch.full_like(self.raw, other)
         else:
-            other = torch.full_like(self.raw, other)
-        return type(self)(torch.max(self.raw, other))
+            raise TypeError("expected x to be a Tensor, int or float")
+        return type(self)(torch.max(self.raw, other_))
 
     def argmin(self: TensorType, axis: Optional[int] = None) -> TensorType:
         return type(self)(self.raw.argmin(dim=axis))
@@ -141,28 +164,32 @@ class PyTorchTensor(BaseTensor):
     def argmax(self: TensorType, axis: Optional[int] = None) -> TensorType:
         return type(self)(self.raw.argmax(dim=axis))
 
-    def argsort(self: TensorType, axis: Optional[int] = -1) -> TensorType:
+    def argsort(self: TensorType, axis: int = -1) -> TensorType:
         return type(self)(self.raw.argsort(dim=axis))
 
-    def uniform(self: TensorType, shape, low=0.0, high=1.0) -> TensorType:
+    def uniform(
+        self: TensorType, shape: ShapeOrScalar, low: float = 0.0, high: float = 1.0
+    ) -> TensorType:
         return type(self)(
             torch.rand(shape, dtype=self.raw.dtype, device=self.raw.device)
             * (high - low)
             + low
         )
 
-    def normal(self: TensorType, shape, mean=0.0, stddev=1.0) -> TensorType:
+    def normal(
+        self: TensorType, shape: ShapeOrScalar, mean: float = 0.0, stddev: float = 1.0
+    ) -> TensorType:
         return type(self)(
             torch.randn(shape, dtype=self.raw.dtype, device=self.raw.device) * stddev
             + mean
         )
 
-    def ones(self: TensorType, shape) -> TensorType:
+    def ones(self: TensorType, shape: ShapeOrScalar) -> TensorType:
         return type(self)(
             torch.ones(shape, dtype=self.raw.dtype, device=self.raw.device)
         )
 
-    def zeros(self: TensorType, shape) -> TensorType:
+    def zeros(self: TensorType, shape: ShapeOrScalar) -> TensorType:
         return type(self)(
             torch.zeros(shape, dtype=self.raw.dtype, device=self.raw.device)
         )
@@ -173,7 +200,7 @@ class PyTorchTensor(BaseTensor):
     def zeros_like(self: TensorType) -> TensorType:
         return type(self)(torch.zeros_like(self.raw))
 
-    def full_like(self: TensorType, fill_value) -> TensorType:
+    def full_like(self: TensorType, fill_value: float) -> TensorType:
         return type(self)(torch.full_like(self.raw, fill_value))
 
     def onehot_like(
@@ -190,30 +217,31 @@ class PyTorchTensor(BaseTensor):
         x[rows, indices.raw] = value
         return type(self)(x)
 
-    def from_numpy(self: TensorType, a) -> TensorType:
+    def from_numpy(self: TensorType, a: Any) -> TensorType:
         return type(self)(torch.as_tensor(a, device=self.raw.device))
 
     def _concatenate(
-        self: TensorType, tensors: Iterable[TensorType], axis=0
+        self: TensorType, tensors: Iterable[TensorType], axis: int = 0
     ) -> TensorType:
         # concatenates only "tensors", but not "self"
         tensors_ = unwrap_(*tensors)
         return type(self)(torch.cat(tensors_, dim=axis))
 
-    def _stack(self: TensorType, tensors: Iterable[TensorType], axis=0) -> TensorType:
+    def _stack(
+        self: TensorType, tensors: Iterable[TensorType], axis: int = 0
+    ) -> TensorType:
         # stacks only "tensors", but not "self"
         tensors_ = unwrap_(*tensors)
         return type(self)(torch.stack(tensors_, dim=axis))
 
-    def transpose(self: TensorType, axes=None) -> TensorType:
+    def transpose(self: TensorType, axes: Optional[Axes] = None) -> TensorType:
         if axes is None:
             axes = tuple(range(self.ndim - 1, -1, -1))
         return type(self)(self.raw.permute(*axes))
 
-    def bool(self: TensorType) -> TensorType:
-        return self.astype(torch.bool)
-
-    def all(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def all(
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+    ) -> TensorType:
         assert_bool(self)
         if axis is None and not keepdims:
             return type(self)(self.raw.all())
@@ -221,13 +249,14 @@ class PyTorchTensor(BaseTensor):
             axis = tuple(range(self.ndim))
         elif not isinstance(axis, Iterable):
             axis = (axis,)
-        axis = reversed(sorted(axis))
         x = self.raw
-        for i in axis:
+        for i in sorted(axis, reverse=True):
             x = x.all(i, keepdim=keepdims)
         return type(self)(x)
 
-    def any(self: TensorType, axis=None, keepdims=False) -> TensorType:
+    def any(
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+    ) -> TensorType:
         assert_bool(self)
         if axis is None and not keepdims:
             return type(self)(self.raw.any())
@@ -235,18 +264,17 @@ class PyTorchTensor(BaseTensor):
             axis = tuple(range(self.ndim))
         elif not isinstance(axis, Iterable):
             axis = (axis,)
-        axis = reversed(sorted(axis))
         x = self.raw
-        for i in axis:
+        for i in sorted(axis, reverse=True):
             x = x.any(i, keepdim=keepdims)
         return type(self)(x)
 
-    def logical_and(self: TensorType, other) -> TensorType:
+    def logical_and(self: TensorType, other: TensorOrScalar) -> TensorType:
         assert_bool(self)
         assert_bool(other)
         return type(self)(self.raw & unwrap1(other))
 
-    def logical_or(self: TensorType, other) -> TensorType:
+    def logical_or(self: TensorType, other: TensorOrScalar) -> TensorType:
         assert_bool(self)
         assert_bool(other)
         return type(self)(self.raw | unwrap1(other))
@@ -270,48 +298,53 @@ class PyTorchTensor(BaseTensor):
     def log1p(self: TensorType) -> TensorType:
         return type(self)(torch.log1p(self.raw))
 
-    def tile(self: TensorType, multiples) -> TensorType:
-        multiples = unwrap1(multiples)
+    def tile(self: TensorType, multiples: Axes) -> TensorType:
         if len(multiples) != self.ndim:
             raise ValueError("multiples requires one entry for each dimension")
         return type(self)(self.raw.repeat(multiples))
 
-    def softmax(self: TensorType, axis=-1) -> TensorType:
+    def softmax(self: TensorType, axis: int = -1) -> TensorType:
         return type(self)(torch.nn.functional.softmax(self.raw, dim=axis))
 
-    def log_softmax(self: TensorType, axis=-1) -> TensorType:
+    def log_softmax(self: TensorType, axis: int = -1) -> TensorType:
         return type(self)(torch.nn.functional.log_softmax(self.raw, dim=axis))
 
-    def squeeze(self: TensorType, axis=None) -> TensorType:
+    def squeeze(self: TensorType, axis: Optional[AxisAxes] = None) -> TensorType:
         if axis is None:
             return type(self)(self.raw.squeeze())
         if not isinstance(axis, Iterable):
             axis = (axis,)
-        axis = reversed(sorted(axis))
         x = self.raw
-        for i in axis:
+        for i in sorted(axis, reverse=True):
             x = x.squeeze(dim=i)
         return type(self)(x)
 
-    def expand_dims(self: TensorType, axis=None) -> TensorType:
+    def expand_dims(self: TensorType, axis: int) -> TensorType:
         return type(self)(self.raw.unsqueeze(dim=axis))
 
-    def full(self: TensorType, shape, value) -> TensorType:
+    def full(self: TensorType, shape: ShapeOrScalar, value: float) -> TensorType:
         if not isinstance(shape, Iterable):
             shape = (shape,)
         return type(self)(
             torch.full(shape, value, dtype=self.raw.dtype, device=self.raw.device)
         )
 
-    def index_update(self: TensorType, indices, values) -> TensorType:
-        indices, values = unwrap_(indices, values)
+    def index_update(
+        self: TensorType, indices: Any, values: TensorOrScalar
+    ) -> TensorType:
+        indices, values_ = unwrap_(indices, values)
         if isinstance(indices, tuple):
             indices = unwrap_(*indices)
         x = self.raw.clone()
-        x[indices] = values
+        x[indices] = values_
         return type(self)(x)
 
-    def arange(self: TensorType, start, stop=None, step=None) -> TensorType:
+    def arange(
+        self: TensorType,
+        start: int,
+        stop: Optional[int] = None,
+        step: Optional[int] = None,
+    ) -> TensorType:
         if step is None:
             step = 1
         if stop is None:
@@ -321,19 +354,21 @@ class PyTorchTensor(BaseTensor):
             torch.arange(start=start, end=stop, step=step, device=self.raw.device)
         )
 
-    def cumsum(self: TensorType, axis=None) -> TensorType:
+    def cumsum(self: TensorType, axis: Optional[int] = None) -> TensorType:
         if axis is None:
             return type(self)(self.raw.reshape(-1).cumsum(dim=0))
         return type(self)(self.raw.cumsum(dim=axis))
 
-    def flip(self: TensorType, axis=None) -> TensorType:
+    def flip(self: TensorType, axis: Optional[AxisAxes] = None) -> TensorType:
         if axis is None:
             axis = tuple(range(self.ndim))
         if not isinstance(axis, Iterable):
             axis = (axis,)
         return type(self)(self.raw.flip(dims=axis))
 
-    def meshgrid(self: TensorType, *tensors, indexing="xy") -> Tuple[TensorType, ...]:
+    def meshgrid(
+        self: TensorType, *tensors: TensorType, indexing: str = "xy"
+    ) -> Tuple[TensorType, ...]:
         tensors = unwrap_(*tensors)
         if indexing == "ij" or len(tensors) == 0:
             outputs = torch.meshgrid(self.raw, *tensors)  # type: ignore
@@ -348,7 +383,12 @@ class PyTorchTensor(BaseTensor):
             results[0], results[1] = results[1], results[0]
         return tuple(results)
 
-    def pad(self: TensorType, paddings, mode="constant", value=0) -> TensorType:
+    def pad(
+        self: TensorType,
+        paddings: Tuple[Tuple[int, int], ...],
+        mode: str = "constant",
+        value: float = 0,
+    ) -> TensorType:
         if len(paddings) != self.ndim:
             raise ValueError("pad requires a tuple for each dimension")
         for p in paddings:
@@ -364,9 +404,9 @@ class PyTorchTensor(BaseTensor):
             if paddings[:k] != ((0, 0),) * k:
                 raise NotImplementedError  # pragma: no cover
             paddings = paddings[k:]
-        paddings = tuple(x for p in reversed(paddings) for x in p)
+        paddings_ = list(x for p in reversed(paddings) for x in p)
         return type(self)(
-            torch.nn.functional.pad(self.raw, paddings, mode=mode, value=value)
+            torch.nn.functional.pad(self.raw, paddings_, mode=mode, value=value)
         )
 
     def isnan(self: TensorType) -> TensorType:
@@ -384,10 +424,30 @@ class PyTorchTensor(BaseTensor):
             torch.nn.functional.cross_entropy(self.raw, labels.raw, reduction="none")
         )
 
-    def _value_and_grad_fn(self: TensorType, f, has_aux=False) -> Any:
-        def value_and_grad(
-            x: TensorType, *args, **kwargs
-        ) -> Union[Tuple[TensorType, TensorType], Tuple[TensorType, Any, TensorType]]:
+    @overload
+    def _value_and_grad_fn(
+        self: TensorType, f: Callable[..., TensorType]
+    ) -> Callable[..., Tuple[TensorType, TensorType]]:
+        ...
+
+    @overload  # noqa: F811 (waiting for pyflakes > 2.1.1)
+    def _value_and_grad_fn(
+        self: TensorType, f: Callable[..., TensorType], has_aux: Literal[False]
+    ) -> Callable[..., Tuple[TensorType, TensorType]]:
+        ...
+
+    @overload  # noqa: F811 (waiting for pyflakes > 2.1.1)
+    def _value_and_grad_fn(
+        self: TensorType,
+        f: Callable[..., Tuple[TensorType, Any]],
+        has_aux: Literal[True],
+    ) -> Callable[..., Tuple[TensorType, Any, TensorType]]:
+        ...
+
+    def _value_and_grad_fn(  # noqa: F811 (waiting for pyflakes > 2.1.1)
+        self: TensorType, f: Callable, has_aux: bool = False
+    ) -> Callable[..., Tuple]:
+        def value_and_grad(x: TensorType, *args: Any, **kwargs: Any) -> Tuple:
             x = type(self)(x.raw.clone().requires_grad_())
             if has_aux:
                 loss, aux = f(x, *args, **kwargs)
@@ -425,16 +485,18 @@ class PyTorchTensor(BaseTensor):
     def float32(self: TensorType) -> TensorType:
         return self.astype(torch.float32)
 
-    def where(self: TensorType, x, y) -> TensorType:
+    def where(self: TensorType, x: TensorOrScalar, y: TensorOrScalar) -> TensorType:
         if isinstance(x, Tensor):
-            x = x.raw
+            x_ = x.raw
+        elif isinstance(x, int) or isinstance(x, float):
+            x_ = torch.full_like(self.raw, x, dtype=torch.float32)
         else:
-            x = torch.full_like(self.raw, x, dtype=torch.float32)
+            raise TypeError("expected x to be a Tensor, int or float")
         if isinstance(y, Tensor):
-            y = y.raw
-        else:
-            y = torch.full_like(self.raw, y, dtype=torch.float32)
-        return type(self)(torch.where(self.raw, x, y))
+            y_ = y.raw
+        elif isinstance(y, int) or isinstance(y, float):
+            y_ = torch.full_like(self.raw, y, dtype=torch.float32)
+        return type(self)(torch.where(self.raw, x_, y_))
 
     def matmul(self: TensorType, other: TensorType) -> TensorType:
         if self.ndim != 2 or other.ndim != 2:
@@ -443,25 +505,25 @@ class PyTorchTensor(BaseTensor):
             )
         return type(self)(torch.matmul(self.raw, other.raw))
 
-    def __lt__(self: TensorType, other) -> TensorType:
+    def __lt__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__lt__(unwrap1(other)))
 
-    def __le__(self: TensorType, other) -> TensorType:
+    def __le__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__le__(unwrap1(other)))
 
-    def __eq__(self: TensorType, other) -> TensorType:  # type: ignore
+    def __eq__(self: TensorType, other: TensorOrScalar) -> TensorType:  # type: ignore
         return type(self)(self.raw.__eq__(unwrap1(other)))
 
-    def __ne__(self: TensorType, other) -> TensorType:  # type: ignore
+    def __ne__(self: TensorType, other: TensorOrScalar) -> TensorType:  # type: ignore
         return type(self)(self.raw.__ne__(unwrap1(other)))
 
-    def __gt__(self: TensorType, other) -> TensorType:
+    def __gt__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__gt__(unwrap1(other)))
 
-    def __ge__(self: TensorType, other) -> TensorType:
+    def __ge__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__ge__(unwrap1(other)))
 
-    def __getitem__(self: TensorType, index) -> TensorType:
+    def __getitem__(self: TensorType, index: Any) -> TensorType:
         if isinstance(index, tuple):
             index = tuple(x.raw if isinstance(x, Tensor) else x for x in index)
         elif isinstance(index, Tensor):
@@ -474,3 +536,6 @@ class PyTorchTensor(BaseTensor):
                 f"take_along_axis is currently only supported for the last axis"
             )
         return type(self)(torch.gather(self.raw, axis, index.raw))
+
+    def bool(self: TensorType) -> TensorType:
+        return self.astype(torch.bool)
