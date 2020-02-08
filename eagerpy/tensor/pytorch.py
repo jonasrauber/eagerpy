@@ -25,6 +25,7 @@ from .base import unwrap1
 
 if TYPE_CHECKING:
     import torch  # for static analyzers
+    from .extensions import NormsMethods  # noqa: F401
 else:
     # lazy import in PyTorchTensor
     torch = None
@@ -43,6 +44,9 @@ def assert_bool(x: Any) -> None:
 
 class PyTorchTensor(BaseTensor):
     __slots__ = ()
+
+    # more specific types for the extensions
+    norms: "NormsMethods[PyTorchTensor]"
 
     def __init__(self, raw: "torch.Tensor"):
         global torch

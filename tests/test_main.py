@@ -326,6 +326,10 @@ def test_take_along_axis_2d_first_raises(dummy: Tensor) -> None:
         ep.take_along_axis(t, indices[ep.newaxis], axis=0)
 
 
+def test_norms_class() -> None:
+    assert ep.Tensor.norms is not None
+
+
 ###############################################################################
 # special tests
 # - decorated with compare_*
@@ -1332,3 +1336,33 @@ def test_int_float_eq(t1int: Tensor, t2: Tensor) -> Tensor:
 @compare_all
 def test_int_float_ne(t1int: Tensor, t2: Tensor) -> Tensor:
     return t1int != t2
+
+
+@compare_all
+def test_norms_l0(t: Tensor) -> Tensor:
+    return t.norms.l0()
+
+
+@compare_all
+def test_norms_l1(t: Tensor) -> Tensor:
+    return t.norms.l1()
+
+
+@compare_all
+def test_norms_l2(t: Tensor) -> Tensor:
+    return t.norms.l2()
+
+
+@compare_all
+def test_norms_linf(t: Tensor) -> Tensor:
+    return t.norms.linf()
+
+
+@compare_all
+def test_norms_lp(t: Tensor) -> Tensor:
+    return t.norms.lp(2)
+
+
+@compare_all
+def test_norms_cache(t: Tensor) -> Tensor:
+    return t.norms.l1() + t.norms.l2()

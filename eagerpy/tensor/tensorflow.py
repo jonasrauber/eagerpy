@@ -29,6 +29,7 @@ from .base import unwrap1
 
 if TYPE_CHECKING:
     import tensorflow as tf  # for static analyzers
+    from .extensions import NormsMethods  # noqa: F401
 else:
     # lazy import in TensorFlowTensor
     tf = None
@@ -77,6 +78,11 @@ def assert_bool(x: Any) -> None:
 
 
 class TensorFlowTensor(BaseTensor):
+    __slots__ = ()
+
+    # more specific types for the extensions
+    norms: "NormsMethods[TensorFlowTensor]"
+
     def __init__(self, raw: "tf.Tensor"):  # type: ignore
         global tf
         if tf is None:

@@ -1,4 +1,14 @@
-from typing import Tuple, cast, Union, Any, Iterable, Optional, overload, Callable
+from typing import (
+    Tuple,
+    cast,
+    Union,
+    Any,
+    Iterable,
+    Optional,
+    overload,
+    Callable,
+    TYPE_CHECKING,
+)
 from typing_extensions import Literal
 import numpy as np
 
@@ -12,6 +22,9 @@ from .base import BaseTensor
 from .base import unwrap_
 from .base import unwrap1
 
+if TYPE_CHECKING:
+    from .extensions import NormsMethods  # noqa: F401
+
 
 def assert_bool(x: Any) -> None:
     if not isinstance(x, Tensor):
@@ -21,6 +34,11 @@ def assert_bool(x: Any) -> None:
 
 
 class NumPyTensor(BaseTensor):
+    __slots__ = ()
+
+    # more specific types for the extensions
+    norms: "NormsMethods[NumPyTensor]"
+
     def __init__(self, raw: "np.ndarray"):  # type: ignore
         super().__init__(raw)
 

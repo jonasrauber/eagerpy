@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     # for static analyzers
     import jax
     import jax.numpy as np
+    from .extensions import NormsMethods  # noqa: F401
 else:
     # lazy import in JAXTensor
     jax = None
@@ -56,6 +57,11 @@ def getitem_preprocess(x: Any) -> Any:
 
 
 class JAXTensor(BaseTensor):
+    __slots__ = ()
+
+    # more specific types for the extensions
+    norms: "NormsMethods[JAXTensor]"
+
     _registered = False
     key = None
 

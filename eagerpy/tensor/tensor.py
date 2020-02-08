@@ -1,8 +1,23 @@
 from abc import ABCMeta, abstractmethod
-from typing import TypeVar, Callable, Tuple, Any, overload, Iterable, Union, Optional
+from typing import (
+    TypeVar,
+    Callable,
+    Tuple,
+    Any,
+    overload,
+    Iterable,
+    Union,
+    Optional,
+    Type,
+    TYPE_CHECKING,
+    cast,
+)
 from typing_extensions import Literal, final
 
 from ..types import Axes, AxisAxes, Shape, ShapeOrScalar
+
+if TYPE_CHECKING:
+    from .extensions import NormsMethods  # noqa: F401
 
 
 TensorType = TypeVar("TensorType", bound="Tensor")
@@ -12,10 +27,47 @@ TensorType = TypeVar("TensorType", bound="Tensor")
 TensorOrScalar = Union["Tensor", int, float]
 
 
+class LazyCachedAccessor:
+    # supports caching under a different name (because Tensor uses __slots__
+    # and thus we cannot override the LazyCachedAccessor class var intself)
+
+    # supports lazy extension loading to break cyclic dependencies
+
+    def __init__(self, cache_name: str, extension_name: str) -> None:
+        self._cache_name = cache_name
+        self._extension_name = extension_name
+
+    @property
+    def _extension(self) -> Any:  # Type[object]:
+        # only imported once needed to break cyclic dependencies
+        from . import extensions
+
+        return getattr(extensions, self._extension_name)
+
+    def __get__(
+        self, instance: Optional["Tensor"], owner: Optional[Type["Tensor"]] = None
+    ) -> Any:
+        if instance is None:
+            # accessed as a class attribute
+            return self._extension
+
+        methods = getattr(instance, self._cache_name, None)
+        if methods is not None:
+            return methods
+
+        # create the extension for this instance
+        methods = self._extension(instance)
+
+        # add it to the instance to avoid recreation
+        instance.__setattr__(self._cache_name, methods)
+        return methods
+
+
 class Tensor(metaclass=ABCMeta):
     """Base class defining the common interface of all EagerPy Tensors"""
 
-    __slots__ = ()
+    # each extension neeeds a slot to cache the instantiated extension
+    __slots__ = ("_norms",)
 
     __array_ufunc__ = None
 
@@ -487,6 +539,12 @@ class Tensor(metaclass=ABCMeta):
         **kwargs: Any,
     ) -> Tuple[TensorType, Any, TensorType]:
         return self._value_and_grad_fn(f, has_aux=True)(self, *args, **kwargs)
+
+    # #########################################################################
+    # extensions
+    # #########################################################################
+
+    norms = cast("NormsMethods[Tensor]", LazyCachedAccessor("_norms", "NormsMethods"))
 
 
 def istensor(x: Any) -> bool:
