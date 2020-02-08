@@ -20,16 +20,12 @@ def extensionmethod(f: Callable[..., T]) -> Callable[..., T]:
 
 class ExtensionMeta(type):
     def __new__(cls, name, bases, attrs):  # type: ignore
-        if bases == ():
-            # creating the ExtensionMethod class
-            # remember all attributes
-            cls._base_attrs = attrs.keys()
-        else:
+        if bases != ():
             # creating a subclass of ExtensionMethods
-            # wrap all new attributes with extensionmethod
-            known = cls._base_attrs
+            # wrap the attributes with extensionmethod
             attrs = {
-                k: extensionmethod(v) if k not in known else v for k, v in attrs.items()
+                k: extensionmethod(v) if not k.startswith("__") else v
+                for k, v in attrs.items()
             }
         return super().__new__(cls, name, bases, attrs)
 
