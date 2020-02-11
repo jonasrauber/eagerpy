@@ -518,7 +518,11 @@ class TensorFlowTensor(BaseTensor):
                 index = tf.convert_to_tensor(index)
                 index = tf.transpose(index)
                 return type(self)(tf.gather_nd(self.raw, index))
-        elif isinstance(index, range) or isinstance(index, list):
+        elif (
+            isinstance(index, range)
+            or isinstance(index, list)
+            or isinstance(index, np.ndarray)
+        ):
             return type(self)(tf.gather(self.raw, index))
         elif isinstance(index, Tensor):
             return type(self)(tf.gather(self.raw, index.raw))

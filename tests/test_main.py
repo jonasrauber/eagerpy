@@ -577,6 +577,13 @@ def test_getitem_list(dummy: Tensor) -> Tensor:
 
 
 @compare_all
+def test_getitem_ndarray(dummy: Tensor) -> Tensor:
+    t = ep.arange(dummy, 32).float32()
+    indices = np.arange(3, 10, 2)
+    return t[indices]
+
+
+@compare_all
 def test_getitem_tuple_tensors(dummy: Tensor) -> Tensor:
     t = ep.arange(dummy, 32).float32().reshape((8, 4))
     rows = ep.arange(t, len(t))
