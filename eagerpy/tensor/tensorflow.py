@@ -508,7 +508,10 @@ class TensorFlowTensor(BaseTensor):
     def __getitem__(self: TensorType, index: Any) -> TensorType:
         if isinstance(index, tuple):
             index = tuple(x.raw if isinstance(x, Tensor) else x for x in index)
-            basic = all(x is None or x is Ellipsis or isinstance(x, int) for x in index)
+            basic = all(
+                x is None or x is Ellipsis or isinstance(x, int) or isinstance(x, slice)
+                for x in index
+            )
             if not basic:
                 # workaround for missing support for this in TensorFlow
                 # TODO: maybe convert each index individually and then stack them instead
