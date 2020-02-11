@@ -613,6 +613,12 @@ def test_getitem_slice(t: Tensor) -> Tensor:
 
 
 @compare_all
+def test_getitem_slice_slice(dummy: Tensor) -> Tensor:
+    t = ep.arange(dummy, 32).float32().reshape((4, 8))
+    return t[:, :3]
+
+
+@compare_all
 def test_take_along_axis_2d(dummy: Tensor) -> Tensor:
     t = ep.arange(dummy, 32).float32().reshape((8, 4))
     indices = ep.arange(t, len(t)) % t.shape[-1]
