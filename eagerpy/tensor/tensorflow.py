@@ -103,7 +103,9 @@ class TensorFlowTensor(BaseTensor):
     def shape(self: TensorType) -> Shape:
         return tuple(self.raw.shape.as_list())
 
-    def reshape(self: TensorType, shape: Shape) -> TensorType:
+    def reshape(self: TensorType, shape: Union[Shape, int]) -> TensorType:
+        if isinstance(shape, int):
+            shape = (shape,)
         return type(self)(tf.reshape(self.raw, shape))
 
     def astype(self: TensorType, dtype: Any) -> TensorType:

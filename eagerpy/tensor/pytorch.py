@@ -71,7 +71,9 @@ class PyTorchTensor(BaseTensor):
     def shape(self) -> Shape:
         return self.raw.shape
 
-    def reshape(self: TensorType, shape: Shape) -> TensorType:
+    def reshape(self: TensorType, shape: Union[Shape, int]) -> TensorType:
+        if isinstance(shape, int):
+            shape = (shape,)
         return type(self)(self.raw.reshape(shape))
 
     def astype(self: TensorType, dtype: Any) -> TensorType:

@@ -235,7 +235,7 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def reshape(self: TensorType, shape: Shape) -> TensorType:
+    def reshape(self: TensorType, shape: Union[Shape, int]) -> TensorType:
         ...
 
     @abstractmethod

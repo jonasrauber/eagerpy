@@ -656,6 +656,19 @@ def test_reshape(t: Tensor) -> Tensor:
 
 
 @compare_all
+def test_reshape_minus_1(t: Tensor) -> Tensor:
+    return ep.reshape(t, -1)
+
+
+@compare_all
+def test_reshape_int(t: Tensor) -> Tensor:
+    n = 1
+    for k in t.shape:
+        n *= k
+    return ep.reshape(t, n)
+
+
+@compare_all
 def test_clip(t: Tensor) -> Tensor:
     return ep.clip(t, 2, 3.5)
 

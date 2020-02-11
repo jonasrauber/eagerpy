@@ -1,4 +1,4 @@
-from typing import overload, Sequence, Callable, Tuple, Any, Optional, cast
+from typing import overload, Sequence, Callable, Tuple, Any, Optional, cast, Union
 from typing_extensions import Literal
 
 from .types import Axes, AxisAxes, Shape, ShapeOrScalar
@@ -348,7 +348,7 @@ def value_aux_and_grad(
     return t.value_aux_and_grad(f, *args, **kwargs)
 
 
-def reshape(t: TensorType, shape: Shape) -> TensorType:
+def reshape(t: TensorType, shape: Union[Shape, int]) -> TensorType:
     return t.reshape(shape)
 
 
