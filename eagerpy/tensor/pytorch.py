@@ -62,7 +62,12 @@ class PyTorchTensor(BaseTensor):
         return type(self)(torch.tanh(self.raw))
 
     def numpy(self: TensorType) -> Any:
-        return self.raw.detach().cpu().numpy()
+        a = self.raw.detach().cpu().numpy()
+        if a.flags.writeable:
+            # without the check, we would attempt to set it on array
+            # scalars, and that would fail
+            a.flags.writeable = False
+        return a
 
     def item(self) -> Union[int, float, bool]:
         return self.raw.item()

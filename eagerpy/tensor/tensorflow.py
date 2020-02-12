@@ -94,7 +94,12 @@ class TensorFlowTensor(BaseTensor):
         return super().raw
 
     def numpy(self: TensorType) -> Any:
-        return self.raw.numpy()
+        a = self.raw.numpy()
+        if a.flags.writeable:
+            # without the check, we would attempt to set it on array
+            # scalars, and that would fail
+            a.flags.writeable = False
+        return a
 
     def item(self: TensorType) -> Union[int, float, bool]:
         return self.numpy().item()  # type: ignore

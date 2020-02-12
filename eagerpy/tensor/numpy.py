@@ -47,7 +47,12 @@ class NumPyTensor(BaseTensor):
         return super().raw
 
     def numpy(self: TensorType) -> Any:
-        return self.raw
+        a = self.raw.view()
+        if a.flags.writeable:
+            # without the check, we would attempt to set it on array
+            # scalars, and that would fail
+            a.flags.writeable = False
+        return a
 
     def item(self) -> Union[int, float, bool]:
         return self.raw.item()  # type: ignore

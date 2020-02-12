@@ -99,7 +99,9 @@ class JAXTensor(BaseTensor):
         return subkey
 
     def numpy(self) -> Any:
-        return onp.asarray(self.raw)
+        a = onp.asarray(self.raw)
+        assert a.flags.writeable is False
+        return a
 
     def item(self) -> Union[int, float, bool]:
         return self.raw.item()  # type: ignore
