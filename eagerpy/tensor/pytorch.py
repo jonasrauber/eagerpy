@@ -254,6 +254,53 @@ class PyTorchTensor(BaseTensor):
             axes = tuple(range(self.ndim - 1, -1, -1))
         return type(self)(self.raw.permute(*axes))
 
+    def rotate(self: TensorType, angles: TensorOrScalar) -> TensorType:
+        # x shape: (bs, nh, x, y)
+        # angles: scalar or Tensor with (bs,)
+        assert len(self.raw.shape) == 4
+
+        def create_meshgrid(x: TensorType) -> TensorType:
+            bs, _, dim_x, dim_y = x.shape
+
+            space_x = torch.linspace(-1, 1, dim_x, device=x.device)
+            space_y = torch.linspace(-1, 1, dim_y, device=x.device)
+            meshgrid = torch.meshgrid([space_x, space_y])
+            gridder = torch.stack([meshgrid[1], meshgrid[0]], dim=2)
+            grid = gridder[None, ...].repeat(bs, 1, 1, 1)[..., None]
+            return grid
+
+        def create_rotation_matrix(
+                angles: TensorType, dim_x: int, dim_y: int
+        ) -> TensorType:
+            cosses = torch.cos(angles)
+            sins = torch.sin(angles)
+            top_slice = torch.stack([cosses, -sins], dim=1)[:, None, :]
+            bot_slice = torch.stack([sins, cosses], dim=1)[:, None, :]
+
+            mats = torch.cat([top_slice, bot_slice], dim=1)
+            mats = mats[:, None, None, :, :]
+            mats = mats.repeat(1, dim_x, dim_y, 1, 1)
+            return mats
+
+        if not hasattr(angles, "__len__"):
+            angles = torch.empty(self.raw.shape[0]).fill_(angles)
+
+        angles = angles.to(self.raw.device)
+
+        meshgrid = create_meshgrid(self.raw)
+        tfm_mats = create_rotation_matrix(angles, self.raw.shape[2],
+                                          self.raw.shape[3])
+        new_coords = torch.matmul(tfm_mats, meshgrid)
+        new_coords = new_coords.squeeze_(-1)
+
+        # same as tensorflow addons, for pytorch version >=1.4 align_corners=True
+        new_image = torch.nn.functional.grid_sample(self.raw, new_coords,
+                                                    mode='bilinear',
+                                                    padding_mode='zeros',
+                                                    align_corners=True)
+
+        return new_image
+
     def all(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:
