@@ -330,6 +330,20 @@ def test_norms_class() -> None:
     assert ep.Tensor.norms is not None
 
 
+def test_numpy_readonly(t: Tensor) -> None:
+    a = t.numpy()
+    assert a.flags.writeable is False
+    with pytest.raises(ValueError, match="read-only"):
+        a[:] += 1
+
+
+def test_numpy_inplace(t: Tensor) -> None:
+    copy = t + 0
+    a = t.numpy().copy()
+    a[:] += 1
+    assert (t == copy).all()
+
+
 ###############################################################################
 # special tests
 # - decorated with compare_*
