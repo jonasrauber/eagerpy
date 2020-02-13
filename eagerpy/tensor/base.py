@@ -18,6 +18,7 @@ class BaseTensor(Tensor):
     __slots__ = "_raw"
 
     def __init__(self: TensorType, raw: Any) -> None:
+        assert not isinstance(raw, Tensor)
         self._raw = raw
 
     @property
