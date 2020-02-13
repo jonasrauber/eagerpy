@@ -8,7 +8,7 @@ from .framework import inf
 def l0(
     x: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
-    return (x != 0).sum(axis=axis, keepdims=keepdims)
+    return (x != 0).sum(axis=axis, keepdims=keepdims).astype(x.dtype)
 
 
 def l1(
