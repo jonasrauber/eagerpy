@@ -65,11 +65,13 @@ jobs:
       run: |
         pytest --cov-report term-missing --cov=eagerpy --cov-append --verbose --backend tensorflow
     - name: Codecov
+      continue-on-error: true
       env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       run: |
         codecov
     - name: Coveralls
+      continue-on-error: true
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
       run: |
