@@ -6,6 +6,7 @@ from typing import (
     Any,
     overload,
     Iterable,
+    Iterator,
     Union,
     Optional,
     Type,
@@ -509,7 +510,7 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     # #########################################################################
-    # aliases
+    # aliases and shared implementations
     # #########################################################################
 
     @final
@@ -539,6 +540,10 @@ class Tensor(metaclass=ABCMeta):
         **kwargs: Any,
     ) -> Tuple[TensorType, Any, TensorType]:
         return self._value_and_grad_fn(f, has_aux=True)(self, *args, **kwargs)
+
+    def __iter__(self: TensorType) -> Iterator[TensorType]:
+        for i in range(len(self)):
+            yield self[i]
 
     # #########################################################################
     # extensions
