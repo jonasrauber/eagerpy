@@ -109,6 +109,10 @@ class PyTorchTensor(BaseTensor):
     def mean(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:
+        if self.raw.dtype not in [torch.float16, torch.float32, torch.float64]:
+            raise ValueError(
+                f"Can only calculate the mean of floating types. Got {self.raw.dtype} instead."
+            )
         if axis is None and not keepdims:
             return type(self)(self.raw.mean())
         if axis is None:

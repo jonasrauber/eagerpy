@@ -129,12 +129,16 @@ class TensorFlowTensor(BaseTensor):
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:
         if self.raw.dtype == tf.bool:
-            return type(self)(self.astype(tf.int64).sum(axis=axis, keepdims=keepdims))
+            return self.astype(tf.int64).sum(axis=axis, keepdims=keepdims)
         return type(self)(tf.reduce_sum(self.raw, axis=axis, keepdims=keepdims))
 
     def mean(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:
+        if self.raw.dtype not in [tf.float16, tf.float32, tf.float64]:
+            raise ValueError(
+                f"Can only calculate the mean of floating types. Got {self.raw.dtype} instead."
+            )
         return type(self)(tf.reduce_mean(self.raw, axis=axis, keepdims=keepdims))
 
     def min(

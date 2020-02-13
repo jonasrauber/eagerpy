@@ -86,6 +86,10 @@ class NumPyTensor(BaseTensor):
     def mean(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:
+        if self.raw.dtype not in [np.float16, np.float32, np.float64]:
+            raise ValueError(
+                f"Can only calculate the mean of floating types. Got {self.raw.dtype} instead."
+            )
         return type(self)(self.raw.mean(axis=axis, keepdims=keepdims))
 
     def min(
