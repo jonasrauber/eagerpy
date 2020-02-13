@@ -278,6 +278,16 @@ def test_pad_raises(dummy: Tensor) -> None:
         ep.pad(t, ((0, 0), (0, 0), (2, 3), (1, 2)), mode="foo")
 
 
+def test_mean_bool(t: Tensor) -> None:
+    with pytest.raises(ValueError):
+        ep.mean(t != 0)
+
+
+def test_mean_int(t: Tensor) -> None:
+    with pytest.raises(ValueError):
+        ep.mean(ep.arange(t, 5))
+
+
 @pytest.mark.parametrize("f", [ep.logical_and, ep.logical_or])
 def test_logical_and_nonboolean(
     t: Tensor, f: Callable[[Tensor, Tensor], Tensor]
@@ -716,6 +726,16 @@ def test_sum_keepdims(t: Tensor) -> Tensor:
 @compare_all
 def test_sum_none_keepdims(t: Tensor) -> Tensor:
     return ep.sum(t, axis=None, keepdims=True)
+
+
+@compare_all
+def test_sum_bool(t: Tensor) -> Tensor:
+    return ep.sum(t != 0)
+
+
+@compare_all
+def test_sum_int(t: Tensor) -> Tensor:
+    return ep.sum(ep.arange(t, 5))
 
 
 @compare_all
