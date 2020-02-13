@@ -354,6 +354,22 @@ def test_numpy_inplace(t: Tensor) -> None:
     assert (t == copy).all()
 
 
+def test_iter_list_stack(t: Tensor) -> None:
+    t2 = ep.stack(list(iter(t)))
+    assert t.shape == t2.shape
+    assert (t == t2).all()
+
+
+def test_list_stack(t: Tensor) -> None:
+    t2 = ep.stack(list(t))
+    assert t.shape == t2.shape
+    assert (t == t2).all()
+
+
+def test_iter_next(t: Tensor) -> None:
+    assert isinstance(next(iter(t)), Tensor)
+
+
 ###############################################################################
 # special tests
 # - decorated with compare_*
