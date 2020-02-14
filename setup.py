@@ -16,8 +16,8 @@ except IOError:
     README = ""
 
 
-install_requires = ["numpy", "typing-extensions"]
-tests_require = ["pytest", "pytest-cov"]
+install_requires = ["numpy", "typing-extensions>=3.7.4.1"]
+tests_require = ["pytest>=5.3.5", "pytest-cov>=2.8.1"]
 
 setup(
     name="eagerpy",
