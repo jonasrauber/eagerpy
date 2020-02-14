@@ -20,143 +20,9 @@ NumPyTensor(self, raw:'np.ndarray')
 
 # Tensor
 ```python
-Tensor(self, raw:Any) -> None
+Tensor(self, raw:Any)
 ```
 Base class defining the common interface of all EagerPy Tensors
-## __init__
-```python
-Tensor.__init__(self, raw:Any) -> None
-```
-
-## raw
-
-## dtype
-
-## __repr__
-```python
-Tensor.__repr__(self:~TensorType) -> str
-```
-
-## __format__
-```python
-Tensor.__format__(self:~TensorType, format_spec:str) -> str
-```
-
-## __getitem__
-```python
-Tensor.__getitem__(self:~TensorType, index:Any) -> ~TensorType
-```
-
-## __bool__
-```python
-Tensor.__bool__(self:~TensorType) -> bool
-```
-
-## __len__
-```python
-Tensor.__len__(self:~TensorType) -> int
-```
-
-## __abs__
-```python
-Tensor.__abs__(self:~TensorType) -> ~TensorType
-```
-
-## __neg__
-```python
-Tensor.__neg__(self:~TensorType) -> ~TensorType
-```
-
-## __add__
-```python
-Tensor.__add__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
-```
-
-## __radd__
-```python
-Tensor.__radd__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
-```
-
-## __sub__
-```python
-Tensor.__sub__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
-```
-
-## __rsub__
-```python
-Tensor.__rsub__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
-```
-
-## __mul__
-```python
-Tensor.__mul__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
-```
-
-## __rmul__
-```python
-Tensor.__rmul__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
-```
-
-## __truediv__
-```python
-Tensor.__truediv__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
-```
-
-## __rtruediv__
-```python
-Tensor.__rtruediv__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
-```
-
-## __floordiv__
-```python
-Tensor.__floordiv__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
-```
-
-## __rfloordiv__
-```python
-Tensor.__rfloordiv__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
-```
-
-## __mod__
-```python
-Tensor.__mod__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
-```
-
-## __lt__
-```python
-Tensor.__lt__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
-```
-
-## __le__
-```python
-Tensor.__le__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
-```
-
-## __eq__
-```python
-Tensor.__eq__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
-```
-
-## __ne__
-```python
-Tensor.__ne__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
-```
-
-## __gt__
-```python
-Tensor.__gt__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
-```
-
-## __ge__
-```python
-Tensor.__ge__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
-```
-
-## __pow__
-```python
-Tensor.__pow__(self:~TensorType, exponent:float) -> ~TensorType
-```
-
 ## sign
 ```python
 Tensor.sign(self:~TensorType) -> ~TensorType
@@ -203,7 +69,7 @@ Tensor.item(self:~TensorType) -> Union[int, float]
 
 ## reshape
 ```python
-Tensor.reshape(self:~TensorType, shape:Tuple[int, ...]) -> ~TensorType
+Tensor.reshape(self:~TensorType, shape:Union[Tuple[int, ...], int]) -> ~TensorType
 ```
 
 ## take_along_axis
@@ -476,5 +342,174 @@ Tensor.value_and_grad(self:~TensorType, f:Callable[..., ~TensorType], *args:Any,
 ## value_aux_and_grad
 ```python
 Tensor.value_aux_and_grad(self:~TensorType, f:Callable[..., Tuple[~TensorType, Any]], *args:Any, **kwargs:Any) -> Tuple[~TensorType, Any, ~TensorType]
+```
+
+## flatten
+```python
+Tensor.flatten(self:~TensorType, start:int=0, end:int=-1) -> ~TensorType
+```
+
+## l0
+```python
+NormsMethods.l0(x:~TensorType, axis:Union[int, Tuple[int, ...], NoneType]=None, keepdims:bool=False) -> ~TensorType
+```
+
+## l1
+```python
+NormsMethods.l1(x:~TensorType, axis:Union[int, Tuple[int, ...], NoneType]=None, keepdims:bool=False) -> ~TensorType
+```
+
+## l2
+```python
+NormsMethods.l2(x:~TensorType, axis:Union[int, Tuple[int, ...], NoneType]=None, keepdims:bool=False) -> ~TensorType
+```
+
+## linf
+```python
+NormsMethods.linf(x:~TensorType, axis:Union[int, Tuple[int, ...], NoneType]=None, keepdims:bool=False) -> ~TensorType
+```
+
+## lp
+```python
+NormsMethods.lp(x:~TensorType, p:Union[int, float], axis:Union[int, Tuple[int, ...], NoneType]=None, keepdims:bool=False) -> ~TensorType
+```
+
+## raw
+
+## dtype
+
+## __init__
+```python
+Tensor.__init__(self, raw:Any)
+```
+
+## __repr__
+```python
+Tensor.__repr__(self:~TensorType) -> str
+```
+
+## __format__
+```python
+Tensor.__format__(self:~TensorType, format_spec:str) -> str
+```
+
+## __getitem__
+```python
+Tensor.__getitem__(self:~TensorType, index:Any) -> ~TensorType
+```
+
+## __iter__
+```python
+Tensor.__iter__(self:~TensorType) -> Iterator[~TensorType]
+```
+
+## __bool__
+```python
+Tensor.__bool__(self:~TensorType) -> bool
+```
+
+## __len__
+```python
+Tensor.__len__(self:~TensorType) -> int
+```
+
+## __abs__
+```python
+Tensor.__abs__(self:~TensorType) -> ~TensorType
+```
+
+## __neg__
+```python
+Tensor.__neg__(self:~TensorType) -> ~TensorType
+```
+
+## __add__
+```python
+Tensor.__add__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
+```
+
+## __radd__
+```python
+Tensor.__radd__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
+```
+
+## __sub__
+```python
+Tensor.__sub__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
+```
+
+## __rsub__
+```python
+Tensor.__rsub__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
+```
+
+## __mul__
+```python
+Tensor.__mul__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
+```
+
+## __rmul__
+```python
+Tensor.__rmul__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
+```
+
+## __truediv__
+```python
+Tensor.__truediv__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
+```
+
+## __rtruediv__
+```python
+Tensor.__rtruediv__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
+```
+
+## __floordiv__
+```python
+Tensor.__floordiv__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
+```
+
+## __rfloordiv__
+```python
+Tensor.__rfloordiv__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
+```
+
+## __mod__
+```python
+Tensor.__mod__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
+```
+
+## __lt__
+```python
+Tensor.__lt__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
+```
+
+## __le__
+```python
+Tensor.__le__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
+```
+
+## __eq__
+```python
+Tensor.__eq__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
+```
+
+## __ne__
+```python
+Tensor.__ne__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
+```
+
+## __gt__
+```python
+Tensor.__gt__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
+```
+
+## __ge__
+```python
+Tensor.__ge__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
+```
+
+## __pow__
+```python
+Tensor.__pow__(self:~TensorType, exponent:float) -> ~TensorType
 ```
 

@@ -82,7 +82,6 @@ pytype:
 pyright:
 	pyright .
 
-
 .PHONY: mypyreport
 mypyreport:
 	-mypy . --html-report build

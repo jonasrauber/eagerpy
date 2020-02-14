@@ -14,34 +14,6 @@ generate:
     - eagerpy.JAXTensor
     - eagerpy.NumPyTensor
     - eagerpy.Tensor:
-        - eagerpy.Tensor.__init__
-        - eagerpy.Tensor.raw
-        - eagerpy.Tensor.dtype
-        - eagerpy.Tensor.__repr__
-        - eagerpy.Tensor.__format__
-        - eagerpy.Tensor.__getitem__
-        - eagerpy.Tensor.__bool__
-        - eagerpy.Tensor.__len__
-        - eagerpy.Tensor.__abs__
-        - eagerpy.Tensor.__neg__
-        - eagerpy.Tensor.__add__
-        - eagerpy.Tensor.__radd__
-        - eagerpy.Tensor.__sub__
-        - eagerpy.Tensor.__rsub__
-        - eagerpy.Tensor.__mul__
-        - eagerpy.Tensor.__rmul__
-        - eagerpy.Tensor.__truediv__
-        - eagerpy.Tensor.__rtruediv__
-        - eagerpy.Tensor.__floordiv__
-        - eagerpy.Tensor.__rfloordiv__
-        - eagerpy.Tensor.__mod__
-        - eagerpy.Tensor.__lt__
-        - eagerpy.Tensor.__le__
-        - eagerpy.Tensor.__eq__
-        - eagerpy.Tensor.__ne__
-        - eagerpy.Tensor.__gt__
-        - eagerpy.Tensor.__ge__
-        - eagerpy.Tensor.__pow__
         - eagerpy.Tensor.sign
         - eagerpy.Tensor.sqrt
         - eagerpy.Tensor.tanh
@@ -108,6 +80,41 @@ generate:
         - eagerpy.Tensor.pow
         - eagerpy.Tensor.value_and_grad
         - eagerpy.Tensor.value_aux_and_grad
+        - eagerpy.Tensor.flatten
+        - eagerpy.Tensor.norms.l0
+        - eagerpy.Tensor.norms.l1
+        - eagerpy.Tensor.norms.l2
+        - eagerpy.Tensor.norms.linf
+        - eagerpy.Tensor.norms.lp
+        - eagerpy.Tensor.raw
+        - eagerpy.Tensor.dtype
+        - eagerpy.Tensor.__init__
+        - eagerpy.Tensor.__repr__
+        - eagerpy.Tensor.__format__
+        - eagerpy.Tensor.__getitem__
+        - eagerpy.Tensor.__iter__
+        - eagerpy.Tensor.__bool__
+        - eagerpy.Tensor.__len__
+        - eagerpy.Tensor.__abs__
+        - eagerpy.Tensor.__neg__
+        - eagerpy.Tensor.__add__
+        - eagerpy.Tensor.__radd__
+        - eagerpy.Tensor.__sub__
+        - eagerpy.Tensor.__rsub__
+        - eagerpy.Tensor.__mul__
+        - eagerpy.Tensor.__rmul__
+        - eagerpy.Tensor.__truediv__
+        - eagerpy.Tensor.__rtruediv__
+        - eagerpy.Tensor.__floordiv__
+        - eagerpy.Tensor.__rfloordiv__
+        - eagerpy.Tensor.__mod__
+        - eagerpy.Tensor.__lt__
+        - eagerpy.Tensor.__le__
+        - eagerpy.Tensor.__eq__
+        - eagerpy.Tensor.__ne__
+        - eagerpy.Tensor.__gt__
+        - eagerpy.Tensor.__ge__
+        - eagerpy.Tensor.__pow__
 
 # Required by Pydoc-Markdown, but irrelevant to us.
 pages: []
