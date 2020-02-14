@@ -1,5 +1,4 @@
 module.exports = {
-  base: '/eagerpy/',
   title: 'EagerPy',
   description: 'A unified API for PyTorch, TensorFlow, JAX and NumPy',
   themeConfig: {
