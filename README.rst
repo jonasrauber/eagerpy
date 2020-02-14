@@ -1,6 +1,6 @@
 .. raw:: html
 
-   <a href="https://jonasrauber.github.io/eagerpy/"><img src="https://raw.githubusercontent.com/jonasrauber/eagerpy/master/docs/.vuepress/public/logo_small.png" align="right" /></a>
+   <a href="https://eagerpy.jonasrauber.de"><img src="https://raw.githubusercontent.com/jonasrauber/eagerpy/master/docs/.vuepress/public/logo_small.png" align="right" /></a>
 
 .. image:: https://badge.fury.io/py/eagerpy.svg
    :target: https://badge.fury.io/py/eagerpy
@@ -15,7 +15,7 @@
 EagerPy: PyTorch, TensorFlow, JAX and NumPy — all of them natively using the same code
 ======================================================================================
 
-`EagerPy <https://jonasrauber.github.io/eagerpy/>`_ is a **Python framework** that let's you write code that automatically works natively with `PyTorch <https://pytorch.org>`_, `TensorFlow <https://www.tensorflow.org>`_, `JAX <https://github.com/google/jax>`_, and `NumPy <https://numpy.org>`_. EagerPy is **also great when you work with just one framework** but prefer a clean and consistent API that is fully chainable, provides extensive type annotions and let's you write beautiful code.
+`EagerPy <https://eagerpy.jonasrauber.de>`_ is a **Python framework** that let's you write code that automatically works natively with `PyTorch <https://pytorch.org>`_, `TensorFlow <https://www.tensorflow.org>`_, `JAX <https://github.com/google/jax>`_, and `NumPy <https://numpy.org>`_. EagerPy is **also great when you work with just one framework** but prefer a clean and consistent API that is fully chainable, provides extensive type annotions and let's you write beautiful code.
 
 
 🔥 Design goals
@@ -29,7 +29,7 @@ EagerPy: PyTorch, TensorFlow, JAX and NumPy — all of them natively using the s
 📖 Documentation
 -----------------
 
-Learn more about in the `documentation <https://jonasrauber.github.io/eagerpy/>`_.
+Learn more about in the `documentation <https://eagerpy.jonasrauber.de>`_.
 
 
 🚀 Quickstart
