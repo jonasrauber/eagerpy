@@ -1,24 +1,46 @@
 .. image:: https://badge.fury.io/py/eagerpy.svg
-    :target: https://badge.fury.io/py/eagerpy
+   :target: https://badge.fury.io/py/eagerpy
 
 .. image:: https://codecov.io/gh/jonasrauber/eagerpy/branch/master/graph/badge.svg
-  :target: https://codecov.io/gh/jonasrauber/eagerpy
+   :target: https://codecov.io/gh/jonasrauber/eagerpy
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-    :target: https://github.com/ambv/black
+   :target: https://github.com/ambv/black
 
 
 =======
 EagerPy
 =======
 
-EagerPy is a thin wrapper around **PyTorch**, **TensorFlow Eager**, **JAX** and
-**NumPy** that unifies their interface and thus allows writing code that
-works natively across all of them.
+.. image:: https://jonasrauber.github.io/eagerpy/logo.png
+   :target: https://jonasrauber.github.io/eagerpy/
+
+What is EagerPy?
+----------------
+
+`EagerPy <https://jonasrauber.github.io/eagerpy/>`_ is a **Python framework** that let's you write code that automatically works natively with `PyTorch <https://pytorch.org>`_, `TensorFlow <https://www.tensorflow.org>`_, `JAX <https://github.com/google/jax>`_, and `NumPy <https://numpy.org>`_.
+
+EagerPy is **also great when you work with just one framework** but prefer a clean and consistent NumPy-inspired API that is fully chainable, provides extensive type annotions and let's you write beautiful code. It often combines the best of PyTorch's API and NumPy's API.
+
+Design goals
+------------
+
+- **Native Performance**: EagerPy operations get directly translated into the corresponding native operations.
+- **Fully Chainable**: All functionality is available as methods on the tensor objects and as EagerPy functions.
+- **Type Checking**: Catch bugs before running your code thanks to EagerPy's extensive type annotations.
+
+Documentation
+-------------
 
 Learn more about in the `documentation <https://jonasrauber.github.io/eagerpy/>`_.
 
-**EagerPy is now in active use** to develop `Foolbox Native <https://github.com/jonasrauber/foolbox-native>`_.
+Use cases
+---------
+
+`Foolbox Native <https://github.com/bethgelab/foolbox>`_, the latest version of
+Foolbox, a popular adversarial attacks library, has been rewritten from scratch
+using EagerPy instead of NumPy to achieve native performance on models
+developed in PyTorch, TensorFlow and JAX, all with one code base.
 
 Installation
 ------------
@@ -33,38 +55,46 @@ Example
 
 .. code-block:: python
 
-   import eagerpy as ep
-
    import torch
-   x = torch.tensor([1., 2., 3.])
-   x = ep.PyTorchTensor(x)
+   x = torch.tensor([1., 2., 3., 4., 5., 6.])
 
    import tensorflow as tf
-   x = tf.constant([1., 2., 3.])
-   x = ep.TensorFlowTensor(x)
+   x = tf.constant([1., 2., 3., 4., 5., 6.])
 
    import jax.numpy as np
-   x = np.array([1., 2., 3.])
-   x = ep.JAXTensor(x)
+   x = np.array([1., 2., 3., 4., 5., 6.])
 
    import numpy as np
-   x = np.array([1., 2., 3.])
-   x = ep.NumPyTensor(x)
+   x = np.array([1., 2., 3., 4., 5., 6.])
 
-   # In all cases, the resulting EagerPy tensor provides the same
-   # interface. This makes it possible to write code that works natively
-   # independent of the underlying framework.
+   # --------------------------------------------------------------------------
 
-   # EagerPy tensors provide a lot of functionality through methods, e.g.
-   x.sum()
-   x.sqrt()
-   x.clip(0, 1)
+   # No matter which framwork you use, you can use the same code
+   import eagerpy as ep
 
-   # but EagerPy also provides them as functions, e.g.
-   ep.sum(x)
-   ep.sqrt(x)
-   ep.clip(x, 0, 1)
-   ep.uniform(x, (3, 3), low=-1., high=1.)  # x is needed to infer the framework
+   # Just wrap a native tensor using EagerPy
+   x = ep.astensor(x)
+
+   # All of EagerPy's functionality is available as methods ...
+   x = x.reshape((2, 3))
+   norms = x.flatten(start=1).square().sum(axis=-1).sqrt()
+   norms = x.flatten(start=1)
+
+   # ... and functions
+   _, grad = ep.value_and_grad(loss_fn, x)
+   ep.clip(x + eps * grad, 0, 1)
+
+   # You can even write functions that work transparently with
+   # Pytorch tensors, TensorFlow tensors, JAX arrays, NumPy arrays
+   # and EagerPy tensors
+   def squared_a_plus_b_times_c(a, b, c):
+      (a, b, c), restore_type = ep.astensors_(a, b, c)
+      # here, a, b, c are EagerPyTensors
+      result = (a + b * c).square()
+      return restore_type(result)
+
+   # You can call this function using any kind of tensors and the result
+   # will have the same type.
 
 
 Compatibility
@@ -72,7 +102,7 @@ Compatibility
 
 We currently test with the following versions:
 
-* PyTorch 1.3.1
-* TensorFlow 2.0.0
+* PyTorch 1.4.0
+* TensorFlow 2.1.0
 * JAX 0.1.57
 * NumPy 1.18.1
