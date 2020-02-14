@@ -8,41 +8,31 @@
    :target: https://github.com/ambv/black
 
 
+.. image:: https://raw.githubusercontent.com/jonasrauber/eagerpy/master/docs/.vuepress/public/logo_small.png
+   :target: https://jonasrauber.github.io/eagerpy/
+
+
 =======
 EagerPy
 =======
-
-.. image:: https://jonasrauber.github.io/eagerpy/logo.png
-   :target: https://jonasrauber.github.io/eagerpy/
-
-What is EagerPy?
-----------------
 
 `EagerPy <https://jonasrauber.github.io/eagerpy/>`_ is a **Python framework** that let's you write code that automatically works natively with `PyTorch <https://pytorch.org>`_, `TensorFlow <https://www.tensorflow.org>`_, `JAX <https://github.com/google/jax>`_, and `NumPy <https://numpy.org>`_.
 
 EagerPy is **also great when you work with just one framework** but prefer a clean and consistent NumPy-inspired API that is fully chainable, provides extensive type annotions and let's you write beautiful code. It often combines the best of PyTorch's API and NumPy's API.
 
-Design goals
-------------
+🔥 Design goals
+--------------
 
 - **Native Performance**: EagerPy operations get directly translated into the corresponding native operations.
 - **Fully Chainable**: All functionality is available as methods on the tensor objects and as EagerPy functions.
 - **Type Checking**: Catch bugs before running your code thanks to EagerPy's extensive type annotations.
 
-Documentation
--------------
+📖 Documentation
+---------------
 
 Learn more about in the `documentation <https://jonasrauber.github.io/eagerpy/>`_.
 
-Use cases
----------
-
-`Foolbox Native <https://github.com/bethgelab/foolbox>`_, the latest version of
-Foolbox, a popular adversarial attacks library, has been rewritten from scratch
-using EagerPy instead of NumPy to achieve native performance on models
-developed in PyTorch, TensorFlow and JAX, all with one code base.
-
-Installation
+🚀 Quickstart
 ------------
 
 .. code-block:: bash
@@ -50,8 +40,8 @@ Installation
    pip install eagerpy
 
 
-Example
--------
+🎉 Example
+---------
 
 .. code-block:: python
 
@@ -96,9 +86,16 @@ Example
    # You can call this function using any kind of tensors and the result
    # will have the same type.
 
+🗺 Use cases
+-----------
 
-Compatibility
--------------
+`Foolbox Native <https://github.com/bethgelab/foolbox>`_, the latest version of
+Foolbox, a popular adversarial attacks library, has been rewritten from scratch
+using EagerPy instead of NumPy to achieve native performance on models
+developed in PyTorch, TensorFlow and JAX, all with one code base.
+
+🐍 Compatibility
+---------------
 
 We currently test with the following versions:
 
