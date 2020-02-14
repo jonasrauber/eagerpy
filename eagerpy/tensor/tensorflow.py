@@ -536,7 +536,10 @@ class TensorFlowTensor(BaseTensor):
         ):
             return type(self)(tf.gather(self.raw, index))
         elif isinstance(index, Tensor):
-            return type(self)(tf.gather(self.raw, index.raw))
+            if index.raw.dtype == tf.bool:
+                return type(self)(self.raw.__getitem__(index.raw))
+            else:
+                return type(self)(tf.gather(self.raw, index.raw))
         return type(self)(self.raw.__getitem__(index))
 
     def take_along_axis(self: TensorType, index: TensorType, axis: int) -> TensorType:
