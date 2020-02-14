@@ -24,7 +24,7 @@ class ModuleWrapper(ModuleType):
     """A wrapper for modules that delays the import until it is needed
     and wraps the output of functions as EagerPy tensors"""
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
         if self.__doc__ is None:
             self.__doc__ = f"EagerPy wrapper of the '{self.__name__}' module"

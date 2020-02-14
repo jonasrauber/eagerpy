@@ -17,7 +17,7 @@ def unwrap1(t: Any) -> Any:
 class BaseTensor(Tensor):
     __slots__ = "_raw"
 
-    def __init__(self: TensorType, raw: Any) -> None:
+    def __init__(self: TensorType, raw: Any):
         assert not isinstance(raw, Tensor)
         self._raw = raw
 

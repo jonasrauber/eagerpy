@@ -34,7 +34,7 @@ class LazyCachedAccessor:
 
     # supports lazy extension loading to break cyclic dependencies
 
-    def __init__(self, cache_name: str, extension_name: str) -> None:
+    def __init__(self, cache_name: str, extension_name: str):
         self._cache_name = cache_name
         self._extension_name = extension_name
 
@@ -76,7 +76,7 @@ class Tensor(metaclass=ABCMeta):
     __module__ = "eagerpy"
 
     @abstractmethod
-    def __init__(self, raw: Any) -> None:
+    def __init__(self, raw: Any):
         ...
 
     @property

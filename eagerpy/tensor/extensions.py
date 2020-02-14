@@ -43,7 +43,7 @@ else:  # pragma: no cover  # Python 3.7 and newer
 
 
 class ExtensionMethods(metaclass=GenericExtensionMeta):
-    def __init__(self, instance: Tensor) -> None:
+    def __init__(self, instance: Tensor):
         self._instance = instance
 
 
