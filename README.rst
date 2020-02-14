@@ -1,14 +1,6 @@
 .. raw:: html
    <a href="https://jonasrauber.github.io/eagerpy/"><img src="https://raw.githubusercontent.com/jonasrauber/eagerpy/master/docs/.vuepress/public/logo_small.png" align="right" /></a>
 
-======================================================================================
-EagerPy: PyTorch, TensorFlow, JAX and NumPy — all of them natively using the same code
-======================================================================================
-
-`EagerPy <https://jonasrauber.github.io/eagerpy/>`_ is a **Python framework** that let's you write code that automatically works natively with `PyTorch <https://pytorch.org>`_, `TensorFlow <https://www.tensorflow.org>`_, `JAX <https://github.com/google/jax>`_, and `NumPy <https://numpy.org>`_.
-
-EagerPy is **also great when you work with just one framework** but prefer a clean and consistent NumPy-inspired API that is fully chainable, provides extensive type annotions and let's you write beautiful code. It often combines the best of PyTorch's API and NumPy's API.
-
 .. image:: https://badge.fury.io/py/eagerpy.svg
    :target: https://badge.fury.io/py/eagerpy
 
@@ -17,6 +9,14 @@ EagerPy is **also great when you work with just one framework** but prefer a cle
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/ambv/black
+
+======================================================================================
+EagerPy: PyTorch, TensorFlow, JAX and NumPy — all of them natively using the same code
+======================================================================================
+
+`EagerPy <https://jonasrauber.github.io/eagerpy/>`_ is a **Python framework** that let's you write code that automatically works natively with `PyTorch <https://pytorch.org>`_, `TensorFlow <https://www.tensorflow.org>`_, `JAX <https://github.com/google/jax>`_, and `NumPy <https://numpy.org>`_.
+
+EagerPy is **also great when you work with just one framework** but prefer a clean and consistent NumPy-inspired API that is fully chainable, provides extensive type annotions and let's you write beautiful code. It often combines the best of PyTorch's API and NumPy's API.
 
 
 🔥 Design goals
