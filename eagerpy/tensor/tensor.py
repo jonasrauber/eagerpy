@@ -545,6 +545,13 @@ class Tensor(metaclass=ABCMeta):
         for i in range(len(self)):
             yield self[i]
 
+    @final
+    def flatten(self: TensorType, start: int = 0, end: int = -1) -> TensorType:
+        start = start % self.ndim
+        end = end % self.ndim
+        shape = self.shape[:start] + (-1,) + self.shape[end + 1 :]
+        return self.reshape(shape)
+
     # #########################################################################
     # extensions
     # #########################################################################

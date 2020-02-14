@@ -370,6 +370,18 @@ def test_iter_next(t: Tensor) -> None:
     assert isinstance(next(iter(t)), Tensor)
 
 
+def test_flatten(dummy: Tensor) -> None:
+    t = ep.ones(dummy, (16, 3, 32, 32))
+    assert ep.flatten(t).shape == (16 * 3 * 32 * 32,)
+    assert ep.flatten(t, start=1).shape == (16, 3 * 32 * 32)
+    assert ep.flatten(t, start=2).shape == (16, 3, 32 * 32)
+    assert ep.flatten(t, start=3).shape == (16, 3, 32, 32)
+    assert ep.flatten(t, end=-2).shape == (16 * 3 * 32, 32)
+    assert ep.flatten(t, end=-3).shape == (16 * 3, 32, 32)
+    assert ep.flatten(t, end=-4).shape == (16, 3, 32, 32)
+    assert ep.flatten(t, start=1, end=-2).shape == (16, 3 * 32, 32)
+
+
 ###############################################################################
 # special tests
 # - decorated with compare_*
