@@ -1,4 +1,5 @@
 .. raw:: html
+
    <a href="https://jonasrauber.github.io/eagerpy/"><img src="https://raw.githubusercontent.com/jonasrauber/eagerpy/master/docs/.vuepress/public/logo_small.png" align="right" /></a>
 
 .. image:: https://badge.fury.io/py/eagerpy.svg
@@ -20,7 +21,7 @@ EagerPy is **also great when you work with just one framework** but prefer a cle
 
 
 🔥 Design goals
---------------
+----------------
 
 - **Native Performance**: EagerPy operations get directly translated into the corresponding native operations.
 - **Fully Chainable**: All functionality is available as methods on the tensor objects and as EagerPy functions.
@@ -28,13 +29,13 @@ EagerPy is **also great when you work with just one framework** but prefer a cle
 
 
 📖 Documentation
----------------
+-----------------
 
 Learn more about in the `documentation <https://jonasrauber.github.io/eagerpy/>`_.
 
 
 🚀 Quickstart
-------------
+--------------
 
 .. code-block:: bash
 
@@ -42,7 +43,7 @@ Learn more about in the `documentation <https://jonasrauber.github.io/eagerpy/>`
 
 
 🎉 Example
----------
+-----------
 
 .. code-block:: python
 
@@ -88,7 +89,7 @@ Learn more about in the `documentation <https://jonasrauber.github.io/eagerpy/>`
 
 
 🗺 Use cases
------------
+------------
 
 `Foolbox Native <https://github.com/bethgelab/foolbox>`_, the latest version of
 Foolbox, a popular adversarial attacks library, has been rewritten from scratch
@@ -97,7 +98,7 @@ developed in PyTorch, TensorFlow and JAX, all with one code base.
 
 
 🐍 Compatibility
----------------
+-----------------
 
 We currently test with the following versions:
 
