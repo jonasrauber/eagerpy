@@ -112,6 +112,10 @@ def argsort(t: TensorType, axis: int = -1) -> TensorType:
     return t.argsort(axis=axis)
 
 
+def sort(t: TensorType, axis: int = -1) -> TensorType:
+    return t.sort(axis=axis)
+
+
 def uniform(
     t: TensorType, shape: ShapeOrScalar, low: float = 0.0, high: float = 1.0
 ) -> TensorType:

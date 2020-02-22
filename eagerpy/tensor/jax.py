@@ -166,6 +166,9 @@ class JAXTensor(BaseTensor):
     def argsort(self: TensorType, axis: int = -1) -> TensorType:
         return type(self)(self.raw.argsort(axis=axis))
 
+    def sort(self: TensorType, axis: int = -1) -> TensorType:
+        return type(self)(self.raw.sort(axis=axis))
+
     def uniform(
         self: TensorType, shape: ShapeOrScalar, low: float = 0.0, high: float = 1.0
     ) -> TensorType:

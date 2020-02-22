@@ -1128,6 +1128,12 @@ def test_argsort(dummy: Tensor) -> Tensor:
 
 
 @compare_all
+def test_sort(dummy: Tensor) -> Tensor:
+    t = -ep.arange(dummy, 6).float32().reshape((2, 3))
+    return ep.sort(t)
+
+
+@compare_all
 def test_transpose(dummy: Tensor) -> Tensor:
     t = ep.arange(dummy, 8).float32().reshape((2, 4))
     return ep.transpose(t)

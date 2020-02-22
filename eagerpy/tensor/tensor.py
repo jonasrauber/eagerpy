@@ -300,6 +300,10 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
+    def sort(self: TensorType, axis: int = -1) -> TensorType:
+        ...
+
+    @abstractmethod
     def uniform(
         self: TensorType, shape: ShapeOrScalar, low: float = 0.0, high: float = 1.0
     ) -> TensorType:
