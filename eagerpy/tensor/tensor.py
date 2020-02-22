@@ -190,7 +190,7 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def __pow__(self: TensorType, exponent: float) -> TensorType:
+    def __pow__(self: TensorType, exponent: TensorOrScalar) -> TensorType:
         ...
 
     @abstractmethod
@@ -527,7 +527,7 @@ class Tensor(metaclass=ABCMeta):
         return self.__abs__()
 
     @final
-    def pow(self: TensorType, exponent: float) -> TensorType:
+    def pow(self: TensorType, exponent: TensorOrScalar) -> TensorType:
         return self.__pow__(exponent)
 
     @final

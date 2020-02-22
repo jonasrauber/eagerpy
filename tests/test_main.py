@@ -499,6 +499,16 @@ def test_pow_op(t: Tensor) -> Tensor:
     return t ** 3
 
 
+@compare_allclose
+def test_pow_tensor(t: Tensor) -> Tensor:
+    return ep.pow(t, (t + 0.5))
+
+
+@compare_allclose
+def test_pow_op_tensor(t: Tensor) -> Tensor:
+    return t ** (t + 0.5)
+
+
 @compare_all
 def test_add(t1: Tensor, t2: Tensor) -> Tensor:
     return t1 + t2

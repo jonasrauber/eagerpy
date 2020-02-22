@@ -32,7 +32,7 @@ def square(t: TensorType) -> TensorType:
     return t.square()
 
 
-def pow(t: TensorType, exponent: float) -> TensorType:
+def pow(t: TensorType, exponent: TensorOrScalar) -> TensorType:
     return t.pow(exponent)
 
 

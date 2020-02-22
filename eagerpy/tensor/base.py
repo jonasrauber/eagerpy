@@ -106,8 +106,8 @@ class BaseTensor(Tensor):
         return type(self)(self.raw.__mod__(unwrap1(other)))
 
     @final
-    def __pow__(self: TensorType, exponent: float) -> TensorType:
-        return type(self)(self.raw.__pow__(exponent))
+    def __pow__(self: TensorType, exponent: TensorOrScalar) -> TensorType:
+        return type(self)(self.raw.__pow__(unwrap1(exponent)))
 
     @final
     @property
