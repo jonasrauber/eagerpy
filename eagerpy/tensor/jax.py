@@ -291,6 +291,14 @@ class JAXTensor(BaseTensor):
         return type(self)(jax.nn.log_softmax(self.raw, axis=axis))
 
     def squeeze(self: TensorType, axis: Optional[AxisAxes] = None) -> TensorType:
+        if axis is not None:
+            # workaround for https://github.com/google/jax/issues/2284
+            axis = (axis,) if isinstance(axis, int) else axis
+            shape = self.shape
+            if any(shape[i] != 1 for i in axis):
+                raise ValueError(
+                    "cannot select an axis to squeeze out which has size not equal to one"
+                )
         return type(self)(self.raw.squeeze(axis=axis))
 
     def expand_dims(self: TensorType, axis: int) -> TensorType:

@@ -4,7 +4,7 @@ import functools
 import numpy as np
 import eagerpy as ep
 from eagerpy import Tensor
-from eagerpy.types import Shape
+from eagerpy.types import Shape, AxisAxes
 
 # make sure there are no undecorated tests in the "special tests" section below
 # -> /\n\ndef test_
@@ -380,6 +380,17 @@ def test_flatten(dummy: Tensor) -> None:
     assert ep.flatten(t, end=-3).shape == (16 * 3, 32, 32)
     assert ep.flatten(t, end=-4).shape == (16, 3, 32, 32)
     assert ep.flatten(t, start=1, end=-2).shape == (16, 3 * 32, 32)
+
+
+@pytest.mark.parametrize("axis", [None, 0, 1, (0, 1)])
+def test_squeeze_not_one(dummy: Tensor, axis: Optional[AxisAxes]) -> None:
+    t = ep.zeros(dummy, (3, 4, 5))
+    if axis is None:
+        t.squeeze(axis=axis)
+    else:
+        with pytest.raises(Exception):
+            # squeezing specifc axis should fail if they are not 1
+            t.squeeze(axis=axis)
 
 
 ###############################################################################
@@ -1231,7 +1242,7 @@ def test_expand_dims(t: Tensor, axis: int) -> Tensor:
 
 @pytest.mark.parametrize("axis", [None, 0, 1, (0, 1)])
 @compare_all
-def test_squeeze(t: Tensor, axis: Optional[int]) -> Tensor:
+def test_squeeze(t: Tensor, axis: Optional[AxisAxes]) -> Tensor:
     t = t.expand_dims(axis=0).expand_dims(axis=1)
     return ep.squeeze(t, axis=axis)
 

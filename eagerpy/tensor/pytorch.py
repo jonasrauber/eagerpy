@@ -338,6 +338,10 @@ class PyTorchTensor(BaseTensor):
             axis = (axis,)
         x = self.raw
         for i in sorted(axis, reverse=True):
+            if x.shape[i] != 1:
+                raise ValueError(
+                    "cannot select an axis to squeeze out which has size not equal to one"
+                )
             x = x.squeeze(dim=i)
         return type(self)(x)
 
