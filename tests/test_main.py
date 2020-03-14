@@ -102,7 +102,7 @@ def test_astensors_tensors_restore(t: Tensor) -> None:
         assert type(xi) == type(ri)
 
     x0 = restore_type(ys[0])
-    assert not isinstance(x0, tuple)
+    assert not isinstance(x0, tuple)  # type: ignore
 
 
 def test_module() -> None:
