@@ -29,7 +29,7 @@ EagerPy: PyTorch, TensorFlow, JAX and NumPy — all of them natively using the s
 📖 Documentation
 -----------------
 
-Learn more about in the `documentation <https://eagerpy.jonasrauber.de>`_.
+Learn more about EagerPy in the `documentation <https://eagerpy.jonasrauber.de>`_.
 
 
 🚀 Quickstart
