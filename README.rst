@@ -94,6 +94,7 @@ Foolbox, a popular adversarial attacks library, has been rewritten from scratch
 using EagerPy instead of NumPy to achieve native performance on models
 developed in PyTorch, TensorFlow and JAX, all with one code base.
 
+EagerPy is also used by other frameworks to reduce code duplication (e.g. `GUDHI <https://github.com/GUDHI/gudhi-devel>`_) or to `compare the performance of different frameworks <https://github.com/jonasrauber/uniformly-sampling-nd-ball>`_.
 
 🐍 Compatibility
 -----------------
