@@ -1,2 +1,3 @@
 include eagerpy/VERSION
 include eagerpy/py.typed
+include LICENSE
