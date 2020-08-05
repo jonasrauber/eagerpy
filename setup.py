@@ -38,7 +38,7 @@ setup(
     author="Jonas Rauber",
     author_email="jonas.rauber@bethgelab.org",
     url="https://github.com/jonasrauber/eagerpy",
-    license="",
+    license="MIT License",
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
