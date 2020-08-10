@@ -132,6 +132,13 @@ class TensorFlowTensor(BaseTensor):
             return self.astype(tf.int64).sum(axis=axis, keepdims=keepdims)
         return type(self)(tf.reduce_sum(self.raw, axis=axis, keepdims=keepdims))
 
+    def prod(
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+    ) -> TensorType:
+        if self.raw.dtype == tf.bool:
+            return self.astype(tf.int64).prod(axis=axis, keepdims=keepdims)
+        return type(self)(tf.reduce_prod(self.raw, axis=axis, keepdims=keepdims))
+
     def mean(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:

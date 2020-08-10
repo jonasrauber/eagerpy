@@ -262,6 +262,12 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
+    def prod(
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+    ) -> TensorType:
+        ...
+
+    @abstractmethod
     def mean(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:

@@ -102,6 +102,11 @@ Tensor.arctanh(self:~TensorType) -> ~TensorType
 Tensor.sum(self:~TensorType, axis:Union[int, Tuple[int, ...], NoneType]=None, keepdims:bool=False) -> ~TensorType
 ```
 
+## prod
+```python
+Tensor.prod(self:~TensorType, axis:Union[int, Tuple[int, ...], NoneType]=None, keepdims:bool=False) -> ~TensorType
+```
+
 ## mean
 ```python
 Tensor.mean(self:~TensorType, axis:Union[int, Tuple[int, ...], NoneType]=None, keepdims:bool=False) -> ~TensorType
@@ -331,7 +336,7 @@ Tensor.abs(self:~TensorType) -> ~TensorType
 
 ## pow
 ```python
-Tensor.pow(self:~TensorType, exponent:float) -> ~TensorType
+Tensor.pow(self:~TensorType, exponent:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
 ## value_and_grad
@@ -510,6 +515,6 @@ Tensor.__ge__(self:~TensorType, other:Union[_ForwardRef('Tensor'), int, float]) 
 
 ## __pow__
 ```python
-Tensor.__pow__(self:~TensorType, exponent:float) -> ~TensorType
+Tensor.__pow__(self:~TensorType, exponent:Union[_ForwardRef('Tensor'), int, float]) -> ~TensorType
 ```
 
