@@ -924,7 +924,7 @@ def test_max_none_keepdims(t: Tensor) -> Tensor:
     return ep.max(t, axis=None, keepdims=True)
 
 
-@compare_allclose
+@compare_allclose(rtol=1e-6)
 def test_exp(t: Tensor) -> Tensor:
     return ep.exp(t)
 

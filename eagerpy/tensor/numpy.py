@@ -30,7 +30,7 @@ def assert_bool(x: Any) -> None:
     if not isinstance(x, Tensor):
         return
     if x.dtype != np.dtype("bool"):
-        raise ValueError(f"requires dtype bool, consider t.bool().all()")
+        raise ValueError(f"requires dtype bool, got {x.dtype}, consider t.bool().all()")
 
 
 class NumPyTensor(BaseTensor):
@@ -413,7 +413,7 @@ class NumPyTensor(BaseTensor):
     def take_along_axis(self: TensorType, index: TensorType, axis: int) -> TensorType:
         if axis % self.ndim != self.ndim - 1:
             raise NotImplementedError(
-                f"take_along_axis is currently only supported for the last axis"
+                "take_along_axis is currently only supported for the last axis"
             )
         return type(self)(np.take_along_axis(self.raw, index.raw, axis=axis))
 

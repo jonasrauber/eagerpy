@@ -39,7 +39,7 @@ def assert_bool(x: Any) -> None:
     if not isinstance(x, Tensor):
         return
     if x.dtype != torch.bool:
-        raise ValueError(f"requires dtype bool, consider t.bool().all()")
+        raise ValueError(f"requires dtype bool, got {x.dtype}, consider t.bool().all()")
 
 
 class PyTorchTensor(BaseTensor):
@@ -561,7 +561,7 @@ class PyTorchTensor(BaseTensor):
     def take_along_axis(self: TensorType, index: TensorType, axis: int) -> TensorType:
         if axis % self.ndim != self.ndim - 1:
             raise NotImplementedError(
-                f"take_along_axis is currently only supported for the last axis"
+                "take_along_axis is currently only supported for the last axis"
             )
         return type(self)(torch.gather(self.raw, axis, index.raw))
 
