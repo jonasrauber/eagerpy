@@ -50,6 +50,12 @@ def sum(
     return t.sum(axis=axis, keepdims=keepdims)
 
 
+def prod(
+    t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+) -> TensorType:
+    return t.prod(axis=axis, keepdims=keepdims)
+
+
 def mean(
     t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:

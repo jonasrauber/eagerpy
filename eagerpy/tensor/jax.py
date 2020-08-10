@@ -132,6 +132,11 @@ class JAXTensor(BaseTensor):
     ) -> TensorType:
         return type(self)(self.raw.sum(axis=axis, keepdims=keepdims))
 
+    def prod(
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+    ) -> TensorType:
+        return type(self)(self.raw.prod(axis=axis, keepdims=keepdims))
+
     def mean(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:

@@ -106,6 +106,20 @@ class PyTorchTensor(BaseTensor):
             axis = tuple(range(self.ndim))
         return type(self)(self.raw.sum(dim=axis, keepdim=keepdims))
 
+    def prod(
+        self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+    ) -> TensorType:
+        if axis is None and not keepdims:
+            return type(self)(self.raw.prod())
+        if axis is None:
+            axis = tuple(range(self.ndim))
+        elif not isinstance(axis, Iterable):
+            axis = (axis,)
+        x = self.raw
+        for i in sorted(axis, reverse=True):
+            x, _ = x.prod(i, keepdim=keepdims)
+        return type(self)(x)
+
     def mean(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:

@@ -31,6 +31,7 @@ generate:
         - eagerpy.Tensor.square
         - eagerpy.Tensor.arctanh
         - eagerpy.Tensor.sum
+        - eagerpy.Tensor.prod
         - eagerpy.Tensor.mean
         - eagerpy.Tensor.min
         - eagerpy.Tensor.max
