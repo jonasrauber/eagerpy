@@ -74,7 +74,7 @@ def assert_bool(x: Any) -> None:
     if not isinstance(x, Tensor):
         return
     if x.dtype != tf.bool:
-        raise ValueError(f"requires dtype bool, consider t.bool().all()")
+        raise ValueError(f"requires dtype bool, got {x.dtype}, consider t.bool().all()")
 
 
 class TensorFlowTensor(BaseTensor):
@@ -549,7 +549,7 @@ class TensorFlowTensor(BaseTensor):
         axis = batch_dims = axis % self.ndim
         if axis != self.ndim - 1:
             raise NotImplementedError(
-                f"take_along_axis is currently only supported for the last axis"
+                "take_along_axis is currently only supported for the last axis"
             )
         return type(self)(
             tf.gather(self.raw, index.raw, axis=axis, batch_dims=batch_dims)
