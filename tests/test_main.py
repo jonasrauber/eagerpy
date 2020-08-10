@@ -795,6 +795,42 @@ def test_sum_int(t: Tensor) -> Tensor:
 
 
 @compare_all
+def test_prod(t: Tensor) -> Tensor:
+    return ep.prod(t)
+
+
+@compare_all
+def test_prod_axis(t: Tensor) -> Tensor:
+    return ep.prod(t, axis=0)
+
+
+@compare_all
+def test_prod_axes(dummy: Tensor) -> Tensor:
+    t = ep.ones(dummy, 30).float32().reshape((3, 5, 2))
+    return ep.prod(t, axis=(0, 1))
+
+
+@compare_all
+def test_prod_keepdims(t: Tensor) -> Tensor:
+    return ep.prod(t, axis=0, keepdims=True)
+
+
+@compare_all
+def test_prod_none_keepdims(t: Tensor) -> Tensor:
+    return ep.prod(t, axis=None, keepdims=True)
+
+
+@compare_all
+def test_prod_bool(t: Tensor) -> Tensor:
+    return ep.prod(t != 0)
+
+
+@compare_all
+def test_prod_int(t: Tensor) -> Tensor:
+    return ep.prod(ep.arange(t, 5))
+
+
+@compare_all
 def test_mean(t: Tensor) -> Tensor:
     return ep.mean(t)
 
