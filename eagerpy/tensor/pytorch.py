@@ -117,7 +117,7 @@ class PyTorchTensor(BaseTensor):
             axis = (axis,)
         x = self.raw
         for i in sorted(axis, reverse=True):
-            x, _ = x.prod(i, keepdim=keepdims)
+            x = x.prod(i, keepdim=keepdims)
         return type(self)(x)
 
     def mean(
