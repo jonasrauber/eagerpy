@@ -11,9 +11,9 @@
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/ambv/black
 
-======================================================================================
-EagerPy: PyTorch, TensorFlow, JAX and NumPy — all of them natively using the same code
-======================================================================================
+==================================================================================
+EagerPy: Writing Code That Works Natively with PyTorch, TensorFlow, JAX, and NumPy
+==================================================================================
 
 `EagerPy <https://eagerpy.jonasrauber.de>`_ is a **Python framework** that lets you write code that automatically works natively with `PyTorch <https://pytorch.org>`_, `TensorFlow <https://www.tensorflow.org>`_, `JAX <https://github.com/google/jax>`_, and `NumPy <https://numpy.org>`_. EagerPy is **also great when you work with just one framework** but prefer a clean and consistent API that is fully chainable, provides extensive type annotions and lets you write beautiful code.
 
@@ -96,6 +96,22 @@ using EagerPy instead of NumPy to achieve native performance on models
 developed in PyTorch, TensorFlow and JAX, all with one code base.
 
 EagerPy is also used by other frameworks to reduce code duplication (e.g. `GUDHI <https://github.com/GUDHI/gudhi-devel>`_) or to `compare the performance of different frameworks <https://github.com/jonasrauber/uniformly-sampling-nd-ball>`_.
+
+📄 Citation
+------------
+
+If you use EagerPy, please cite our `paper <https://arxiv.org/abs/2008.04175>`_ using the this BibTex entry:
+
+.. code-block::
+
+   @article{rauber2020eagerpy,
+     title={{EagerPy}: Writing Code That Works Natively with {PyTorch}, {TensorFlow}, {JAX}, and {NumPy}},
+     author={Rauber, Jonas and Bethge, Matthias and Brendel, Wieland},
+     journal={arXiv preprint arXiv:2008.04175},
+     year={2020},
+     url={https://eagerpy.jonasrauber.de},
+   }
+
 
 🐍 Compatibility
 -----------------

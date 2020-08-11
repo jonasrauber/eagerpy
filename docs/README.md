@@ -2,7 +2,7 @@
 home: true
 heroImage: /logo.png
 heroText: EagerPy
-tagline: PyTorch, TensorFlow, JAX and NumPy — all of them natively using the same code
+tagline: Writing Code That Works Natively with PyTorch, TensorFlow, JAX, and NumPy
 actionText: Get Started →
 actionLink: /guide/
 features:
