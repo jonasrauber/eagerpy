@@ -542,7 +542,7 @@ class TensorFlowTensor(BaseTensor):
                 for i in range(len(index)):
                     t = index[i]
                     if int64:
-                        t = tf.cast(t, tf.int64)
+                        t = tf.cast(t, tf.int64)  # pragma: no cover
                     assert t.ndim == len(shape)
                     tiling = []
                     for b, k in zip(shape, t.shape):
@@ -551,7 +551,7 @@ class TensorFlowTensor(BaseTensor):
                         elif k == b:
                             tiling.append(1)
                         else:
-                            raise ValueError(
+                            raise ValueError(  # pragma: no cover
                                 f"{tuple(t.shape)} cannot be broadcasted to {shape}"
                             )
                     index[i] = tf.tile(t, tiling)
