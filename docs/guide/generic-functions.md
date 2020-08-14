@@ -5,7 +5,7 @@ title: Generic Functions
 
 # Implementing Generic Framework-Agnostic Functions
 
-Using the conversion functions shown in \appendixref{sec:converting}, we can already define a simple framework-agnostic function. This function can be called with a native tensor from any framework and it will return the norm of that tensor, again as a native tensor from that framework (\autoref{alg:calling_norm_pytorch}, \autoref{alg:calling_norm_tensorflow}).
+Using the conversion functions shown in [Converting](./converting.md), we can already define a simple framework-agnostic function.
 
 ```pyhon
 import eagerpy as ep
@@ -15,6 +15,8 @@ def norm(x):
     result = x.square().sum().sqrt()
     return result.raw
 ```
+
+This function can be called with a native tensor from any framework and it will return the norm of that tensor, again as a native tensor from that framework.
 
 Calling the `norm` function using a PyTorch tensor:
 ```pyhon
