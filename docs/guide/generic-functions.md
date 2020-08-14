@@ -7,7 +7,7 @@ title: Generic Functions
 
 Using the conversion functions shown in [Converting](./converting.md), we can already define a simple framework-agnostic function.
 
-```pyhon
+```python
 import eagerpy as ep
 
 def norm(x):
@@ -19,7 +19,7 @@ def norm(x):
 This function can be called with a native tensor from any framework and it will return the norm of that tensor, again as a native tensor from that framework.
 
 Calling the `norm` function using a PyTorch tensor:
-```pyhon
+```python
 import torch
 norm(torch.tensor([1., 2., 3.]))
 # tensor(3.7417)
