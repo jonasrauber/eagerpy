@@ -14,6 +14,9 @@ module.exports = {
         children: [
           '/guide/',
           '/guide/getting-started',
+          '/guide/converting',
+          '/guide/generic-functions',
+          '/guide/autodiff',
           '/guide/examples',
           '/guide/development',
           '/guide/citation',
