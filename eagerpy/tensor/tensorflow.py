@@ -535,9 +535,27 @@ class TensorFlowTensor(BaseTensor):
             )
             if not basic:
                 # workaround for missing support for this in TensorFlow
-                # TODO: maybe convert each index individually and then stack them instead
-                index = tf.convert_to_tensor(index)
-                index = tf.transpose(index)
+                index = [tf.convert_to_tensor(x) for x in index]
+                shapes = [tuple(x.shape) for x in index]
+                shape = tuple(max(x) for x in zip(*shapes))
+                int64 = any(x.dtype == tf.int64 for x in index)
+                for i in range(len(index)):
+                    t = index[i]
+                    if int64:
+                        t = tf.cast(t, tf.int64)
+                    assert t.ndim == len(shape)
+                    tiling = []
+                    for b, k in zip(shape, t.shape):
+                        if k == 1:
+                            tiling.append(b)
+                        elif k == b:
+                            tiling.append(1)
+                        else:
+                            raise ValueError(
+                                f"{tuple(t.shape)} cannot be broadcasted to {shape}"
+                            )
+                    index[i] = tf.tile(t, tiling)
+                index = tf.stack(index, axis=-1)
                 return type(self)(tf.gather_nd(self.raw, index))
         elif (
             isinstance(index, range)

@@ -665,6 +665,22 @@ def test_getitem_tuple_tensors(dummy: Tensor) -> Tensor:
 
 
 @compare_all
+def test_getitem_tuple_tensors_full(dummy: Tensor) -> Tensor:
+    t = ep.arange(dummy, 32).float32().reshape((8, 4))
+    rows = ep.arange(t, len(t))[:, np.newaxis].tile((1, t.shape[-1]))
+    cols = t.argsort(axis=-1)
+    return t[rows, cols]
+
+
+@compare_all
+def test_getitem_tuple_tensors_full_broadcast(dummy: Tensor) -> Tensor:
+    t = ep.arange(dummy, 32).float32().reshape((8, 4))
+    rows = ep.arange(t, len(t))[:, np.newaxis]
+    cols = t.argsort(axis=-1)
+    return t[rows, cols]
+
+
+@compare_all
 def test_getitem_tuple_range_tensor(dummy: Tensor) -> Tensor:
     t = ep.arange(dummy, 32).float32().reshape((8, 4))
     rows = range(len(t))
