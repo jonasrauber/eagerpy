@@ -2,4 +2,4 @@
 torch==1.4.0
 jaxlib==0.1.37
 jax==0.1.57
-tensorflow==2.1.0
+tensorflow==2.1.2
