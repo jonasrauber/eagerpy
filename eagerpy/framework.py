@@ -175,6 +175,10 @@ def transpose(t: TensorType, axes: Optional[Axes] = None) -> TensorType:
     return t.transpose(axes=axes)
 
 
+def diag(t: TensorType, k: int = 0) -> TensorType:
+    return t._diag(k)
+
+
 @overload
 def logical_and(x: TensorType, y: TensorOrScalar) -> TensorType:
     ...

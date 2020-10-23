@@ -235,8 +235,61 @@ def test_logical_and_manual(t: Tensor) -> None:
 
 
 def test_transpose_1d(dummy: Tensor) -> None:
-    t = ep.arange(dummy, 8).float32()
+    t = ep.arange(dummy, 4).float32()
     assert (ep.transpose(t) == t).all()
+
+
+def test_diag(dummy: Tensor) -> None:
+
+    t = ep.arange(dummy, 1, 5).float32()
+    d = ep.diag(t)
+    assert d.shape == (4, 4)
+    assert (d.flatten()[[0, 5, 10, 15]] == t).all()
+    assert (ep.index_update(d.flatten(), [0, 5, 10, 15], ep.zeros(dummy, 4)) == 0).all()
+    assert (ep.diag(d) == t).all()
+
+    d = ep.diag(t, k=1)
+    assert d.shape == (5, 5)
+    assert (d.flatten()[[1, 7, 13, 19]] == t).all()
+    assert (ep.index_update(d.flatten(), [1, 7, 13, 19], ep.zeros(dummy, 4)) == 0).all()
+    assert (ep.diag(d, k=1) == t).all()
+
+    d = ep.diag(t, k=2)
+    assert d.shape == (6, 6)
+    assert (d.flatten()[[2, 9, 16, 23]] == t).all()
+    assert (ep.index_update(d.flatten(), [2, 9, 16, 23], ep.zeros(dummy, 4)) == 0).all()
+    assert (ep.diag(d, k=2) == t).all()
+
+    d = ep.diag(t, k=-1)
+    assert d.shape == (5, 5)
+    assert (d.flatten()[[5, 11, 17, 23]] == t).all()
+    assert (
+        ep.index_update(d.flatten(), [5, 11, 17, 23], ep.zeros(dummy, 4)) == 0
+    ).all()
+    assert (ep.diag(d, k=-1) == t).all()
+
+    d = ep.diag(t, k=-2)
+    assert d.shape == (6, 6)
+    assert (d.flatten()[[12, 19, 26, 33]] == t).all()
+    assert (
+        ep.index_update(d.flatten(), [12, 19, 26, 33], ep.zeros(dummy, 4)) == 0
+    ).all()
+    assert (ep.diag(d, k=-2) == t).all()
+
+    t = ep.arange(dummy, 9).float32().reshape((3, 3))
+    assert (ep.diag(t) == t.flatten()[[0, 4, 8]]).all()
+
+    t = ep.arange(dummy, 9).float32().reshape((3, 3))
+    assert (ep.diag(t, k=1) == t.flatten()[[1, 5]]).all()
+
+    t = ep.arange(dummy, 9).float32().reshape((3, 3))
+    assert (ep.diag(t, k=2) == t.flatten()[[2]]).all()
+
+    t = ep.arange(dummy, 9).float32().reshape((3, 3))
+    assert (ep.diag(t, k=-1) == t.flatten()[[3, 7]]).all()
+
+    t = ep.arange(dummy, 9).float32().reshape((3, 3))
+    assert (ep.diag(t, k=-2) == t.flatten()[[6]]).all()
 
 
 def test_onehot_like_raises(dummy: Tensor) -> None:
@@ -1225,6 +1278,42 @@ def test_topk_indices(dummy: Tensor) -> Tensor:
 def test_transpose(dummy: Tensor) -> Tensor:
     t = ep.arange(dummy, 8).float32().reshape((2, 4))
     return ep.transpose(t)
+
+
+@compare_all
+def test_diag_1(dummy: Tensor) -> Tensor:
+    t = ep.arange(dummy, 4).float32()
+    return ep.diag(t)
+
+
+@compare_all
+def test_diag_2(dummy: Tensor) -> Tensor:
+    t = ep.arange(dummy, 4).float32()
+    return ep.diag(t, k=2)
+
+
+@compare_all
+def test_diag_3(dummy: Tensor) -> Tensor:
+    t = ep.arange(dummy, 4).float32()
+    return ep.diag(t, k=-2)
+
+
+@compare_all
+def test_diag_4(dummy: Tensor) -> Tensor:
+    t = ep.arange(dummy, 9).float32().reshape((3, 3))
+    return ep.diag(t)
+
+
+@compare_all
+def test_diag_5(dummy: Tensor) -> Tensor:
+    t = ep.arange(dummy, 9).float32().reshape((3, 3))
+    return ep.diag(t, k=2)
+
+
+@compare_all
+def test_diag_6(dummy: Tensor) -> Tensor:
+    t = ep.arange(dummy, 9).float32().reshape((3, 3))
+    return ep.diag(t, k=-2)
 
 
 @compare_all

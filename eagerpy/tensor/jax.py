@@ -256,6 +256,9 @@ class JAXTensor(BaseTensor):
             axes = tuple(range(self.ndim - 1, -1, -1))
         return type(self)(np.transpose(self.raw, axes=axes))
 
+    def _diag(self: TensorType, k: int = 0) -> TensorType:
+        return type(self)(np.diag(self.raw, k=k))
+
     def all(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:

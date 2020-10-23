@@ -263,6 +263,12 @@ class TensorFlowTensor(BaseTensor):
             axes = tuple(range(self.ndim - 1, -1, -1))
         return type(self)(tf.transpose(self.raw, perm=axes))
 
+    def _diag(self: TensorType, k: int = 0) -> TensorType:
+        if len(self.shape) == 1:
+            return type(self)(tf.linalg.diag(self.raw, k=k))
+        else:
+            return type(self)(tf.linalg.diag_part(self.raw, k=k))
+
     def all(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:

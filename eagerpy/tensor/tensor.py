@@ -374,6 +374,10 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
+    def _diag(self: TensorType, k: int = 0) -> TensorType:
+        ...
+
+    @abstractmethod
     def take_along_axis(self: TensorType, index: TensorType, axis: int) -> TensorType:
         ...
 

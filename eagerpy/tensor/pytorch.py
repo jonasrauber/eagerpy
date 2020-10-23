@@ -281,6 +281,9 @@ class PyTorchTensor(BaseTensor):
             axes = tuple(range(self.ndim - 1, -1, -1))
         return type(self)(self.raw.permute(*axes))
 
+    def _diag(self: TensorType, k: int = 0) -> TensorType:
+        return type(self)(torch.diag(self.raw, diagonal=k))
+
     def all(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:
