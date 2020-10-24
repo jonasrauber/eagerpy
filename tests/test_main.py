@@ -235,7 +235,7 @@ def test_logical_and_manual(t: Tensor) -> None:
 
 
 def test_transpose_1d(dummy: Tensor) -> None:
-    t = ep.arange(dummy, 4).float32()
+    t = ep.arange(dummy, 8).float32()
     assert (ep.transpose(t) == t).all()
 
 
