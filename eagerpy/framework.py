@@ -176,7 +176,7 @@ def transpose(t: TensorType, axes: Optional[Axes] = None) -> TensorType:
 
 
 def diag(t: TensorType, k: int = 0) -> TensorType:
-    return t._diag(k)
+    return t.diag(k)
 
 
 @overload
