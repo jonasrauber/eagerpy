@@ -121,7 +121,7 @@ def argsort(t: TensorType, axis: int = -1) -> TensorType:
 def sort(t: TensorType, axis: int = -1) -> TensorType:
     return t.sort(axis=axis)
 
-def topk(t: TensorType, k: int, sorted: bool = True) -> TensorType:
+def topk(t: TensorType, k: int, sorted: bool = True) -> Tuple[TensorType, TensorType]:
     return t.topk(k, sorted=sorted)
 
 

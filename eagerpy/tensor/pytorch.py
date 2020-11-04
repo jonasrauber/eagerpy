@@ -203,7 +203,7 @@ class PyTorchTensor(BaseTensor):
     def sort(self: TensorType, axis: int = -1) -> TensorType:
         return type(self)(self.raw.sort(dim=axis).values)  # type: ignore
 
-    def topk(self: TensorType, k: int, sorted: bool = True) -> TensorType:
+    def topk(self: TensorType, k: int, sorted: bool = True) -> Tuple[TensorType, TensorType]:
         pair = self.raw.topk(k, sorted=sorted)
         return type(self)(pair[0]), type(self)(pair[1])
 

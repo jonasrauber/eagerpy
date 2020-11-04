@@ -149,7 +149,7 @@ Tensor.argsort(self:~TensorType, axis:int=-1) -> ~TensorType
 
 ## topk
 ```python
-Tensor.topk(self:~TensorType, k:int, sorted:bool=True) -> ~TensorType
+Tensor.topk(self:~TensorType, k:int, sorted:bool=True) -> Tuple[~TensorType, ~TensorType]
 ```
 
 ## uniform

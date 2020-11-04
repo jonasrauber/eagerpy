@@ -310,6 +310,10 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
+    def topk(self: TensorType, k: int, sorted: bool = True) -> Tuple[TensorType, TensorType]:
+        ...
+
+    @abstractmethod
     def uniform(
         self: TensorType, shape: ShapeOrScalar, low: float = 0.0, high: float = 1.0
     ) -> TensorType:
