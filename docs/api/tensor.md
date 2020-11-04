@@ -147,6 +147,11 @@ Tensor.argmax(self:~TensorType, axis:Union[int, NoneType]=None) -> ~TensorType
 Tensor.argsort(self:~TensorType, axis:int=-1) -> ~TensorType
 ```
 
+## topk
+```python
+Tensor.topk(self:~TensorType, k:int, sorted:bool=True) -> ~TensorType
+```
+
 ## uniform
 ```python
 Tensor.uniform(self:~TensorType, shape:Union[Tuple[int, ...], int], low:float=0.0, high:float=1.0) -> ~TensorType

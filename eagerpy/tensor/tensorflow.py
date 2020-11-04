@@ -176,6 +176,10 @@ class TensorFlowTensor(BaseTensor):
     def sort(self: TensorType, axis: Optional[int] = -1) -> TensorType:
         return type(self)(tf.sort(self.raw, axis=axis))
 
+    def topk(self: TensorType, k: int, sorted: bool = True) -> TensorType:
+        pair = tf.math.top_k(self.raw, k, sorted=sorted)
+        return type(self)(pair[0]), type(self)(pair[1])
+
     @samedevice
     def uniform(
         self: TensorType, shape: ShapeOrScalar, low: float = 0.0, high: float = 1.0

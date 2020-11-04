@@ -121,6 +121,9 @@ def argsort(t: TensorType, axis: int = -1) -> TensorType:
 def sort(t: TensorType, axis: int = -1) -> TensorType:
     return t.sort(axis=axis)
 
+def topk(t: TensorType, k: int, sorted: bool = True) -> TensorType:
+    return t.topk(k, sorted=sorted)
+
 
 def uniform(
     t: TensorType, shape: ShapeOrScalar, low: float = 0.0, high: float = 1.0
