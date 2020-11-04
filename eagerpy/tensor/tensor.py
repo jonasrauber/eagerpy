@@ -310,7 +310,9 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def topk(self: TensorType, k: int, sorted: bool = True) -> Tuple[TensorType, TensorType]:
+    def topk(
+        self: TensorType, k: int, sorted: bool = True
+    ) -> Tuple[TensorType, TensorType]:
         ...
 
     @abstractmethod

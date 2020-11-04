@@ -1205,10 +1205,12 @@ def test_sort(dummy: Tensor) -> Tensor:
     t = -ep.arange(dummy, 6).float32().reshape((2, 3))
     return ep.sort(t)
 
+
 @compare_all
 def test_topk_0(dummy: Tensor) -> Tensor:
     t = ep.arange(dummy, 27).float32().reshape((3, 3, 3))
     return ep.topk(t, 2)[0]
+
 
 @compare_all
 def test_topk_1(dummy: Tensor) -> Tensor:
