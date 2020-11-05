@@ -179,8 +179,8 @@ class TensorFlowTensor(BaseTensor):
     def topk(
         self: TensorType, k: int, sorted: bool = True
     ) -> Tuple[TensorType, TensorType]:
-        pair = tf.math.top_k(self.raw, k, sorted=sorted)
-        return type(self)(pair[0]), type(self)(pair[1])
+        values, indices = tf.math.top_k(self.raw, k, sorted=sorted)
+        return type(self)(values), type(self)(indices)
 
     @samedevice
     def uniform(

@@ -206,8 +206,8 @@ class PyTorchTensor(BaseTensor):
     def topk(
         self: TensorType, k: int, sorted: bool = True
     ) -> Tuple[TensorType, TensorType]:
-        pair = self.raw.topk(k, sorted=sorted)
-        return type(self)(pair[0]), type(self)(pair[1])
+        values, indices = self.raw.topk(k, sorted=sorted)
+        return type(self)(values), type(self)(indices)
 
     def uniform(
         self: TensorType, shape: ShapeOrScalar, low: float = 0.0, high: float = 1.0
