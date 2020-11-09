@@ -69,7 +69,7 @@ EagerPy requires Python 3.6 or newer. Besides that, all essential dependencies a
    x.flatten(start=1).square().sum(axis=-1).sqrt()
    # or just: x.flatten(1).norms.l2()
 
-   # and as functions (yes, we gradients are also supported!)
+   # and as functions (yes, gradients are also supported!)
    loss, grad = ep.value_and_grad(loss_fn, x)
    ep.clip(x + eps * grad, 0, 1)
 
