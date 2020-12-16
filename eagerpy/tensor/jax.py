@@ -174,6 +174,20 @@ class JAXTensor(BaseTensor):
     def sort(self: TensorType, axis: int = -1) -> TensorType:
         return type(self)(self.raw.sort(axis=axis))
 
+    def topk(
+        self: TensorType, k: int, sorted: bool = True
+    ) -> Tuple[TensorType, TensorType]:
+        # argpartition not yet implemented
+        # wrapping indexing not supported in take()
+        n = self.raw.shape[-1]
+        idx = np.take(np.argsort(self.raw), np.arange(n - k, n), axis=-1)
+        val = np.take_along_axis(self.raw, idx, axis=-1)
+        if sorted:
+            perm = np.flip(np.argsort(val, axis=-1), axis=-1)
+            idx = np.take_along_axis(idx, perm, axis=-1)
+            val = np.take_along_axis(self.raw, idx, axis=-1)
+        return type(self)(val), type(self)(idx)
+
     def uniform(
         self: TensorType, shape: ShapeOrScalar, low: float = 0.0, high: float = 1.0
     ) -> TensorType:
