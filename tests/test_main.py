@@ -1280,6 +1280,11 @@ def test_crossentropy(dummy: Tensor) -> Tensor:
     return ep.crossentropy(t, t.argmax(axis=-1))
 
 
+def test_slogdet(dummy: Tensor) -> Tuple[Tensor, Tensor]:
+    t = ep.arange(dummy, 100).reshape((10, 10)).float32()
+    return ep.slogdet(t)
+
+
 @pytest.mark.parametrize("axis", [0, 1, -1])
 @compare_all
 def test_stack(t1: Tensor, t2: Tensor, axis: int) -> Tensor:

@@ -325,6 +325,10 @@ def crossentropy(logits: TensorType, labels: TensorType) -> TensorType:
     return logits.crossentropy(labels)
 
 
+def slogdet(matrix: TensorType) -> Tuple[TensorType, TensorType]:
+    return matrix.slogdet()
+
+
 @overload
 def value_and_grad_fn(
     t: TensorType, f: Callable[..., TensorType]
