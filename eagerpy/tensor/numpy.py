@@ -353,8 +353,6 @@ class NumPyTensor(BaseTensor):
         return type(self)(ces)
 
     def slogdet(self: TensorType) -> Tuple[TensorType, TensorType]:
-        if self.ndim != 2:
-            raise ValueError("crossentropy only supported for 2D logits tensors")
         sign, logabsdet = np.linalg.slogdet(self.raw)
         return type(self)(sign), type(self)(logabsdet)
 

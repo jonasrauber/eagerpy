@@ -471,8 +471,6 @@ class PyTorchTensor(BaseTensor):
         )
 
     def slogdet(self: TensorType) -> Tuple[TensorType, TensorType]:
-        if self.ndim != 2:
-            raise ValueError("crossentropy only supported for 2D logits tensors")
         sign, logabsdet = torch.slogdet(self.raw)
         return type(self)(sign), type(self)(logabsdet)
 
