@@ -437,6 +437,7 @@ def compare_allclose(*args: Any, rtol: float = 1e-07, atol: float = 0) -> Callab
             n = n.numpy()
             assert t.shape == n.shape
             np.testing.assert_allclose(t, n, rtol=rtol, atol=atol)
+
         return test_fn
 
     if len(args) == 1 and callable(args[0]):
@@ -445,11 +446,14 @@ def compare_allclose(*args: Any, rtol: float = 1e-07, atol: float = 0) -> Callab
     return compare_allclose_inner
 
 
-
-def compare_allclose_tuple(*args: Any, rtol: float = 1e-07, atol: float = 0) -> Callable:
+def compare_allclose_tuple(
+    *args: Any, rtol: float = 1e-07, atol: float = 0
+) -> Callable:
     """A decorator to simplify writing test functions"""
 
-    def compare_allclose_inner(f: Callable[..., Tuple[Tensor, Tensor]]) -> Callable[..., None]:
+    def compare_allclose_inner(
+        f: Callable[..., Tuple[Tensor, Tensor]]
+    ) -> Callable[..., None]:
         @functools.wraps(f)
         def test_fn(*args: Any, **kwargs: Any) -> None:
             assert len(args) == 0
@@ -463,6 +467,7 @@ def compare_allclose_tuple(*args: Any, rtol: float = 1e-07, atol: float = 0) -> 
                 n_i = n[i].numpy()
                 assert t_i.shape == n_i.shape
                 np.testing.assert_allclose(t_i, n_i, rtol=rtol, atol=atol)
+
         return test_fn
 
     if len(args) == 1 and callable(args[0]):
