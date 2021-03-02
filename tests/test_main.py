@@ -1289,6 +1289,7 @@ def test_crossentropy(dummy: Tensor) -> Tensor:
         [
             np.array([[1, 2], [3, 4]]),
             np.array([[[1, 2], [3, 4]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]]),
+            np.arange(100).reshape((10, 10)),
         ],
     ),
 )
