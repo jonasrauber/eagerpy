@@ -1281,9 +1281,17 @@ def test_crossentropy(dummy: Tensor) -> Tensor:
 
 
 @compare_allclose
-def test_slogdet(dummy: Tensor) -> Tuple[Tensor, Tensor]:
+def test_slogdet_sign(dummy: Tensor) -> Tuple[Tensor, Tensor]:
     t = ep.arange(dummy, 100).reshape((10, 10)).float32()
-    return ep.slogdet(t)
+    sign, _ = ep.slogdet(t)
+    return sign
+
+
+@compare_allclose
+def test_slogdet_logdet(dummy: Tensor) -> Tuple[Tensor, Tensor]:
+    t = ep.arange(dummy, 100).reshape((10, 10)).float32()
+    _, logdet = ep.slogdet(t)
+    return logdet
 
 
 @pytest.mark.parametrize("axis", [0, 1, -1])
