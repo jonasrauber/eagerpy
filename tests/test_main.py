@@ -1281,33 +1281,29 @@ def test_crossentropy(dummy: Tensor) -> Tensor:
 
 
 @compare_allclose
-def test_slogdet_sign(dummy: Tensor) -> Tensor:
-    a = ep.from_numpy(dummy, np.array([[1, 2], [3, 4]])).float32()
+@pytest.mark.parametrize(
+    "array",
+    [
+        np.array([[1, 2], [3, 4]]),
+        np.array([[[1, 2], [3, 4]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]]),
+    ],
+)
+def test_slogdet_sign(dummy: Tensor, array: Tensor) -> Tensor:
+    a = ep.from_numpy(dummy, array).float32()
     sign, _ = ep.slogdet(a)
     return sign
 
 
 @compare_allclose
-def test_slogdet_logdet(dummy: Tensor) -> Tensor:
-    a = ep.from_numpy(dummy, np.array([[1, 2], [3, 4]])).float32()
-    _, logdet = ep.slogdet(a)
-    return logdet
-
-
-@compare_allclose
-def test_slogdet_stack_matrices_sign(dummy: Tensor) -> Tensor:
-    a = ep.from_numpy(
-        dummy, np.array([[[1, 2], [3, 4]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]])
-    ).float32()
-    sign, _ = ep.slogdet(a)
-    return sign
-
-
-@compare_allclose
-def test_slogdet_stack_matrices_logdet(dummy: Tensor) -> Tensor:
-    a = ep.from_numpy(
-        dummy, np.array([[[1, 2], [3, 4]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]])
-    ).float32()
+@pytest.mark.parametrize(
+    "array",
+    [
+        np.array([[1, 2], [3, 4]]),
+        np.array([[[1, 2], [3, 4]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]]),
+    ],
+)
+def test_slogdet_logdet(dummy: Tensor, array: Tensor) -> Tensor:
+    a = ep.from_numpy(dummy, array).float32()
     _, logdet = ep.slogdet(a)
     return logdet
 
