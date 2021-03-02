@@ -1283,24 +1283,24 @@ def test_crossentropy(dummy: Tensor) -> Tensor:
 
 @compare_allclose
 @pytest.mark.parametrize(
-    "output, array",
+    "array, output",
     itertools.product(
-        ["sign", "logdet"],
         [
             np.array([[1, 2], [3, 4]]),
             np.array([[[1, 2], [3, 4]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]]),
             np.arange(100).reshape((10, 10)),
         ],
+        ["sign", "logdet"],
     ),
     ids=map(
         lambda *l: "_".join(*l),
         itertools.product(
-            ["sign", "logdet"],
             ["matrix_finite", "stack_of_matrices", "matrix_infinite"],
+            ["sign", "logdet"],
         ),
     ),
 )
-def test_slogdet(dummy: Tensor, output: str, array: Tensor) -> Tensor:
+def test_slogdet(dummy: Tensor, array: Tensor, output: str) -> Tensor:
     a = ep.from_numpy(dummy, array).float32()
     outputs = dict()
     outputs["sign"], outputs["logdet"] = ep.slogdet(a)
