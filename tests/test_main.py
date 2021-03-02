@@ -1,6 +1,7 @@
 from typing import Callable, Dict, Any, Tuple, Union, Optional, cast
 import pytest
 import functools
+import itertools
 import numpy as np
 import eagerpy as ep
 from eagerpy import Tensor
@@ -1282,30 +1283,20 @@ def test_crossentropy(dummy: Tensor) -> Tensor:
 
 @compare_allclose
 @pytest.mark.parametrize(
-    "array",
-    [
-        np.array([[1, 2], [3, 4]]),
-        np.array([[[1, 2], [3, 4]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]]),
-    ],
+    "output, array",
+    itertools.product(
+        ["sign", "logdet"],
+        [
+            np.array([[1, 2], [3, 4]]),
+            np.array([[[1, 2], [3, 4]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]]),
+        ],
+    ),
 )
-def test_slogdet_sign(dummy: Tensor, array: Tensor) -> Tensor:
+def test_slogdet(dummy: Tensor, output: str, array: Tensor) -> Tensor:
     a = ep.from_numpy(dummy, array).float32()
-    sign, _ = ep.slogdet(a)
-    return sign
-
-
-@compare_allclose
-@pytest.mark.parametrize(
-    "array",
-    [
-        np.array([[1, 2], [3, 4]]),
-        np.array([[[1, 2], [3, 4]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]]),
-    ],
-)
-def test_slogdet_logdet(dummy: Tensor, array: Tensor) -> Tensor:
-    a = ep.from_numpy(dummy, array).float32()
-    _, logdet = ep.slogdet(a)
-    return logdet
+    outputs = dict()
+    outputs["sign"], outputs["logdet"] = ep.slogdet(a)
+    return outputs[output]
 
 
 @pytest.mark.parametrize("axis", [0, 1, -1])
