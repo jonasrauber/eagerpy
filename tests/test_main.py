@@ -1281,7 +1281,7 @@ def test_crossentropy(dummy: Tensor) -> Tensor:
 
 
 @compare_allclose
-def test_slogdet_sign(dummy: Tensor) -> Tuple[Tensor, Tensor]:
+def test_slogdet_sign(dummy: Tensor) -> Tensor:
     a = ep.from_numpy(dummy, np.array([[1, 2], [3, 4]])).float32()
     sign, _ = ep.slogdet(a)
     ref = ep.from_numpy(dummy, np.array([-1])).float32()
@@ -1290,7 +1290,7 @@ def test_slogdet_sign(dummy: Tensor) -> Tuple[Tensor, Tensor]:
 
 
 @compare_allclose
-def test_slogdet_logdet(dummy: Tensor) -> Tuple[Tensor, Tensor]:
+def test_slogdet_logdet(dummy: Tensor) -> Tensor:
     a = ep.from_numpy(dummy, np.array([[1, 2], [3, 4]])).float32()
     _, logdet = ep.slogdet(a)
     ref = ep.from_numpy(dummy, np.array([0.69314718055994529])).float32()
@@ -1299,7 +1299,7 @@ def test_slogdet_logdet(dummy: Tensor) -> Tuple[Tensor, Tensor]:
 
 
 @compare_allclose
-def test_slogdet_stack_matrices_sign(dummy: Tensor) -> Tuple[Tensor, Tensor]:
+def test_slogdet_stack_matrices_sign(dummy: Tensor) -> Tensor:
     a = ep.from_numpy(
         dummy, np.array([[[1, 2], [3, 4]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]])
     ).float32()
@@ -1310,7 +1310,7 @@ def test_slogdet_stack_matrices_sign(dummy: Tensor) -> Tuple[Tensor, Tensor]:
 
 
 @compare_allclose
-def test_slogdet_stack_matrices_logdet(dummy: Tensor) -> Tuple[Tensor, Tensor]:
+def test_slogdet_stack_matrices_logdet(dummy: Tensor) -> Tensor:
     a = ep.from_numpy(
         dummy, np.array([[[1, 2], [3, 4]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]])
     ).float32()
