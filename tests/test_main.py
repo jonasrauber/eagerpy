@@ -426,26 +426,17 @@ def compare_all(f: Callable[..., Tensor]) -> Callable[..., None]:
 def compare_allclose(*args: Any, rtol: float = 1e-07, atol: float = 0) -> Callable:
     """A decorator to simplify writing test functions"""
 
-    def compare_allclose_inner(f: Callable[..., Any]) -> Callable[..., None]:
+    def compare_allclose_inner(f: Callable[..., Tensor]) -> Callable[..., None]:
         @functools.wraps(f)
         def test_fn(*args: Any, **kwargs: Any) -> None:
             assert len(args) == 0
             nkwargs = get_numpy_kwargs(kwargs)
             t = f(*args, **kwargs)
             n = f(*args, **nkwargs)
-            if isinstance(t, Tensor):
-                t = t.numpy()
-                n = n.numpy()
-                assert t.shape == n.shape
-                np.testing.assert_allclose(t, n, rtol=rtol, atol=atol)
-            else:
-                assert isinstance(t, tuple)
-                assert isinstance(n, type(t))
-                for i in range(len(t)):
-                    t_i = t[i].numpy()
-                    n_i = n[i].numpy()
-                    assert t_i.shape == n_i.shape
-                    np.testing.assert_allclose(t_i, n_i, rtol=rtol, atol=atol)
+            t = t.numpy()
+            n = n.numpy()
+            assert t.shape == n.shape
+            np.testing.assert_allclose(t, n, rtol=rtol, atol=atol)
 
         return test_fn
 
