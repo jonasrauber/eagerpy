@@ -1292,6 +1292,13 @@ def test_crossentropy(dummy: Tensor) -> Tensor:
             np.arange(100).reshape((10, 10)),
         ],
     ),
+    ids=map(
+        lambda *l: "_".join(*l),
+        itertools.product(
+            ["sign", "logdet"],
+            ["matrix_finite", "stack_of_matrices", "matrix_infinite"],
+        ),
+    ),
 )
 def test_slogdet(dummy: Tensor, output: str, array: Tensor) -> Tensor:
     a = ep.from_numpy(dummy, array).float32()
