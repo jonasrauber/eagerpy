@@ -1281,7 +1281,6 @@ def test_crossentropy(dummy: Tensor) -> Tensor:
     return ep.crossentropy(t, t.argmax(axis=-1))
 
 
-@compare_allclose
 @pytest.mark.parametrize(
     "array, output",
     itertools.product(
@@ -1300,6 +1299,7 @@ def test_crossentropy(dummy: Tensor) -> Tensor:
         ),
     ),
 )
+@compare_allclose
 def test_slogdet(dummy: Tensor, array: Tensor, output: str) -> Tensor:
     a = ep.from_numpy(dummy, array).float32()
     outputs = dict()
