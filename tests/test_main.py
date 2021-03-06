@@ -1,6 +1,7 @@
 from typing import Callable, Dict, Any, Tuple, Union, Optional, cast
 import pytest
 import functools
+import itertools
 import numpy as np
 import eagerpy as ep
 from eagerpy import Tensor
@@ -1278,6 +1279,32 @@ def test_crossentropy(dummy: Tensor) -> Tensor:
     t = ep.arange(dummy, 50).reshape((10, 5)).float32()
     t = t / t.max()
     return ep.crossentropy(t, t.argmax(axis=-1))
+
+
+@pytest.mark.parametrize(
+    "array, output",
+    itertools.product(
+        [
+            np.array([[1, 2], [3, 4]]),
+            np.array([[[1, 2], [3, 4]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]]),
+            np.arange(100).reshape((10, 10)),
+        ],
+        ["sign", "logdet"],
+    ),
+    ids=map(
+        lambda *l: "_".join(*l),
+        itertools.product(
+            ["matrix_finite", "stack_of_matrices", "matrix_infinite"],
+            ["sign", "logdet"],
+        ),
+    ),
+)
+@compare_allclose
+def test_slogdet(dummy: Tensor, array: Tensor, output: str) -> Tensor:
+    a = ep.from_numpy(dummy, array).float32()
+    outputs = dict()
+    outputs["sign"], outputs["logdet"] = ep.slogdet(a)
+    return outputs[output]
 
 
 @pytest.mark.parametrize("axis", [0, 1, -1])

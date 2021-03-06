@@ -407,6 +407,10 @@ class JAXTensor(BaseTensor):
         ).squeeze(axis=1)
         return type(self)(ces)
 
+    def slogdet(self: TensorType) -> Tuple[TensorType, TensorType]:
+        sign, logabsdet = np.linalg.slogdet(self.raw)
+        return type(self)(sign), type(self)(logabsdet)
+
     @overload
     def _value_and_grad_fn(
         self: TensorType, f: Callable[..., TensorType]

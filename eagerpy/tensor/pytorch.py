@@ -470,6 +470,10 @@ class PyTorchTensor(BaseTensor):
             torch.nn.functional.cross_entropy(self.raw, labels.raw, reduction="none")
         )
 
+    def slogdet(self: TensorType) -> Tuple[TensorType, TensorType]:
+        sign, logabsdet = torch.slogdet(self.raw)
+        return type(self)(sign), type(self)(logabsdet)
+
     @overload
     def _value_and_grad_fn(
         self: TensorType, f: Callable[..., TensorType]

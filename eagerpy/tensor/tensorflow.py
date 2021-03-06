@@ -442,6 +442,10 @@ class TensorFlowTensor(BaseTensor):
             tf.nn.sparse_softmax_cross_entropy_with_logits(labels.raw, self.raw)
         )
 
+    def slogdet(self: TensorType) -> Tuple[TensorType, TensorType]:
+        sign, logabsdet = tf.linalg.slogdet(self.raw)
+        return type(self)(sign), type(self)(logabsdet)
+
     @overload
     def _value_and_grad_fn(
         self: TensorType, f: Callable[..., TensorType]

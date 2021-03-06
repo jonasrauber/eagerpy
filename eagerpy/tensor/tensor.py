@@ -495,6 +495,10 @@ class Tensor(metaclass=ABCMeta):
     def crossentropy(self: TensorType, labels: TensorType) -> TensorType:
         ...
 
+    @abstractmethod
+    def slogdet(matrix: TensorType) -> Tuple[TensorType, TensorType]:
+        ...
+
     @overload
     def _value_and_grad_fn(
         self: TensorType, f: Callable[..., TensorType]
