@@ -43,6 +43,11 @@ def astensor(x: Union[NativeTensor, Tensor]) -> Tensor:  # type: ignore
     # to avoid importing all the frameworks
     name = _get_module_name(x)
     m = sys.modules
+    # jax might use jax or the jaxlib namespace
+    # this is necessary for running jax on gpus
+    if name == "jaxlib":
+        name = "jax"
+
     if name == "torch" and isinstance(x, m[name].Tensor):  # type: ignore
         return PyTorchTensor(x)
     if name == "tensorflow" and isinstance(x, m[name].Tensor):  # type: ignore
