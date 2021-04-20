@@ -214,7 +214,7 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def matmul(self: TensorType, other: TensorType) -> TensorType:
+    def __matmul__(self: TensorType, other: TensorType) -> TensorType:
         ...
 
     @property
@@ -571,6 +571,9 @@ class Tensor(metaclass=ABCMeta):
         end = end % self.ndim
         shape = self.shape[:start] + (-1,) + self.shape[end + 1 :]
         return self.reshape(shape)
+
+    def matmul(self: TensorType, other: TensorType) -> TensorType:
+        return self.__matmul__(other)
 
     # #########################################################################
     # extensions

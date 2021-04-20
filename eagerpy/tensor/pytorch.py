@@ -550,12 +550,12 @@ class PyTorchTensor(BaseTensor):
             y_ = torch.full_like(self.raw, y, dtype=torch.float32)
         return type(self)(torch.where(self.raw, x_, y_))
 
-    def matmul(self: TensorType, other: TensorType) -> TensorType:
+    def __matmul__(self: TensorType, other: TensorType) -> TensorType:
         if self.ndim != 2 or other.ndim != 2:
             raise ValueError(
                 f"matmul requires both tensors to be 2D, got {self.ndim}D and {other.ndim}D"
             )
-        return type(self)(torch.matmul(self.raw, other.raw))
+        return type(self)(self.raw.__matmul__(other.raw))
 
     def __lt__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__lt__(unwrap1(other)))

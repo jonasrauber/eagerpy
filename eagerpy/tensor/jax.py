@@ -493,12 +493,12 @@ class JAXTensor(BaseTensor):
         x, y = unwrap_(x, y)
         return type(self)(np.where(self.raw, x, y))
 
-    def matmul(self: TensorType, other: TensorType) -> TensorType:
+    def __matmul__(self: TensorType, other: TensorType) -> TensorType:
         if self.ndim != 2 or other.ndim != 2:
             raise ValueError(
                 f"matmul requires both tensors to be 2D, got {self.ndim}D and {other.ndim}D"
             )
-        return type(self)(np.matmul(self.raw, other.raw))
+        return type(self)(self.raw.__matmul__(other.raw))
 
     def __lt__(self: TensorType, other: TensorOrScalar) -> TensorType:
         return type(self)(self.raw.__lt__(unwrap1(other)))
