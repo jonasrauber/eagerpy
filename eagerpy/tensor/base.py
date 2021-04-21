@@ -112,4 +112,4 @@ class BaseTensor(Tensor):
     @final
     @property
     def ndim(self: TensorType) -> int:
-        return cast(int, self.raw.ndim)
+        return len(self.raw.shape)
