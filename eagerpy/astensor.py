@@ -1,5 +1,17 @@
-from typing import TYPE_CHECKING, Union, overload, Tuple, TypeVar, Generic, Any
+import functools
+from typing import (
+    TYPE_CHECKING,
+    Union,
+    overload,
+    Tuple,
+    TypeVar,
+    Generic,
+    Any,
+    Callable,
+)
 import sys
+
+from jax import tree_flatten, tree_unflatten
 
 from .tensor import Tensor
 from .tensor import TensorType
@@ -59,7 +71,26 @@ def astensors(*xs: Union[NativeTensor, Tensor]) -> Tuple[Tensor, ...]:  # type: 
     return tuple(astensor(x) for x in xs)
 
 
+def as_tensors(data: Any) -> Any:
+    leaf_values, tree_def = tree_flatten(data)
+    leaf_values = tuple(astensor(value) for value in leaf_values)
+    return tree_unflatten(tree_def, leaf_values)
+
+
 T = TypeVar("T")
+
+
+def as_raw_tensor(x: T) -> Any:
+    if isinstance(x, Tensor):
+        return x.raw
+    else:
+        return x
+
+
+def as_raw_tensors(data: Any) -> Any:
+    leaf_values, tree_def = tree_flatten(data)
+    leaf_values = tuple(as_raw_tensor(value) for value in leaf_values)
+    return tree_unflatten(tree_def, leaf_values)
 
 
 class RestoreTypeFunc(Generic[T]):
@@ -84,7 +115,7 @@ class RestoreTypeFunc(Generic[T]):
         ...
 
     def __call__(self, *args):  # type: ignore  # noqa: F811
-        result = tuple(x.raw for x in args) if self.unwrap else args
+        result = tuple(as_raw_tensor(x) for x in args) if self.unwrap else args
         if len(result) == 1:
             (result,) = result
         return result
@@ -96,3 +127,34 @@ def astensor_(x: T) -> Tuple[Tensor, RestoreTypeFunc[T]]:
 
 def astensors_(x: T, *xs: T) -> Tuple[Tuple[Tensor, ...], RestoreTypeFunc[T]]:
     return astensors(x, *xs), RestoreTypeFunc[T](x)
+
+
+def as_tensors_(data: Any) -> Any:
+    leaf_values, tree_def = tree_flatten(data)
+    leaf_values, restore_type = astensors_(*leaf_values)
+    return tree_unflatten(tree_def, leaf_values), restore_type
+
+
+def eager_function(
+    func: Callable[..., T], skip_argnums: Tuple = tuple()
+) -> Callable[..., T]:
+    @functools.wraps(func)
+    def eager_func(*args: Any, **kwargs: Any) -> Any:
+        sorted_skip_argnums = sorted(skip_argnums)
+        skip_args = [arg for i, arg in enumerate(args) if i in sorted_skip_argnums]
+        kept_args = [arg for i, arg in enumerate(args) if i not in sorted_skip_argnums]
+
+        (kept_args, kwargs), restore_type = as_tensors_((kept_args, kwargs))
+
+        for i, arg in zip(sorted_skip_argnums, skip_args):
+            kept_args.insert(i, arg)
+
+        result = func(*kept_args, **kwargs)
+
+        if restore_type.unwrap:
+            raw_result = as_raw_tensors(result)
+            return raw_result
+        else:
+            return result
+
+    return eager_func

@@ -33,6 +33,7 @@ from .astensor import astensor  # noqa: F401,E402
 from .astensor import astensors  # noqa: F401,E402
 from .astensor import astensor_  # noqa: F401,E402
 from .astensor import astensors_  # noqa: F401,E402
+from .astensor import eager_function  # noqa: F401,E402
 
 from .modules import torch  # noqa: F401,E402
 from .modules import tensorflow  # noqa: F401,E402

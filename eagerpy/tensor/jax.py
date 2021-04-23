@@ -9,8 +9,8 @@ from typing import (
     Optional,
     overload,
     Callable,
-    Type,
 )
+
 from typing_extensions import Literal
 from importlib import import_module
 import numpy as onp
@@ -62,22 +62,7 @@ class JAXTensor(BaseTensor):
     # more specific types for the extensions
     norms: "NormsMethods[JAXTensor]"
 
-    _registered = False
     key = None
-
-    def __new__(cls: Type["JAXTensor"], *args: Any, **kwargs: Any) -> "JAXTensor":
-        if not cls._registered:
-            import jax
-
-            def flatten(t: JAXTensor) -> Tuple[Any, None]:
-                return ((t.raw,), None)
-
-            def unflatten(aux_data: None, children: Tuple) -> JAXTensor:
-                return cls(*children)
-
-            jax.tree_util.register_pytree_node(cls, flatten, unflatten)
-            cls._registered = True
-        return cast(JAXTensor, super().__new__(cls))
 
     def __init__(self, raw: "np.ndarray"):  # type: ignore
         global jax
@@ -434,46 +419,24 @@ class JAXTensor(BaseTensor):
     def _value_and_grad_fn(  # noqa: F811 (waiting for pyflakes > 2.1.1)
         self: TensorType, f: Callable, has_aux: bool = False
     ) -> Callable[..., Tuple]:
-        # f takes and returns JAXTensor instances
-        # jax.value_and_grad accepts functions that take JAXTensor instances
-        # because we registered JAXTensor as JAX type, but it still requires
-        # the output to be a scalar (that is not not wrapped as a JAXTensor)
+        from eagerpy.astensor import as_tensors, as_raw_tensors
 
-        # f_jax is like f but unwraps loss
-        if has_aux:
+        def value_and_grad(
+            x: JAXTensor, *args: Any, **kwargs: Any
+        ) -> Union[Tuple[JAXTensor, JAXTensor], Tuple[JAXTensor, Any, JAXTensor]]:
+            assert isinstance(x, JAXTensor)
+            x, args, kwargs = as_raw_tensors((x, args, kwargs))
 
-            def f_jax(*args: Any, **kwargs: Any) -> Tuple[Any, Any]:
-                loss, aux = f(*args, **kwargs)
-                return loss.raw, aux
+            loss_aux, grad = jax.value_and_grad(f, has_aux=has_aux)(x, *args, **kwargs)
+            assert grad.shape == x.shape
+            loss_aux, grad = as_tensors((loss_aux, grad))
 
-        else:
-
-            def f_jax(*args: Any, **kwargs: Any) -> Any:  # type: ignore
-                loss = f(*args, **kwargs)
-                return loss.raw
-
-        value_and_grad_jax = jax.value_and_grad(f_jax, has_aux=has_aux)
-
-        # value_and_grad is like value_and_grad_jax but wraps loss
-        if has_aux:
-
-            def value_and_grad(
-                x: JAXTensor, *args: Any, **kwargs: Any
-            ) -> Tuple[JAXTensor, Any, JAXTensor]:
-                assert isinstance(x, JAXTensor)
-                (loss, aux), grad = value_and_grad_jax(x, *args, **kwargs)
-                assert grad.shape == x.shape
-                return JAXTensor(loss), aux, grad
-
-        else:
-
-            def value_and_grad(  # type: ignore
-                x: JAXTensor, *args: Any, **kwargs: Any
-            ) -> Tuple[JAXTensor, JAXTensor]:
-                assert isinstance(x, JAXTensor)
-                loss, grad = value_and_grad_jax(x, *args, **kwargs)
-                assert grad.shape == x.shape
-                return JAXTensor(loss), grad
+            if has_aux:
+                loss, aux = loss_aux
+                return loss, aux, grad
+            else:
+                loss = loss_aux
+                return loss, grad
 
         return value_and_grad
 
