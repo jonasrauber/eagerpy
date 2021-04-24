@@ -48,7 +48,7 @@ def astensor(x: NativeTensor) -> Tensor:  # type: ignore
     ...
 
 
-def astensor(x: Union[NativeTensor, Tensor]) -> Tensor:  # type: ignore
+def astensor(x: Union[NativeTensor, Tensor, Any]) -> Union[Tensor, Any]:  # type: ignore
     if isinstance(x, Tensor):
         return x
     # we use the module name instead of isinstance
@@ -64,7 +64,8 @@ def astensor(x: Union[NativeTensor, Tensor]) -> Tensor:  # type: ignore
         return JAXTensor(x)
     if name == "numpy" and isinstance(x, m[name].ndarray):  # type: ignore
         return NumPyTensor(x)
-    raise ValueError(f"Unknown type: {type(x)}")
+    return x
+    # raise ValueError(f"Unknown type: {type(x)}")
 
 
 def astensors(*xs: Union[NativeTensor, Tensor]) -> Tuple[Tensor, ...]:  # type: ignore
