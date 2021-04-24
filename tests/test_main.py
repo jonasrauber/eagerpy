@@ -1661,3 +1661,22 @@ def test_eager_function_on_method(t: Tensor, astensor: bool) -> Tensor:
     result = MyClass().my_universal_method(a, b, c)
     assert isinstance(result, type(a))
     return ep.astensor(result)
+
+
+@eager_function
+def my_universal_function_with_non_tensors(a: int, b: Tensor, c: Tensor) -> Tensor:
+    return (a + b * c).square()
+
+
+@pytest.mark.parametrize("astensor", [False, True])
+@compare_all
+def test_eager_function_with_non_tensors(t: Tensor, astensor: bool) -> Tensor:
+    if astensor:
+        b = t
+    else:
+        b = t.raw
+    a = 3
+    c = b
+    result = my_universal_function_with_non_tensors(a, b, c)
+    assert isinstance(result, type(b))
+    return ep.astensor(result)

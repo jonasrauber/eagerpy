@@ -64,34 +64,16 @@ def astensor(x: Union[NativeTensor, Tensor, Any]) -> Union[Tensor, Any]:  # type
         return JAXTensor(x)
     if name == "numpy" and isinstance(x, m[name].ndarray):  # type: ignore
         return NumPyTensor(x)
+
+    # non Tensor types are returned unmodified
     return x
-    # raise ValueError(f"Unknown type: {type(x)}")
 
 
 def astensors(*xs: Union[NativeTensor, Tensor]) -> Tuple[Tensor, ...]:  # type: ignore
     return tuple(astensor(x) for x in xs)
 
 
-def as_tensors(data: Any) -> Any:
-    leaf_values, tree_def = tree_flatten(data)
-    leaf_values = tuple(astensor(value) for value in leaf_values)
-    return tree_unflatten(tree_def, leaf_values)
-
-
 T = TypeVar("T")
-
-
-def as_raw_tensor(x: T) -> Any:
-    if isinstance(x, Tensor):
-        return x.raw
-    else:
-        return x
-
-
-def as_raw_tensors(data: Any) -> Any:
-    leaf_values, tree_def = tree_flatten(data)
-    leaf_values = tuple(as_raw_tensor(value) for value in leaf_values)
-    return tree_unflatten(tree_def, leaf_values)
 
 
 class RestoreTypeFunc(Generic[T]):
@@ -130,10 +112,65 @@ def astensors_(x: T, *xs: T) -> Tuple[Tuple[Tensor, ...], RestoreTypeFunc[T]]:
     return astensors(x, *xs), RestoreTypeFunc[T](x)
 
 
-def as_tensors_(data: Any) -> Any:
+def as_tensors(data: Any) -> Any:
     leaf_values, tree_def = tree_flatten(data)
-    leaf_values, restore_type = astensors_(*leaf_values)
-    return tree_unflatten(tree_def, leaf_values), restore_type
+    leaf_values = tuple(astensor(value) for value in leaf_values)
+    return tree_unflatten(tree_def, leaf_values)
+
+
+def has_tensor(tree_def: Any) -> bool:
+    return "<class 'eagerpy.tensor" in str(tree_def)
+
+
+def as_tensors_any(data: Any) -> Tuple[Any, bool]:
+    """Convert data structure leaves in Tensor and detect if any of the input data contains a Tensor.
+
+    Parameters
+    ----------
+    data
+        data structure.
+
+    Returns
+    -------
+    Any
+        modified data structure.
+    bool
+        True if input data contains a Tensor type.
+    """
+    leaf_values, tree_def = tree_flatten(data)
+    transformed_leaf_values = tuple(astensor(value) for value in leaf_values)
+    return tree_unflatten(tree_def, transformed_leaf_values), has_tensor(tree_def)
+
+
+def as_raw_tensor(x: T) -> Any:
+    if isinstance(x, Tensor):
+        return x.raw
+    else:
+        return x
+
+
+def as_raw_tensors(data: Any) -> Any:
+    leaf_values, tree_def = tree_flatten(data)
+
+    if not has_tensor(tree_def):
+        return data
+
+    leaf_values = tuple(as_raw_tensor(value) for value in leaf_values)
+    unwrap_leaf_values = []
+    for x in leaf_values:
+        name = _get_module_name(x)
+        m = sys.modules
+        if name == "torch" and isinstance(x, m[name].Tensor):  # type: ignore
+            unwrap_leaf_values.append((x, True))
+        elif name == "tensorflow" and isinstance(x, m[name].Tensor):  # type: ignore
+            unwrap_leaf_values.append((x, True))
+        elif (name == "jax" or name == "jaxlib") and isinstance(x, m["jax"].numpy.ndarray):  # type: ignore
+            unwrap_leaf_values.append((x, True))
+        elif name == "numpy" and isinstance(x, m[name].ndarray):  # type: ignore
+            unwrap_leaf_values.append((x, True))
+        else:
+            unwrap_leaf_values.append(x)
+    return tree_unflatten(tree_def, unwrap_leaf_values)
 
 
 def eager_function(
@@ -145,14 +182,15 @@ def eager_function(
         skip_args = [arg for i, arg in enumerate(args) if i in sorted_skip_argnums]
         kept_args = [arg for i, arg in enumerate(args) if i not in sorted_skip_argnums]
 
-        (kept_args, kwargs), restore_type = as_tensors_((kept_args, kwargs))
+        (kept_args, kwargs), has_tensor = as_tensors_any((kept_args, kwargs))
+        unwrap = not has_tensor
 
         for i, arg in zip(sorted_skip_argnums, skip_args):
             kept_args.insert(i, arg)
 
         result = func(*kept_args, **kwargs)
 
-        if restore_type.unwrap:
+        if unwrap:
             raw_result = as_raw_tensors(result)
             return raw_result
         else:

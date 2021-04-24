@@ -58,7 +58,6 @@ def getitem_preprocess(x: Any) -> Any:
 
 class JAXTensor(BaseTensor):
     __slots__ = ()
-
     # more specific types for the extensions
     norms: "NormsMethods[JAXTensor]"
 
