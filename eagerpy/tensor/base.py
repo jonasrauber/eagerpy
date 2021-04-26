@@ -1,5 +1,5 @@
 from typing_extensions import final
-from typing import Any
+from typing import Any, cast
 
 from .tensor import Tensor
 from .tensor import TensorType
