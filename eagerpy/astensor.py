@@ -173,23 +173,12 @@ def as_raw_tensors(data: Any) -> Any:
     return tree_unflatten(tree_def, unwrap_leaf_values)
 
 
-def eager_function(
-    func: Callable[..., T], skip_argnums: Tuple = tuple()
-) -> Callable[..., T]:
+def eager_function(func: Callable[..., T]) -> Callable[..., T]:
     @functools.wraps(func)
     def eager_func(*args: Any, **kwargs: Any) -> Any:
-        sorted_skip_argnums = sorted(skip_argnums)
-        skip_args = [arg for i, arg in enumerate(args) if i in sorted_skip_argnums]
-        kept_args = [arg for i, arg in enumerate(args) if i not in sorted_skip_argnums]
-
-        (kept_args, kwargs), has_tensor = as_tensors_any((kept_args, kwargs))
+        (args, kwargs), has_tensor = as_tensors_any((args, kwargs))
         unwrap = not has_tensor
-
-        for i, arg in zip(sorted_skip_argnums, skip_args):
-            kept_args.insert(i, arg)
-
-        result = func(*kept_args, **kwargs)
-
+        result = func(*args, **kwargs)
         if unwrap:
             raw_result = as_raw_tensors(result)
             return raw_result

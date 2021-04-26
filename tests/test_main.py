@@ -1643,7 +1643,7 @@ def test_eager_function_return_non_registered_datastruct(
 
 # define a non-registered pytree container.
 class MyClass:
-    @functools.partial(eager_function, skip_argnums=(0,))
+    @eager_function
     def my_universal_method(self, a: Tensor, b: Tensor, c: Tensor) -> Any:
         res = (a + b * c).square()
         return res
