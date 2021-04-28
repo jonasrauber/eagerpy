@@ -51,7 +51,7 @@ class BaseTensor(Tensor):
 
     @final
     def __len__(self: TensorType) -> int:
-        return len(self.raw)
+        return cast(int, self.raw.shape[0])
 
     @final
     def __abs__(self: TensorType) -> TensorType:
@@ -112,4 +112,4 @@ class BaseTensor(Tensor):
     @final
     @property
     def ndim(self: TensorType) -> int:
-        return cast(int, self.raw.ndim)
+        return len(self.raw.shape)
