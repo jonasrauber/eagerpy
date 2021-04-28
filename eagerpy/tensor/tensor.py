@@ -213,10 +213,6 @@ class Tensor(metaclass=ABCMeta):
     def where(self: TensorType, x: TensorOrScalar, y: TensorOrScalar) -> TensorType:
         ...
 
-    @abstractmethod
-    def matmul(self: TensorType, other: TensorType) -> TensorType:
-        ...
-
     @property
     @abstractmethod
     def ndim(self: TensorType) -> int:
@@ -571,6 +567,16 @@ class Tensor(metaclass=ABCMeta):
         end = end % self.ndim
         shape = self.shape[:start] + (-1,) + self.shape[end + 1 :]
         return self.reshape(shape)
+
+    def __matmul__(self: TensorType, other: TensorType) -> TensorType:
+        if self.ndim != 2 or other.ndim != 2:
+            raise ValueError(
+                f"matmul requires both tensors to be 2D, got {self.ndim}D and {other.ndim}D"
+            )
+        return type(self)(self.raw.__matmul__(other.raw))
+
+    def matmul(self: TensorType, other: TensorType) -> TensorType:
+        return self.__matmul__(other)
 
     # #########################################################################
     # extensions

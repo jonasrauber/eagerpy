@@ -1264,6 +1264,12 @@ def test_matmul(dummy: Tensor) -> Tensor:
     return ep.matmul(t, t.T)
 
 
+@compare_all
+def test_matmul_operator(dummy: Tensor) -> Tensor:
+    t = ep.arange(dummy, 8).float32().reshape((2, 4))
+    return t @ t.T
+
+
 @compare_allclose(rtol=1e-6)
 def test_softmax(t: Tensor) -> Tensor:
     return ep.softmax(t)
