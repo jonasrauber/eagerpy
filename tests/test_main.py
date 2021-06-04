@@ -1249,6 +1249,18 @@ def test_where_second_scalar(t: Tensor) -> Tensor:
 
 
 @compare_all
+def test_where_first_scalar64(dummy: Tensor) -> Tensor:
+    t = ep.arange(dummy, 60).float64().reshape((3, 4, 5))
+    return ep.where(t >= 3, 2, -t)
+
+
+@compare_all
+def test_where_second_scalar64(dummy: Tensor) -> Tensor:
+    t = ep.arange(dummy, 60).float64().reshape((3, 4, 5))
+    return ep.where(t >= 3, t, 2)
+
+
+@compare_all
 def test_where_both_scalars(t: Tensor) -> Tensor:
     return ep.where(t >= 3, 2, 5)
 

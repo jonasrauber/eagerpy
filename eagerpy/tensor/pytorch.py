@@ -535,11 +535,19 @@ class PyTorchTensor(BaseTensor):
     def float32(self: TensorType) -> TensorType:
         return self.astype(torch.float32)
 
+    def float64(self: TensorType) -> TensorType:
+        return self.astype(torch.float64)
+
     def where(self: TensorType, x: TensorOrScalar, y: TensorOrScalar) -> TensorType:
+
         if isinstance(x, Tensor):
             x_ = x.raw
         elif isinstance(x, int) or isinstance(x, float):
-            x_ = torch.full_like(self.raw, x, dtype=torch.float32)
+            if isinstance(y, Tensor):
+                dtype = y.raw.dtype
+            else:
+                dtype = torch.float32
+            x_ = torch.full_like(self.raw, x, dtype=dtype)
         else:
             raise TypeError(
                 "expected x to be a Tensor, int or float"
@@ -547,7 +555,11 @@ class PyTorchTensor(BaseTensor):
         if isinstance(y, Tensor):
             y_ = y.raw
         elif isinstance(y, int) or isinstance(y, float):
-            y_ = torch.full_like(self.raw, y, dtype=torch.float32)
+            if isinstance(x, Tensor):
+                dtype = x.raw.dtype
+            else:
+                dtype = torch.float32
+            y_ = torch.full_like(self.raw, y, dtype=dtype)
         return type(self)(torch.where(self.raw, x_, y_))
 
     def __lt__(self: TensorType, other: TensorOrScalar) -> TensorType:

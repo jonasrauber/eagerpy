@@ -501,6 +501,9 @@ class TensorFlowTensor(BaseTensor):
     def float32(self: TensorType) -> TensorType:
         return self.astype(tf.float32)
 
+    def float64(self: TensorType) -> TensorType:
+        return self.astype(tf.float64)
+
     def where(self: TensorType, x: TensorOrScalar, y: TensorOrScalar) -> TensorType:
         x, y = unwrap_(x, y)
         return type(self)(tf.where(self.raw, x, y))

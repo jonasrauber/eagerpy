@@ -489,6 +489,9 @@ class JAXTensor(BaseTensor):
     def float32(self: TensorType) -> TensorType:
         return self.astype(np.float32)
 
+    def float64(self: TensorType) -> TensorType:
+        return self.astype(np.float32)
+
     def where(self: TensorType, x: TensorOrScalar, y: TensorOrScalar) -> TensorType:
         x, y = unwrap_(x, y)
         return type(self)(np.where(self.raw, x, y))

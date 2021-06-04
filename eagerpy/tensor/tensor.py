@@ -210,6 +210,10 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
+    def float64(self: TensorType) -> TensorType:
+        ...
+
+    @abstractmethod
     def where(self: TensorType, x: TensorOrScalar, y: TensorOrScalar) -> TensorType:
         ...
 
