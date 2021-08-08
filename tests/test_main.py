@@ -4,7 +4,7 @@ import functools
 import itertools
 import numpy as np
 import eagerpy as ep
-from eagerpy import Tensor
+from eagerpy import Tensor, eager_function
 from eagerpy.types import Shape, AxisAxes
 
 # make sure there are no undecorated tests in the "special tests" section below
@@ -147,6 +147,7 @@ def test_value_and_grad_fn(dummy: Tensor) -> None:
     if isinstance(dummy, ep.NumPyTensor):
         pytest.skip()
 
+    @eager_function
     def f(x: ep.Tensor) -> ep.Tensor:
         return x.square().sum()
 
@@ -161,6 +162,7 @@ def test_value_and_grad_fn_with_aux(dummy: Tensor) -> None:
     if isinstance(dummy, ep.NumPyTensor):
         pytest.skip()
 
+    @eager_function
     def f(x: Tensor) -> Tuple[Tensor, Tensor]:
         x = x.square()
         return x.sum(), x
@@ -177,6 +179,7 @@ def test_value_and_grad(dummy: Tensor) -> None:
     if isinstance(dummy, ep.NumPyTensor):
         pytest.skip()
 
+    @eager_function
     def f(x: Tensor) -> Tensor:
         return x.square().sum()
 
@@ -190,6 +193,7 @@ def test_value_aux_and_grad(dummy: Tensor) -> None:
     if isinstance(dummy, ep.NumPyTensor):
         pytest.skip()
 
+    @eager_function
     def f(x: Tensor) -> Tuple[Tensor, Tensor]:
         x = x.square()
         return x.sum(), x
@@ -205,6 +209,7 @@ def test_value_aux_and_grad_multiple_aux(dummy: Tensor) -> None:
     if isinstance(dummy, ep.NumPyTensor):
         pytest.skip()
 
+    @eager_function
     def f(x: Tensor) -> Tuple[Tensor, Tuple[Tensor, Tensor]]:
         x = x.square()
         return x.sum(), (x, x + 1)
@@ -221,6 +226,7 @@ def test_value_and_grad_multiple_args(dummy: Tensor) -> None:
     if isinstance(dummy, ep.NumPyTensor):
         pytest.skip()
 
+    @eager_function
     def f(x: Tensor, y: Tensor) -> Tensor:
         return (x * y).sum()
 
@@ -1599,3 +1605,96 @@ def test_norms_lp(t: Tensor) -> Tensor:
 @compare_all
 def test_norms_cache(t: Tensor) -> Tensor:
     return t.norms.l1() + t.norms.l2()
+
+
+@eager_function
+def my_universal_function(a: Tensor, b: Tensor, c: Tensor) -> Tensor:
+    return (a + b * c).square()
+
+
+@pytest.mark.parametrize("astensor", [False, True])
+@compare_all
+def test_eager_function(t: Tensor, astensor: bool) -> Tensor:
+    if astensor:
+        a = t
+    else:
+        a = t.raw
+    b = a
+    c = a
+    result = my_universal_function(a, b, c)
+    assert isinstance(result, type(a))
+    return ep.astensor(result)
+
+
+# define a non-registered pytree container.
+class NonRegisteredDataStruct:
+    def __init__(self, res: Any) -> None:
+        self.res = res
+
+
+@eager_function
+def my_universal_function_return_non_registered_datastruct(
+    a: Tensor, b: Tensor, c: Tensor
+) -> Any:
+    res = (a + b * c).square()
+    return NonRegisteredDataStruct(res)
+
+
+@pytest.mark.parametrize("astensor", [False, True])
+@compare_all
+def test_eager_function_return_non_registered_datastruct(
+    t: Tensor, astensor: bool
+) -> Tensor:
+    if astensor:
+        a = t
+    else:
+        a = t.raw
+    b = a
+    c = a
+    result = my_universal_function_return_non_registered_datastruct(a, b, c)
+
+    # result has not been converted because NonRegisteredSpecial
+    # is not a registered pytree container
+    assert isinstance(result.res, type(t))
+    return ep.astensor(result.res)
+
+
+# define a non-registered pytree container.
+class MyClass:
+    @eager_function
+    def my_universal_method(self, a: Tensor, b: Tensor, c: Tensor) -> Any:
+        res = (a + b * c).square()
+        return res
+
+
+@pytest.mark.parametrize("astensor", [False, True])
+@compare_all
+def test_eager_function_on_method(t: Tensor, astensor: bool) -> Tensor:
+    if astensor:
+        a = t
+    else:
+        a = t.raw
+    b = a
+    c = a
+    result = MyClass().my_universal_method(a, b, c)
+    assert isinstance(result, type(a))
+    return ep.astensor(result)
+
+
+@eager_function
+def my_universal_function_with_non_tensors(a: int, b: Tensor, c: Tensor) -> Tensor:
+    return (a + b * c).square()
+
+
+@pytest.mark.parametrize("astensor", [False, True])
+@compare_all
+def test_eager_function_with_non_tensors(t: Tensor, astensor: bool) -> Tensor:
+    if astensor:
+        b = t
+    else:
+        b = t.raw
+    a = 3
+    c = b
+    result = my_universal_function_with_non_tensors(a, b, c)
+    assert isinstance(result, type(b))
+    return ep.astensor(result)

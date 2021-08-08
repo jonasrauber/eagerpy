@@ -6,7 +6,6 @@ from .. import norms
 
 from .tensor import Tensor
 
-
 T = TypeVar("T")
 
 

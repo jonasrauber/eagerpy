@@ -1,5 +1,5 @@
 from typing_extensions import final
-from typing import Any, cast
+from typing import Any, Type, Union, cast, Tuple
 
 from .tensor import Tensor
 from .tensor import TensorType
@@ -16,6 +16,33 @@ def unwrap1(t: Any) -> Any:
 
 class BaseTensor(Tensor):
     __slots__ = "_raw"
+
+    _registered = False
+
+    def __new__(cls: Type["BaseTensor"], *args: Any, **kwargs: Any) -> "BaseTensor":
+        if not cls._registered:
+            import jax
+
+            def flatten(t: Tensor) -> Tuple[Any, None]:
+                return ((t.raw,), None)
+
+            def unflatten(aux_data: None, children: Tuple) -> Union[Tensor, Any]:
+                assert len(children) == 1
+                x = children[0]
+                del children
+
+                if isinstance(x, tuple):
+                    x, unwrap = x
+                    if unwrap:
+                        return x
+
+                if isinstance(x, Tensor):
+                    return x
+                return cls(x)
+
+            jax.tree_util.register_pytree_node(cls, flatten, unflatten)
+            cls._registered = True
+        return cast("BaseTensor", super().__new__(cls))
 
     def __init__(self: TensorType, raw: Any):
         assert not isinstance(raw, Tensor)

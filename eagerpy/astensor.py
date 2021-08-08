@@ -1,5 +1,17 @@
-from typing import TYPE_CHECKING, Union, overload, Tuple, TypeVar, Generic, Any
+import functools
+from typing import (
+    TYPE_CHECKING,
+    Union,
+    overload,
+    Tuple,
+    TypeVar,
+    Generic,
+    Any,
+    Callable,
+)
 import sys
+
+from jax import tree_flatten, tree_unflatten
 
 from .tensor import Tensor
 from .tensor import TensorType
@@ -36,7 +48,7 @@ def astensor(x: NativeTensor) -> Tensor:  # type: ignore
     ...
 
 
-def astensor(x: Union[NativeTensor, Tensor]) -> Tensor:  # type: ignore
+def astensor(x: Union[NativeTensor, Tensor, Any]) -> Union[Tensor, Any]:  # type: ignore
     if isinstance(x, Tensor):
         return x
     # we use the module name instead of isinstance
@@ -52,7 +64,9 @@ def astensor(x: Union[NativeTensor, Tensor]) -> Tensor:  # type: ignore
         return JAXTensor(x)
     if name == "numpy" and isinstance(x, m[name].ndarray):  # type: ignore
         return NumPyTensor(x)
-    raise ValueError(f"Unknown type: {type(x)}")
+
+    # non Tensor types are returned unmodified
+    return x
 
 
 def astensors(*xs: Union[NativeTensor, Tensor]) -> Tuple[Tensor, ...]:  # type: ignore
@@ -84,7 +98,7 @@ class RestoreTypeFunc(Generic[T]):
         ...
 
     def __call__(self, *args):  # type: ignore  # noqa: F811
-        result = tuple(x.raw for x in args) if self.unwrap else args
+        result = tuple(as_raw_tensor(x) for x in args) if self.unwrap else args
         if len(result) == 1:
             (result,) = result
         return result
@@ -96,3 +110,79 @@ def astensor_(x: T) -> Tuple[Tensor, RestoreTypeFunc[T]]:
 
 def astensors_(x: T, *xs: T) -> Tuple[Tuple[Tensor, ...], RestoreTypeFunc[T]]:
     return astensors(x, *xs), RestoreTypeFunc[T](x)
+
+
+def as_tensors(data: Any) -> Any:
+    leaf_values, tree_def = tree_flatten(data)
+    leaf_values = tuple(astensor(value) for value in leaf_values)
+    return tree_unflatten(tree_def, leaf_values)
+
+
+def has_tensor(tree_def: Any) -> bool:
+    return "<class 'eagerpy.tensor" in str(tree_def)
+
+
+def as_tensors_any(data: Any) -> Tuple[Any, bool]:
+    """Convert data structure leaves in Tensor and detect if any of the input data contains a Tensor.
+
+    Parameters
+    ----------
+    data
+        data structure.
+
+    Returns
+    -------
+    Any
+        modified data structure.
+    bool
+        True if input data contains a Tensor type.
+    """
+    leaf_values, tree_def = tree_flatten(data)
+    transformed_leaf_values = tuple(astensor(value) for value in leaf_values)
+    return tree_unflatten(tree_def, transformed_leaf_values), has_tensor(tree_def)
+
+
+def as_raw_tensor(x: T) -> Any:
+    if isinstance(x, Tensor):
+        return x.raw
+    else:
+        return x
+
+
+def as_raw_tensors(data: Any) -> Any:
+    leaf_values, tree_def = tree_flatten(data)
+
+    if not has_tensor(tree_def):
+        return data
+
+    leaf_values = tuple(as_raw_tensor(value) for value in leaf_values)
+    unwrap_leaf_values = []
+    for x in leaf_values:
+        name = _get_module_name(x)
+        m = sys.modules
+        if name == "torch" and isinstance(x, m[name].Tensor):  # type: ignore
+            unwrap_leaf_values.append((x, True))
+        elif name == "tensorflow" and isinstance(x, m[name].Tensor):  # type: ignore
+            unwrap_leaf_values.append((x, True))
+        elif (name == "jax" or name == "jaxlib") and isinstance(x, m["jax"].numpy.ndarray):  # type: ignore
+            unwrap_leaf_values.append((x, True))
+        elif name == "numpy" and isinstance(x, m[name].ndarray):  # type: ignore
+            unwrap_leaf_values.append((x, True))
+        else:
+            unwrap_leaf_values.append(x)
+    return tree_unflatten(tree_def, unwrap_leaf_values)
+
+
+def eager_function(func: Callable[..., T]) -> Callable[..., T]:
+    @functools.wraps(func)
+    def eager_func(*args: Any, **kwargs: Any) -> Any:
+        (args, kwargs), has_tensor = as_tensors_any((args, kwargs))
+        unwrap = not has_tensor
+        result = func(*args, **kwargs)
+        if unwrap:
+            raw_result = as_raw_tensors(result)
+            return raw_result
+        else:
+            return result
+
+    return eager_func
