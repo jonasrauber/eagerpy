@@ -44,32 +44,36 @@ def arctanh(t: TensorType) -> TensorType:
     return t.arctanh()
 
 
+def unique(t: TensorType) -> TensorType:
+    return t.unique()
+
+
 def sum(
-    t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+        t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
     return t.sum(axis=axis, keepdims=keepdims)
 
 
 def prod(
-    t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+        t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
     return t.prod(axis=axis, keepdims=keepdims)
 
 
 def mean(
-    t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+        t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
     return t.mean(axis=axis, keepdims=keepdims)
 
 
 def min(
-    t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+        t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
     return t.min(axis=axis, keepdims=keepdims)
 
 
 def max(
-    t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+        t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
     return t.max(axis=axis, keepdims=keepdims)
 
@@ -127,13 +131,13 @@ def topk(t: TensorType, k: int, sorted: bool = True) -> Tuple[TensorType, Tensor
 
 
 def uniform(
-    t: TensorType, shape: ShapeOrScalar, low: float = 0.0, high: float = 1.0
+        t: TensorType, shape: ShapeOrScalar, low: float = 0.0, high: float = 1.0
 ) -> TensorType:
     return t.uniform(shape, low=low, high=high)
 
 
 def normal(
-    t: TensorType, shape: ShapeOrScalar, mean: float = 0.0, stddev: float = 1.0
+        t: TensorType, shape: ShapeOrScalar, mean: float = 0.0, stddev: float = 1.0
 ) -> TensorType:
     return t.normal(shape, mean=mean, stddev=stddev)
 
@@ -273,7 +277,7 @@ def index_update(t: TensorType, indices: Any, values: TensorOrScalar) -> TensorT
 
 
 def arange(
-    t: TensorType, start: int, stop: Optional[int] = None, step: Optional[int] = None
+        t: TensorType, start: int, stop: Optional[int] = None, step: Optional[int] = None
 ) -> TensorType:
     return t.arange(start, stop, step)
 
@@ -287,16 +291,16 @@ def flip(t: TensorType, axis: Optional[AxisAxes] = None) -> TensorType:
 
 
 def meshgrid(
-    t: TensorType, *tensors: TensorType, indexing: str = "xy"
+        t: TensorType, *tensors: TensorType, indexing: str = "xy"
 ) -> Tuple[TensorType, ...]:
     return t.meshgrid(*tensors, indexing=indexing)
 
 
 def pad(
-    t: TensorType,
-    paddings: Tuple[Tuple[int, int], ...],
-    mode: str = "constant",
-    value: float = 0,
+        t: TensorType,
+        paddings: Tuple[Tuple[int, int], ...],
+        mode: str = "constant",
+        value: float = 0,
 ) -> TensorType:
     return t.pad(paddings, mode=mode, value=value)
 
@@ -310,13 +314,13 @@ def isinf(t: TensorType) -> TensorType:
 
 
 def all(
-    t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+        t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
     return t.all(axis=axis, keepdims=keepdims)
 
 
 def any(
-    t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
+        t: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
 ) -> TensorType:
     return t.any(axis=axis, keepdims=keepdims)
 
@@ -331,21 +335,21 @@ def slogdet(matrix: TensorType) -> Tuple[TensorType, TensorType]:
 
 @overload
 def value_and_grad_fn(
-    t: TensorType, f: Callable[..., TensorType]
+        t: TensorType, f: Callable[..., TensorType]
 ) -> Callable[..., Tuple[TensorType, TensorType]]:
     ...
 
 
 @overload
 def value_and_grad_fn(
-    t: TensorType, f: Callable[..., TensorType], has_aux: Literal[False]
+        t: TensorType, f: Callable[..., TensorType], has_aux: Literal[False]
 ) -> Callable[..., Tuple[TensorType, TensorType]]:
     ...
 
 
 @overload
 def value_and_grad_fn(
-    t: TensorType, f: Callable[..., Tuple[TensorType, Any]], has_aux: Literal[True]
+        t: TensorType, f: Callable[..., Tuple[TensorType, Any]], has_aux: Literal[True]
 ) -> Callable[..., Tuple[TensorType, Any, TensorType]]:
     ...
 
@@ -355,13 +359,13 @@ def value_and_grad_fn(t: Any, f: Any, has_aux: bool = False) -> Any:
 
 
 def value_and_grad(
-    f: Callable[..., TensorType], t: TensorType, *args: Any, **kwargs: Any
+        f: Callable[..., TensorType], t: TensorType, *args: Any, **kwargs: Any
 ) -> Tuple[TensorType, TensorType]:
     return t.value_and_grad(f, *args, **kwargs)
 
 
 def value_aux_and_grad(
-    f: Callable[..., Tuple[TensorType, Any]], t: TensorType, *args: Any, **kwargs: Any
+        f: Callable[..., Tuple[TensorType, Any]], t: TensorType, *args: Any, **kwargs: Any
 ) -> Tuple[TensorType, Any, TensorType]:
     return t.value_aux_and_grad(f, *args, **kwargs)
 

@@ -30,6 +30,7 @@ generate:
         - eagerpy.Tensor.clip
         - eagerpy.Tensor.square
         - eagerpy.Tensor.arctanh
+        - eagerpy.Tensor.unique
         - eagerpy.Tensor.sum
         - eagerpy.Tensor.prod
         - eagerpy.Tensor.mean

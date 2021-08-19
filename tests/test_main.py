@@ -1011,6 +1011,9 @@ def test_tanh(t: Tensor) -> Tensor:
 def test_arctanh(t: Tensor) -> Tensor:
     return ep.arctanh((t - t.mean()) / t.max())
 
+@compare_allclose
+def test_unique(t: Tensor) -> Tensor:
+    return ep.unique(t)
 
 @compare_all
 def test_abs_op(t: Tensor) -> Tensor:

@@ -256,6 +256,10 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
+    def unique(self: TensorType) -> TensorType:
+        ...
+
+    @abstractmethod
     def sum(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:

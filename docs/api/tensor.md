@@ -97,6 +97,11 @@ Tensor.square(self:~TensorType) -> ~TensorType
 Tensor.arctanh(self:~TensorType) -> ~TensorType
 ```
 
+## unique
+```python
+Tensor.unique(self:~TensorType) -> ~TensorType
+```
+
 ## sum
 ```python
 Tensor.sum(self:~TensorType, axis:Union[int, Tuple[int, ...], NoneType]=None, keepdims:bool=False) -> ~TensorType

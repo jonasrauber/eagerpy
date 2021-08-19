@@ -78,6 +78,9 @@ class NumPyTensor(BaseTensor):
     def arctanh(self: TensorType) -> TensorType:
         return type(self)(np.arctanh(self.raw))
 
+    def unique(self: TensorType) -> TensorType:
+        return type(self)(np.unique(self.raw))
+
     def sum(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:

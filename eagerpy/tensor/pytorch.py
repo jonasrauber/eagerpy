@@ -97,6 +97,9 @@ class PyTorchTensor(BaseTensor):
         """
         return type(self)(0.5 * (torch.log1p(self.raw) - torch.log1p(-self.raw)))
 
+    def unique(self: TensorType) -> TensorType:
+        return type(self)(self.raw.unqiue())
+
     def sum(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:

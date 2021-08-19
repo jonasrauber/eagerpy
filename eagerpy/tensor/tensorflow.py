@@ -125,6 +125,10 @@ class TensorFlowTensor(BaseTensor):
     def arctanh(self: TensorType) -> TensorType:
         return type(self)(tf.atanh(self.raw))
 
+    def unique(self: TensorType) -> TensorType:
+        a, _ = tf.unique(self.raw)
+        return type(self)(a)
+
     def sum(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:
