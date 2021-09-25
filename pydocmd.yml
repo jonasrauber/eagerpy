@@ -16,7 +16,6 @@ generate:
     - eagerpy.Tensor:
         - eagerpy.Tensor.sign
         - eagerpy.Tensor.sqrt
-        - eagerpy.Tensor.tanh
         - eagerpy.Tensor.float32
         - eagerpy.Tensor.where
         - eagerpy.Tensor.matmul
@@ -29,6 +28,17 @@ generate:
         - eagerpy.Tensor.astype
         - eagerpy.Tensor.clip
         - eagerpy.Tensor.square
+        - eagerpy.Tensor.sin
+        - eagerpy.Tensor.cos
+        - eagerpy.Tensor.tan
+        - eagerpy.Tensor.sinh
+        - eagerpy.Tensor.cosh
+        - eagerpy.Tensor.tanh
+        - eagerpy.Tensor.arcsin
+        - eagerpy.Tensor.arccos
+        - eagerpy.Tensor.arctan
+        - eagerpy.Tensor.arcsinh
+        - eagerpy.Tensor.arccosh
         - eagerpy.Tensor.arctanh
         - eagerpy.Tensor.sum
         - eagerpy.Tensor.prod

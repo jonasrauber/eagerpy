@@ -122,9 +122,6 @@ class TensorFlowTensor(BaseTensor):
     def square(self: TensorType) -> TensorType:
         return type(self)(tf.square(self.raw))
 
-    def arctanh(self: TensorType) -> TensorType:
-        return type(self)(tf.atanh(self.raw))
-
     def sum(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:
@@ -495,8 +492,41 @@ class TensorFlowTensor(BaseTensor):
     def sqrt(self: TensorType) -> TensorType:
         return type(self)(tf.sqrt(self.raw))
 
+    def sin(self: TensorType) -> TensorType:
+        return type(self)(tf.sin(self.raw))
+
+    def cos(self: TensorType) -> TensorType:
+        return type(self)(tf.cos(self.raw))
+
+    def tan(self: TensorType) -> TensorType:
+        return type(self)(tf.tan(self.raw))
+
+    def sinh(self: TensorType) -> TensorType:
+        return type(self)(tf.sinh(self.raw))
+
+    def cosh(self: TensorType) -> TensorType:
+        return type(self)(tf.cosh(self.raw))
+
     def tanh(self: TensorType) -> TensorType:
         return type(self)(tf.tanh(self.raw))
+
+    def arcsin(self: TensorType) -> TensorType:
+        return type(self)(tf.asin(self.raw))
+
+    def arccos(self: TensorType) -> TensorType:
+        return type(self)(tf.acos(self.raw))
+
+    def arctan(self: TensorType) -> TensorType:
+        return type(self)(tf.atan(self.raw))
+
+    def arcsinh(self: TensorType) -> TensorType:
+        return type(self)(tf.asinh(self.raw))
+
+    def arccosh(self: TensorType) -> TensorType:
+        return type(self)(tf.acosh(self.raw))
+
+    def arctanh(self: TensorType) -> TensorType:
+        return type(self)(tf.atanh(self.raw))
 
     def float32(self: TensorType) -> TensorType:
         return self.astype(tf.float32)

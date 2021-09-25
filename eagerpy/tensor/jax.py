@@ -124,9 +124,6 @@ class JAXTensor(BaseTensor):
     def square(self: TensorType) -> TensorType:
         return type(self)(np.square(self.raw))
 
-    def arctanh(self: TensorType) -> TensorType:
-        return type(self)(np.arctanh(self.raw))
-
     def sum(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
     ) -> TensorType:
@@ -483,8 +480,41 @@ class JAXTensor(BaseTensor):
     def sqrt(self: TensorType) -> TensorType:
         return type(self)(np.sqrt(self.raw))
 
+    def sin(self: TensorType) -> TensorType:
+        return type(self)(np.sin(self.raw))
+
+    def cos(self: TensorType) -> TensorType:
+        return type(self)(np.cos(self.raw))
+
+    def tan(self: TensorType) -> TensorType:
+        return type(self)(np.tan(self.raw))
+
+    def sinh(self: TensorType) -> TensorType:
+        return type(self)(np.sinh(self.raw))
+
+    def cosh(self: TensorType) -> TensorType:
+        return type(self)(np.cosh(self.raw))
+
     def tanh(self: TensorType) -> TensorType:
         return type(self)(np.tanh(self.raw))
+
+    def arcsin(self: TensorType) -> TensorType:
+        return type(self)(np.arcsin(self.raw))
+
+    def arccos(self: TensorType) -> TensorType:
+        return type(self)(np.arccos(self.raw))
+
+    def arctan(self: TensorType) -> TensorType:
+        return type(self)(np.arctan(self.raw))
+
+    def arcsinh(self: TensorType) -> TensorType:
+        return type(self)(np.arcsinh(self.raw))
+
+    def arccosh(self: TensorType) -> TensorType:
+        return type(self)(np.arccosh(self.raw))
+
+    def arctanh(self: TensorType) -> TensorType:
+        return type(self)(np.arctanh(self.raw))
 
     def float32(self: TensorType) -> TensorType:
         return self.astype(np.float32)
