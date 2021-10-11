@@ -115,24 +115,13 @@ class PyTorchTensor(BaseTensor):
         return type(self)(torch.atan(self.raw))
 
     def arcsinh(self: TensorType) -> TensorType:
-        try:
-            return type(self)(torch.asinh(self.raw))
-        except AttributeError:
-            # Pytorch < 1.6.0 lacks hyperbolic inverses
-            # (see https://github.com/pytorch/pytorch/issues/10324)
-            return type(self)(torch.log(self.raw + (self.raw ** 2 + 1) ** 0.5))
+        return type(self)(torch.asinh(self.raw))
 
     def arccosh(self: TensorType) -> TensorType:
-        try:
-            return type(self)(torch.acosh(self.raw))
-        except AttributeError:
-            return type(self)(torch.log(self.raw + (self.raw ** 2 - 1) ** 0.5))
+        return type(self)(torch.acosh(self.raw))
 
     def arctanh(self: TensorType) -> TensorType:
-        try:
-            return type(self)(torch.atanh(self.raw))
-        except AttributeError:
-            return type(self)(0.5 * (torch.log1p(self.raw) - torch.log1p(-self.raw)))
+        return type(self)(torch.atanh(self.raw))
 
     def sum(
         self: TensorType, axis: Optional[AxisAxes] = None, keepdims: bool = False
