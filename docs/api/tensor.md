@@ -33,11 +33,6 @@ Tensor.sign(self:~TensorType) -> ~TensorType
 Tensor.sqrt(self:~TensorType) -> ~TensorType
 ```
 
-## tanh
-```python
-Tensor.tanh(self:~TensorType) -> ~TensorType
-```
-
 ## float32
 ```python
 Tensor.float32(self:~TensorType) -> ~TensorType
@@ -90,6 +85,61 @@ Tensor.clip(self:~TensorType, min_:float, max_:float) -> ~TensorType
 ## square
 ```python
 Tensor.square(self:~TensorType) -> ~TensorType
+```
+
+## sin
+```python
+Tensor.sin(self:~TensorType) -> ~TensorType
+```
+
+## cos
+```python
+Tensor.cos(self:~TensorType) -> ~TensorType
+```
+
+## tan
+```python
+Tensor.tan(self:~TensorType) -> ~TensorType
+```
+
+## sinh
+```python
+Tensor.sinh(self:~TensorType) -> ~TensorType
+```
+
+## cosh
+```python
+Tensor.cosh(self:~TensorType) -> ~TensorType
+```
+
+## tanh
+```python
+Tensor.tanh(self:~TensorType) -> ~TensorType
+```
+
+## arcsin
+```python
+Tensor.arcsin(self:~TensorType) -> ~TensorType
+```
+
+## arccos
+```python
+Tensor.arccos(self:~TensorType) -> ~TensorType
+```
+
+## arctan
+```python
+Tensor.arctan(self:~TensorType) -> ~TensorType
+```
+
+## arcsinh
+```python
+Tensor.arcsinh(self:~TensorType) -> ~TensorType
+```
+
+## arccosh
+```python
+Tensor.arccosh(self:~TensorType) -> ~TensorType
 ```
 
 ## arctanh

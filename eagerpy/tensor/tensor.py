@@ -202,7 +202,51 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
+    def sin(self: TensorType) -> TensorType:
+        ...
+
+    @abstractmethod
+    def cos(self: TensorType) -> TensorType:
+        ...
+
+    @abstractmethod
+    def tan(self: TensorType) -> TensorType:
+        ...
+
+    @abstractmethod
+    def sinh(self: TensorType) -> TensorType:
+        ...
+
+    @abstractmethod
+    def cosh(self: TensorType) -> TensorType:
+        ...
+
+    @abstractmethod
     def tanh(self: TensorType) -> TensorType:
+        ...
+
+    @abstractmethod
+    def arcsin(self: TensorType) -> TensorType:
+        ...
+
+    @abstractmethod
+    def arccos(self: TensorType) -> TensorType:
+        ...
+
+    @abstractmethod
+    def arctan(self: TensorType) -> TensorType:
+        ...
+
+    @abstractmethod
+    def arcsinh(self: TensorType) -> TensorType:
+        ...
+
+    @abstractmethod
+    def arccosh(self: TensorType) -> TensorType:
+        ...
+
+    @abstractmethod
+    def arctanh(self: TensorType) -> TensorType:
         ...
 
     @abstractmethod
@@ -249,10 +293,6 @@ class Tensor(metaclass=ABCMeta):
 
     @abstractmethod
     def square(self: TensorType) -> TensorType:
-        ...
-
-    @abstractmethod
-    def arctanh(self: TensorType) -> TensorType:
         ...
 
     @abstractmethod

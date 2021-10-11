@@ -1003,12 +1003,66 @@ def test_log1p(t: Tensor) -> Tensor:
 
 
 @compare_allclose(rtol=1e-6)
+def test_sin(t: Tensor) -> Tensor:
+    return ep.sin(t)
+
+
+@compare_allclose(rtol=1e-6)
+def test_cos(t: Tensor) -> Tensor:
+    return ep.cos(t)
+
+
+@compare_allclose(rtol=1e-6)
+def test_tan(t: Tensor) -> Tensor:
+    return ep.tan(t)
+
+
+@compare_allclose(rtol=1e-6)
+def test_sinh(t: Tensor) -> Tensor:
+    return ep.sinh(t)
+
+
+@compare_allclose(rtol=1e-6)
+def test_cosh(t: Tensor) -> Tensor:
+    return ep.cosh(t)
+
+
+@compare_allclose(rtol=1e-6)
 def test_tanh(t: Tensor) -> Tensor:
     return ep.tanh(t)
 
 
 @compare_allclose(rtol=1e-6)
+def test_arcsin(t: Tensor) -> Tensor:
+    # domain is [-1, 1]
+    return ep.arcsin((t - t.mean()) / t.max())
+
+
+@compare_allclose(rtol=1e-6)
+def test_arccos(t: Tensor) -> Tensor:
+    # domain is [-1, 1]
+    return ep.arccos((t - t.mean()) / t.max())
+
+
+@compare_allclose(rtol=1e-6)
+def test_arctan(t: Tensor) -> Tensor:
+    return ep.arctan(t)
+
+
+@compare_allclose(rtol=1e-6)
+def test_arcsinh(t: Tensor) -> Tensor:
+    return ep.arcsinh(t)
+
+
+@compare_allclose(rtol=1e-6)
+def test_arccosh(t: Tensor) -> Tensor:
+    # domain is [1, inf)
+    return ep.arccosh(1 + t - t.min())
+
+
+@compare_allclose(rtol=1e-6)
 def test_arctanh(t: Tensor) -> Tensor:
+    # domain is [-1, 1]
     return ep.arctanh((t - t.mean()) / t.max())
 
 
