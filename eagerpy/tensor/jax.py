@@ -49,7 +49,9 @@ def assert_bool(x: Any) -> None:
 
 def getitem_preprocess(x: Any) -> Any:
     if isinstance(x, range):
-        return list(x)
+        x = list(x)
+    if isinstance(x, list):
+        return np.asarray(x)
     elif isinstance(x, Tensor):
         return x.raw
     else:
