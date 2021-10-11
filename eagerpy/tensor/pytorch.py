@@ -201,7 +201,7 @@ class PyTorchTensor(BaseTensor):
         return type(self)(self.raw.argsort(dim=axis))
 
     def sort(self: TensorType, axis: int = -1) -> TensorType:
-        return type(self)(self.raw.sort(dim=axis).values)  # type: ignore
+        return type(self)(self.raw.sort(dim=axis).values)
 
     def topk(
         self: TensorType, k: int, sorted: bool = True
@@ -459,7 +459,7 @@ class PyTorchTensor(BaseTensor):
         return type(self)(torch.isnan(self.raw))
 
     def isinf(self: TensorType) -> TensorType:
-        return type(self)(torch.isinf(self.raw))  # type: ignore
+        return type(self)(torch.isinf(self.raw))
 
     def crossentropy(self: TensorType, labels: TensorType) -> TensorType:
         if self.ndim != 2:
