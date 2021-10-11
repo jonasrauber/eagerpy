@@ -496,27 +496,27 @@ def test_square(t: Tensor) -> Tensor:
     return ep.square(t)
 
 
-@compare_allclose
+@compare_allclose(rtol=1e-6)
 def test_pow(t: Tensor) -> Tensor:
     return ep.pow(t, 3)
 
 
-@compare_allclose
+@compare_allclose(rtol=1e-6)
 def test_pow_float(t: Tensor) -> Tensor:
     return ep.pow(t, 2.5)
 
 
-@compare_allclose
+@compare_allclose(rtol=1e-6)
 def test_pow_op(t: Tensor) -> Tensor:
     return t ** 3
 
 
-@compare_allclose
+@compare_allclose(rtol=1e-5)
 def test_pow_tensor(t: Tensor) -> Tensor:
     return ep.pow(t, (t + 0.5))
 
 
-@compare_allclose
+@compare_allclose(rtol=1e-5)
 def test_pow_op_tensor(t: Tensor) -> Tensor:
     return t ** (t + 0.5)
 
@@ -736,7 +736,7 @@ def test_take_along_axis_3d(dummy: Tensor) -> Tensor:
     return ep.take_along_axis(t, indices, axis=-1)
 
 
-@compare_all
+@compare_allclose
 def test_sqrt(t: Tensor) -> Tensor:
     return ep.sqrt(t)
 
@@ -1576,12 +1576,12 @@ def test_norms_l0(t: Tensor) -> Tensor:
     return t.norms.l0()
 
 
-@compare_all
+@compare_allclose
 def test_norms_l1(t: Tensor) -> Tensor:
     return t.norms.l1()
 
 
-@compare_all
+@compare_allclose
 def test_norms_l2(t: Tensor) -> Tensor:
     return t.norms.l2()
 
@@ -1591,11 +1591,11 @@ def test_norms_linf(t: Tensor) -> Tensor:
     return t.norms.linf()
 
 
-@compare_all
+@compare_allclose
 def test_norms_lp(t: Tensor) -> Tensor:
     return t.norms.lp(2)
 
 
-@compare_all
+@compare_allclose
 def test_norms_cache(t: Tensor) -> Tensor:
     return t.norms.l1() + t.norms.l2()
