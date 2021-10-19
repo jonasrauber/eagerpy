@@ -33,6 +33,11 @@ Tensor.sign(self:~TensorType) -> ~TensorType
 Tensor.sqrt(self:~TensorType) -> ~TensorType
 ```
 
+## inv
+```python
+Tensor.inv(self:~TensorType) -> ~TensorType
+```
+
 ## float32
 ```python
 Tensor.float32(self:~TensorType) -> ~TensorType
