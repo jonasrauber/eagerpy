@@ -528,6 +528,9 @@ class TensorFlowTensor(BaseTensor):
     def arctanh(self: TensorType) -> TensorType:
         return type(self)(tf.atanh(self.raw))
 
+    def inv(self: TensorType) -> TensorType:
+        return type(self)(tf.linalg.inv(self.raw))
+
     def float32(self: TensorType) -> TensorType:
         return self.astype(tf.float32)
 
