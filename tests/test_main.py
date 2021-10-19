@@ -741,6 +741,11 @@ def test_sqrt(t: Tensor) -> Tensor:
     return ep.sqrt(t)
 
 
+@compare_allclose
+def test_inv(t: Tensor) -> Tensor:
+    return ep.inv(t)
+
+
 @compare_equal
 def test_shape(t: Tensor) -> Shape:
     return t.shape

@@ -416,3 +416,7 @@ def take_along_axis(t: TensorType, indices: TensorType, axis: int) -> TensorType
 
 def flatten(t: TensorType, start: int = 0, end: int = -1) -> TensorType:
     return t.flatten(start=start, end=end)
+
+
+def inv(t: TensorType) -> TensorType:
+    return t.inv()
