@@ -239,6 +239,23 @@ def test_transpose_1d(dummy: Tensor) -> None:
     assert (ep.transpose(t) == t).all()
 
 
+def test_inv(dummy: Tensor) -> None:
+    x = [[  1, -1,  0],
+         [  2, -3,  1],
+         [ -2,  0,  1]]
+    x = ep.from_numpy(dummy, np.array(x, dtype=float))
+    n = [[ -3,  1, -1],
+         [ -4,  1, -1],
+         [ -6,  2, -1]]
+    n = ep.from_numpy(dummy, np.array(n, dtype=float))
+    t = ep.inv(x)
+
+    t = t.numpy()
+    n = n.numpy()
+    assert t.shape == n.shape
+    np.testing.assert_allclose(t, n, rtol=1e-6)
+
+
 def test_onehot_like_raises(dummy: Tensor) -> None:
     t = ep.arange(dummy, 18).float32().reshape((6, 3))
     indices = ep.arange(t, 6) // 2
@@ -739,11 +756,6 @@ def test_take_along_axis_3d(dummy: Tensor) -> Tensor:
 @compare_allclose
 def test_sqrt(t: Tensor) -> Tensor:
     return ep.sqrt(t)
-
-
-@compare_allclose
-def test_inv(t: Tensor) -> Tensor:
-    return ep.inv(t)
 
 
 @compare_equal
