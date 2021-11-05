@@ -240,13 +240,9 @@ def test_transpose_1d(dummy: Tensor) -> None:
 
 
 def test_inv(dummy: Tensor) -> None:
-    x = [[  1, -1,  0],
-         [  2, -3,  1],
-         [ -2,  0,  1]]
+    x = [[1, -1, 0], [2, -3, 1], [-2, 0, 1]]
     x = ep.from_numpy(dummy, np.array(x, dtype=float))
-    n = [[ -3,  1, -1],
-         [ -4,  1, -1],
-         [ -6,  2, -1]]
+    n = [[-3, 1, -1], [-4, 1, -1], [-6, 2, -1]]
     n = ep.from_numpy(dummy, np.array(n, dtype=float))
     t = ep.inv(x)
 
