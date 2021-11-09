@@ -558,6 +558,9 @@ class PyTorchTensor(BaseTensor):
     def sqrt(self: TensorType) -> TensorType:
         return type(self)(torch.sqrt(self.raw))
 
+    def inv(self: TensorType) -> TensorType:
+        return type(self)(torch.linalg.inv(self.raw))
+
     def float32(self: TensorType) -> TensorType:
         return self.astype(torch.float32)
 

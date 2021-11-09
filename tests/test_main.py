@@ -239,6 +239,19 @@ def test_transpose_1d(dummy: Tensor) -> None:
     assert (ep.transpose(t) == t).all()
 
 
+def test_inv(dummy: Tensor) -> None:
+    x_list = [[1, -1, 0], [2, -3, 1], [-2, 0, 1]]
+    x = ep.from_numpy(dummy, np.array(x_list, dtype=float))
+    n_list = [[-3, 1, -1], [-4, 1, -1], [-6, 2, -1]]
+    n = ep.from_numpy(dummy, np.array(n_list, dtype=float))
+    t = ep.inv(x)
+
+    t = t.numpy()
+    n = n.numpy()
+    assert t.shape == n.shape
+    np.testing.assert_allclose(t, n, rtol=1e-6)
+
+
 def test_onehot_like_raises(dummy: Tensor) -> None:
     t = ep.arange(dummy, 18).float32().reshape((6, 3))
     indices = ep.arange(t, 6) // 2

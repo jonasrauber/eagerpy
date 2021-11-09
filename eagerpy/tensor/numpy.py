@@ -421,6 +421,9 @@ class NumPyTensor(BaseTensor):
     def arctanh(self: TensorType) -> TensorType:
         return type(self)(np.arctanh(self.raw))
 
+    def inv(self: TensorType) -> TensorType:
+        return type(self)(np.linalg.inv(self.raw))
+
     def float32(self: TensorType) -> TensorType:
         return self.astype(np.float32)
 

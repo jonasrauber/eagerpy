@@ -250,6 +250,10 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
+    def inv(self: TensorType) -> TensorType:
+        ...
+
+    @abstractmethod
     def float32(self: TensorType) -> TensorType:
         ...
 

@@ -521,6 +521,9 @@ class JAXTensor(BaseTensor):
     def arctanh(self: TensorType) -> TensorType:
         return type(self)(jnp.arctanh(self.raw))
 
+    def inv(self: TensorType) -> TensorType:
+        return type(self)(jnp.linalg.inv(self.raw))
+
     def float32(self: TensorType) -> TensorType:
         return self.astype(jnp.float32)
 
