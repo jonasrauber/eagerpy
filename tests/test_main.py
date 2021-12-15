@@ -252,6 +252,36 @@ def test_inv(dummy: Tensor) -> None:
     np.testing.assert_allclose(t, n, rtol=1e-6)
 
 
+def test_round(dummy: Tensor) -> None:
+    x = ep.from_numpy(dummy, np.linspace(0, 5, 13))
+    n = np.array([0, 0, 1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 5], dtype=float)
+
+    t = ep.round(x)
+    t = t.numpy()
+    assert t.shape == n.shape
+    np.testing.assert_allclose(t, n, rtol=1e-6)
+
+
+def test_ceil(dummy: Tensor) -> None:
+    x = ep.from_numpy(dummy, np.linspace(0, 5, 13))
+    n = np.array([0, 1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5, 5], dtype=float)
+
+    t = ep.ceil(x)
+    t = t.numpy()
+    assert t.shape == n.shape
+    np.testing.assert_allclose(t, n, rtol=1e-6)
+
+
+def test_floor(dummy: Tensor) -> None:
+    x = ep.from_numpy(dummy, np.linspace(0, 5, 13))
+    n = np.array([0, 0, 0, 1, 1, 2, 2, 2, 3, 3, 4, 4, 5], dtype=float)
+
+    t = ep.floor(x)
+    t = t.numpy()
+    assert t.shape == n.shape
+    np.testing.assert_allclose(t, n, rtol=1e-6)
+
+
 def test_onehot_like_raises(dummy: Tensor) -> None:
     t = ep.arange(dummy, 18).float32().reshape((6, 3))
     indices = ep.arange(t, 6) // 2

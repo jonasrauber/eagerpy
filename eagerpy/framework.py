@@ -420,3 +420,15 @@ def flatten(t: TensorType, start: int = 0, end: int = -1) -> TensorType:
 
 def inv(t: TensorType) -> TensorType:
     return t.inv()
+
+
+def round(t: TensorType) -> TensorType:
+    return t.round()
+
+
+def ceil(t: TensorType) -> TensorType:
+    return t.ceil()
+
+
+def floor(t: TensorType) -> TensorType:
+    return t.floor()

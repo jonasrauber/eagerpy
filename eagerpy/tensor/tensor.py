@@ -254,6 +254,18 @@ class Tensor(metaclass=ABCMeta):
         ...
 
     @abstractmethod
+    def round(self: TensorType) -> TensorType:
+        ...
+
+    @abstractmethod
+    def ceil(self: TensorType) -> TensorType:
+        ...
+
+    @abstractmethod
+    def floor(self: TensorType) -> TensorType:
+        ...
+
+    @abstractmethod
     def float32(self: TensorType) -> TensorType:
         ...
 
