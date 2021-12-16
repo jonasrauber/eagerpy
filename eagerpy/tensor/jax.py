@@ -80,7 +80,7 @@ class JAXTensor(BaseTensor):
 
             jax.tree_util.register_pytree_node(cls, flatten, unflatten)
             cls._registered = True
-        return cast(JAXTensor, super().__new__(cls))
+        return super().__new__(cls)
 
     def __init__(self, raw: "jnp.ndarray"):
         global jax
