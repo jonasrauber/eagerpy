@@ -524,6 +524,15 @@ class JAXTensor(BaseTensor):
     def inv(self: TensorType) -> TensorType:
         return type(self)(jnp.linalg.inv(self.raw))
 
+    def round(self: TensorType) -> TensorType:
+        return type(self)(jnp.round(self.raw))
+
+    def ceil(self: TensorType) -> TensorType:
+        return type(self)(jnp.ceil(self.raw))
+
+    def floor(self: TensorType) -> TensorType:
+        return type(self)(jnp.floor(self.raw))
+
     def float32(self: TensorType) -> TensorType:
         return self.astype(jnp.float32)
 

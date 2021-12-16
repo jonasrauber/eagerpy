@@ -531,6 +531,15 @@ class TensorFlowTensor(BaseTensor):
     def inv(self: TensorType) -> TensorType:
         return type(self)(tf.linalg.inv(self.raw))
 
+    def round(self: TensorType) -> TensorType:
+        return type(self)(tf.math.round(self.raw))
+
+    def ceil(self: TensorType) -> TensorType:
+        return type(self)(tf.math.ceil(self.raw))
+
+    def floor(self: TensorType) -> TensorType:
+        return type(self)(tf.math.floor(self.raw))
+
     def float32(self: TensorType) -> TensorType:
         return self.astype(tf.float32)
 

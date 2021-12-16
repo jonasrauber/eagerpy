@@ -561,6 +561,15 @@ class PyTorchTensor(BaseTensor):
     def inv(self: TensorType) -> TensorType:
         return type(self)(torch.linalg.inv(self.raw))
 
+    def round(self: TensorType) -> TensorType:
+        return type(self)(torch.round(self.raw))
+
+    def ceil(self: TensorType) -> TensorType:
+        return type(self)(torch.ceil(self.raw))
+
+    def floor(self: TensorType) -> TensorType:
+        return type(self)(torch.floor(self.raw))
+
     def float32(self: TensorType) -> TensorType:
         return self.astype(torch.float32)
 

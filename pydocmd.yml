@@ -17,6 +17,9 @@ generate:
         - eagerpy.Tensor.sign
         - eagerpy.Tensor.sqrt
         - eagerpy.Tensor.inv
+        - eagerpy.Tensor.round
+        - eagerpy.Tensor.ceil
+        - eagerpy.Tensor.floor
         - eagerpy.Tensor.float32
         - eagerpy.Tensor.where
         - eagerpy.Tensor.matmul

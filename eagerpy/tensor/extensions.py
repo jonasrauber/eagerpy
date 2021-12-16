@@ -35,7 +35,6 @@ if hasattr(typing, "GenericMeta"):  # Python 3.6
     class GenericExtensionMeta(typing.GenericMeta, ExtensionMeta):
         pass
 
-
 else:  # pragma: no cover  # Python 3.7 and newer
 
     class GenericExtensionMeta(ExtensionMeta):  # type: ignore
