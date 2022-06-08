@@ -530,9 +530,8 @@ class PyTorchTensor(BaseTensor):
             else:
                 loss = f(x, *args, **kwargs)
             loss = loss.raw
-            loss.backward()
-            assert x.raw.grad is not None
-            grad = type(self)(x.raw.grad)
+            grad = torch.autograd.grad(loss, x)
+            grad = type(self)(grad)
             assert grad.shape == x.shape
             loss = loss.detach()
             loss = type(self)(loss)
