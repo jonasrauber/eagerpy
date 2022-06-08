@@ -186,6 +186,21 @@ def test_value_and_grad(dummy: Tensor) -> None:
     assert (g == 2 * t).all()
 
 
+def test_value_and_grad_repeated_calls(dummy: Tensor) -> None:
+    if isinstance(dummy, ep.NumPyTensor):
+        pytest.skip()
+
+    def f(x: Tensor) -> Tensor:
+        return x.square().sum()
+
+    t = ep.arange(dummy, 8).float32().reshape((2, 4))
+    v1, g1 = ep.value_and_grad(f, t)
+    v2, g2 = ep.value_and_grad(f, t)
+    assert v1.item() == 140 == v2.item()
+    assert (g1 == 2 * t).all()
+    assert (g2 == 2 * t).all()
+
+
 def test_value_aux_and_grad(dummy: Tensor) -> None:
     if isinstance(dummy, ep.NumPyTensor):
         pytest.skip()
