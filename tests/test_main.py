@@ -551,7 +551,7 @@ def test_pow_float(t: Tensor) -> Tensor:
 
 @compare_allclose(rtol=1e-6)
 def test_pow_op(t: Tensor) -> Tensor:
-    return t ** 3
+    return t**3
 
 
 @compare_allclose(rtol=1e-5)
