@@ -85,7 +85,7 @@ class PyTorchTensor(BaseTensor):
         return type(self)(self.raw.clamp(min_, max_))
 
     def square(self: TensorType) -> TensorType:
-        return type(self)(self.raw ** 2)
+        return type(self)(self.raw**2)
 
     def sin(self: TensorType) -> TensorType:
         return type(self)(torch.sin(self.raw))
@@ -530,9 +530,8 @@ class PyTorchTensor(BaseTensor):
             else:
                 loss = f(x, *args, **kwargs)
             loss = loss.raw
-            loss.backward()
-            assert x.raw.grad is not None
-            grad = type(self)(x.raw.grad)
+            grad_raw = torch.autograd.grad(loss, x.raw)[0]
+            grad = type(self)(grad_raw)
             assert grad.shape == x.shape
             loss = loss.detach()
             loss = type(self)(loss)
