@@ -620,8 +620,11 @@ class PyTorchTensor(BaseTensor):
     def __getitem__(self: TensorType, index: Any) -> TensorType:
         if isinstance(index, tuple):
             index = tuple(x.raw if isinstance(x, Tensor) else x for x in index)
-        elif isinstance(index, Tensor):
-            index = index.raw
+        else:
+            if isinstance(index, Tensor):
+                index = index.raw
+            if isinstance(index, np.ndarray):
+                index = torch.as_tensor(index)
         return type(self)(self.raw[index])
 
     def take_along_axis(self: TensorType, index: TensorType, axis: int) -> TensorType:
