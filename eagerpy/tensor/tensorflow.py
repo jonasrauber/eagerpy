@@ -336,7 +336,7 @@ class TensorFlowTensor(BaseTensor):
         x = self.raw
         if isinstance(indices, int):
             if isinstance(values_, int) or isinstance(values_, float):
-                values_ = tf.fill(x.shape[-1:], values_)
+                values_ = tf.cast(tf.fill(x.shape[-1:], values_), x.dtype)
             return type(self)(
                 tf.tensor_scatter_nd_update(x, [[indices]], values_[None])
             )
@@ -350,7 +350,7 @@ class TensorFlowTensor(BaseTensor):
             ):
                 x = tf.transpose(x)
                 if isinstance(values_, int) or isinstance(values_, float):
-                    values_ = tf.fill(x.shape[-1:], values_)
+                    values_ = tf.cast(tf.fill(x.shape[-1:], values_), x.dtype)
                 result = tf.tensor_scatter_nd_update(x, [[indices[-1]]], values_[None])
                 return type(self)(tf.transpose(result))
             else:
@@ -363,7 +363,7 @@ class TensorFlowTensor(BaseTensor):
                 ]
             indices = tf.stack(indices, axis=-1)
             if isinstance(values_, int) or isinstance(values_, float):
-                values_ = tf.fill((indices.shape[0],), values_)
+                values_ = tf.cast(tf.fill((indices.shape[0],), values_), x.dtype)
             return type(self)(tf.tensor_scatter_nd_update(x, indices, values_))
         else:
             raise ValueError  # pragma: no cover
